@@ -27,6 +27,7 @@ class Solenoids:
         self.S3 = Solenoid(27)
 
     def spray(self):
+
         print(f"spray: {vars(self).keys()}")
         for name, s in vars(self).items():
             s.spray()
@@ -36,6 +37,7 @@ def main(num: int, dev: bool = False):
     typer.echo(f"Run {num}")
     if dev:
         Device.pin_factory = MockFactory()
+    sleep(1)
     solenoids = Solenoids()
     solenoids.spray()
 
