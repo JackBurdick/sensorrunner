@@ -1,4 +1,5 @@
 import typer
+from gpiozero.pins.native import NativeFactory
 from gpiozero.pins.mock import MockFactory
 
 from gpiozero import Device, DigitalOutputDevice
@@ -37,6 +38,8 @@ def main(num: int, dev: bool = False):
     typer.echo(f"Run {num}")
     if dev:
         Device.pin_factory = MockFactory()
+    else:
+        Device.pin_factory = NativeFactory()
     sleep(1)
     solenoids = Solenoids()
     solenoids.spray()
