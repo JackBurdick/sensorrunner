@@ -10,12 +10,29 @@ from gpiozero.pins.native import NativeFactory
 
 
 class Demux:
-    def __init__(self, ordered_pins, pwr_pin):
+    """
+    IMPORTANT: can only be in use one at a time, right now a flag (in_use) is
+    used, but maybe this could be controlled outside by a queue in the future?
+    (Not sure, because we wouldn't want it to get too large)
+    """
+
+    def __init__(self, ordered_pins, pwr_pin, on_duration=1, stabilize_time=0.05):
         self.select = dict(
             [(i, DigitalOutputDevice(p)) for i, p in enumerate(ordered_pins)]
         )
         self.pwr = DigitalOutputDevice(pwr_pin)
         self._width = len(self.select)
+        if not isinstance(on_duration, (int, float)):
+            raise ValueError(
+                f"on_duration ({on_duration}) must be type int or float not {type(on_duration)}"
+            )
+        self.on_duration = on_duration
+        if not isinstance(stabilize_time, (int, float)):
+            raise ValueError(
+                f"stabilize_time ({stabilize_time}) must be type int or float not {type(stabilize_time)}"
+            )
+        self.stabilize_time = stabilize_time
+        self.in_use = False  # attempt at preventing multiple calls at the same time
 
         self.zero()
         self.pwr.off()
@@ -25,7 +42,9 @@ class Demux:
             raise ValueError(f"{num} is not int")
         return f"{num:b}".zfill(self._width)
 
-    def on_select(self, num):
+    def _on_select(self, num):
+        if self.in_use:
+            raise ValueError(f"can only be in use once at a time, currently in use!")
         self.zero()
         self.pwr.off()  # TODO: maybe check first?
         bin_rep = self._to_bin(num)
@@ -33,26 +52,38 @@ class Demux:
         for i, v in enumerate(bin_rep[::-1]):
             if int(v):
                 self.select[i].on()
-                sleep(0.1)  # let stabilize
+        sleep(self.stabilize_time)  # let stabilize
         self.pwr.on()
+        self.in_use = True
 
-    def off_select(self, num):
+    def _off_select(self, num):
         self.pwr.off()  # TODO: maybe check first?
         bin_rep = self._to_bin(num)
         for i, v in enumerate(bin_rep[::-1]):
             if int(v):
                 self.select[i].off()
+        self.in_use = False
 
     def zero(self):
+        # first turn power off to prevent accidental other sprays
+        self.pwr.off()
         for p in self.select.values():
             p.off()
-        self.pwr.off()
+        self.in_use = False
 
-    def spray_select(self, num):
+    def spray_select(self, num, on_duration=None):
         print(f"spray: {num}")  # {vars(self).keys()}
-        self.on_select(num)
-        sleep(1)
-        # self.off_select(num)
+        if on_duration:
+            if not isinstance(on_duration, (int, float)):
+                raise ValueError(
+                    f"on_duration ({on_duration}) must be type int or float not {type(on_duration)}"
+                )
+            duration = on_duration
+        else:
+            duration = self.on_duration
+        self._on_select(num)
+        sleep(duration)
+        self.pwr.off()
         self.zero()
 
 
@@ -65,8 +96,8 @@ def main(num: int, dev: bool = False):
     sleep(1)
     dm = Demux([23, 24, 17], 27)
     for i in range(8):
-        sleep(0.5)
         dm.spray_select(i)
+        sleep(0.5)
 
 
 if __name__ == "__main__":
