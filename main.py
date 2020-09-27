@@ -26,12 +26,14 @@ class Demux:
         return f"{num:b}".zfill(self._width)
 
     def on_select(self, num):
+        self.zero()
         self.pwr.off()  # TODO: maybe check first?
         bin_rep = self._to_bin(num)
+        print(f"on: {bin_rep}")
         for i, v in enumerate(bin_rep[::-1]):
             if int(v):
                 self.select[i].on()
-        sleep(0.1)  # let stabilize
+                sleep(0.1)  # let stabilize
         self.pwr.on()
 
     def off_select(self, num):
@@ -49,8 +51,9 @@ class Demux:
     def spray_select(self, num):
         print(f"spray: {num}")  # {vars(self).keys()}
         self.on_select(num)
-        sleep(0.5)
-        self.off_select(num)
+        sleep(1)
+        # self.off_select(num)
+        self.zero()
 
 
 def main(num: int, dev: bool = False):
@@ -61,7 +64,8 @@ def main(num: int, dev: bool = False):
         Device.pin_factory = NativeFactory()
     sleep(1)
     dm = Demux([23, 24, 17], 27)
-    for i in range(3):
+    for i in range(8):
+        sleep(0.5)
         dm.spray_select(i)
 
 
