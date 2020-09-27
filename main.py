@@ -1,37 +1,56 @@
+from time import sleep
+
 import typer
-from gpiozero.pins.native import NativeFactory
-from gpiozero.pins.mock import MockFactory
 
 from gpiozero import Device, DigitalOutputDevice
-from time import sleep
+from gpiozero.pins.mock import MockFactory
+from gpiozero.pins.native import NativeFactory
 
 # GPIO PINS: https://www.raspberrypi.org/documentation/usage/gpio/
 
 
-class Solenoid:
-    def __init__(self, pin_num):
-        self.pin_num = pin_num
-        self.out = DigitalOutputDevice(pin_num)
+class Demux:
+    def __init__(self, ordered_pins, pwr_pin):
+        self.select = dict(
+            [(i, DigitalOutputDevice(p)) for i, p in enumerate(ordered_pins)]
+        )
+        self.pwr = DigitalOutputDevice(pwr_pin)
+        self._width = len(self.select)
 
-    def spray(self):
-        print(f"spray {self.pin_num}")
-        self.out.on()
-        sleep(1)
-        self.out.off()
+        self.zero()
+        self.pwr.off()
 
+    def _to_bin(self, num: int):
+        if not isinstance(num, int):
+            raise ValueError(f"{num} is not int")
+        return f"{num:b}".zfill(self._width)
 
-class Solenoids:
-    def __init__(self):
-        self.S0 = Solenoid(23)
-        self.S1 = Solenoid(24)
-        self.S2 = Solenoid(17)
-        self.S3 = Solenoid(27)
+    def on_select(self, num):
+        self.pwr.off()  # TODO: maybe check first?
+        bin_rep = self._to_bin(num)
+        for i, v in enumerate(bin_rep[::-1]):
+            if int(v):
+                self.select[i].on()
+        sleep(0.1)  # let stabilize
+        self.pwr.on()
 
-    def spray(self):
+    def off_select(self, num):
+        self.pwr.off()  # TODO: maybe check first?
+        bin_rep = self._to_bin(num)
+        for i, v in enumerate(bin_rep[::-1]):
+            if int(v):
+                self.select[i].off()
 
-        print(f"spray: {vars(self).keys()}")
-        for name, s in vars(self).items():
-            s.spray()
+    def zero(self):
+        for p in self.select.values():
+            p.off()
+        self.pwr.off()
+
+    def spray_select(self, num):
+        print(f"spray: {num}")  # {vars(self).keys()}
+        self.on_select(num)
+        sleep(0.5)
+        self.off_select(num)
 
 
 def main(num: int, dev: bool = False):
@@ -41,8 +60,9 @@ def main(num: int, dev: bool = False):
     else:
         Device.pin_factory = NativeFactory()
     sleep(1)
-    solenoids = Solenoids()
-    solenoids.spray()
+    dm = Demux([23, 24, 17], 27)
+    for i in range(3):
+        dm.spray_select(i)
 
 
 if __name__ == "__main__":
