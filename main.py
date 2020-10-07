@@ -104,14 +104,18 @@ class Demux:
 
 
 def main(num: int, dev: bool = False):
+    INDEX_PINS = [25, 23, 24, 17]
+    PWR_PIN = 27
+    # IND_SKIP = [] # TODO: allow for manual off of pins
+
     typer.echo(f"Run {num}")
     if dev:
         Device.pin_factory = MockFactory()
     else:
         Device.pin_factory = NativeFactory()
     sleep(1)
-    sprayer = Demux([25, 23, 24, 17], 27)
-    for i in range(8):
+    sprayer = Demux(INDEX_PINS, PWR_PIN)
+    for i in range(16):
         sprayer.spray_select(i)
         sleep(0.5)
 
