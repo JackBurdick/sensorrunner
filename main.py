@@ -8,34 +8,50 @@ from gpiozero.pins.native import NativeFactory
 
 # GPIO PINS: https://www.raspberrypi.org/documentation/usage/gpio/
 
+"""
+TODO:
+
+1. logging
+2. organization
+3. db hookup
+4. config specification
+
+"""
+
 
 class Demux:
     """
     IMPORTANT: can only be in use one at a time, right now a flag (in_use) is
     used, but maybe this could be controlled outside by a queue in the future?
     (Not sure, because we wouldn't want it to get too large)
+
+    # TODO: convert this to a baseclass
     """
 
     def __init__(self, ordered_pins, pwr_pin, on_duration=1, stabilize_time=0.05):
+        self.pwr = DigitalOutputDevice(pwr_pin)
+        self.pwr.off()
+
         self.select = dict(
             [(i, DigitalOutputDevice(p)) for i, p in enumerate(ordered_pins)]
         )
-        self.pwr = DigitalOutputDevice(pwr_pin)
         self._width = len(self.select)
+
         if not isinstance(on_duration, (int, float)):
             raise ValueError(
                 f"on_duration ({on_duration}) must be type int or float not {type(on_duration)}"
             )
         self.on_duration = on_duration
+
         if not isinstance(stabilize_time, (int, float)):
             raise ValueError(
                 f"stabilize_time ({stabilize_time}) must be type int or float not {type(stabilize_time)}"
             )
         self.stabilize_time = stabilize_time
+
         self.in_use = False  # attempt at preventing multiple calls at the same time
 
         self.zero()
-        self.pwr.off()
 
     def _to_bin(self, num: int):
         if not isinstance(num, int):
@@ -94,9 +110,9 @@ def main(num: int, dev: bool = False):
     else:
         Device.pin_factory = NativeFactory()
     sleep(1)
-    dm = Demux([23, 24, 17], 27)
+    sprayer = Demux([25, 23, 24, 17], 27)
     for i in range(8):
-        dm.spray_select(i)
+        sprayer.spray_select(i)
         sleep(0.5)
 
 
