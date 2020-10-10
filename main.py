@@ -32,7 +32,7 @@ class Demux:
         self,
         gpio_pins_ordered,
         pwr_pin,
-        on_duration=1,
+        on_duration=5,
         stabilize_time=0.05,
         connected=None,
         unconnected=None,
@@ -143,18 +143,20 @@ def main(num: int, dev: bool = False):
     INDEX_PINS = [25, 23, 24, 17]
     PWR_PIN = 27
     UNCONNECTED = []  # TODO: allow for manual off of pins
-    CONNECTED = []
+    CONNECTED = [0]
 
-    typer.echo(f"Run {num}")
     if dev:
         Device.pin_factory = MockFactory()
     else:
         Device.pin_factory = NativeFactory()
     sleep(1)
     sprayer = Demux(INDEX_PINS, PWR_PIN, connected=CONNECTED, unconnected=UNCONNECTED)
-    for i in range(16):
-        sprayer.run_select(i)
-        sleep(0.5)
+
+    for n in range(num):
+        print(f"round num: {num}")
+        for i in sprayer.connect_inds:
+            sprayer.run_select(i)
+            sleep(0.5)
 
 
 if __name__ == "__main__":
