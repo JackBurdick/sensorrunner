@@ -80,7 +80,6 @@ class Demux:
             bin_rep = self.num_to_bin[num]
         except KeyError:
             raise KeyError(f"num {num} is not available in {self.num_to_bin.keys()}")
-        print(f"on: {bin_rep}")
         for i, v in enumerate(bin_rep[::-1]):
             if int(v):
                 self.select[i].on()
@@ -125,7 +124,7 @@ class Demux:
         return CONNECT_INDS
 
     def run_select(self, num, on_duration=None):
-        print(f"on: {num}")  # {vars(self).keys()}
+        print(f"on: {num}", end=" ")  # {vars(self).keys()}
         if on_duration:
             if not isinstance(on_duration, (int, float)):
                 raise ValueError(
@@ -136,15 +135,15 @@ class Demux:
             duration = self.on_duration
         self._on_select(num)
         sleep(duration)
-        self.pwr.off()
         self.zero()
+        print(" --> off")
 
 
 def main(num: int, dev: bool = False):
     INDEX_PINS = [25, 23, 24, 17]
     PWR_PIN = 27
-    UNCONNECTED = [12,13,14,15]  # TODO: allow for manual off of pins
-    CONNECTED = []
+    UNCONNECTED = []  # TODO: allow for manual off of pins
+    CONNECTED = [1]
 
     if dev:
         Device.pin_factory = MockFactory()
@@ -153,13 +152,21 @@ def main(num: int, dev: bool = False):
 
     sprayer = Demux(INDEX_PINS, PWR_PIN, connected=CONNECTED, unconnected=UNCONNECTED)
     sleep(2)
-    time_end = time.monotonic() + 60 * num
-    while time.monotonic() < time_end:
-        print(f"minute: {time.monotonic()} < {time_end}")
-        for i in sprayer.connect_inds:
-            sprayer.run_select(i)
-            sleep(2)
-        sleep(30)
+    time_start = time.monotonic()
+    time_end = time_start + 60 * num
+    DELAY_MIN = 3
+    try:
+        while time.monotonic() < time_end:
+            now = time.monotonic()
+            print(f"duration: {now:.1f} < {time_end:.1f}")
+            for i in sprayer.connect_inds:
+                sprayer.run_select(i)
+                sleep(0.5)  # rest between each
+            sleep((60 * DELAY_MIN))
+    except KeyboardInterrupt:
+        sprayer.zero()
+        print("sprayer zeroed")
+
 
 if __name__ == "__main__":
     typer.run(main)
