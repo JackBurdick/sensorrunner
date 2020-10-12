@@ -1,5 +1,6 @@
 from time import sleep
 
+import time
 import typer
 
 from gpiozero import Device, DigitalOutputDevice
@@ -32,7 +33,7 @@ class Demux:
         self,
         gpio_pins_ordered,
         pwr_pin,
-        on_duration=5,
+        on_duration=3,
         stabilize_time=0.05,
         connected=None,
         unconnected=None,
@@ -124,7 +125,7 @@ class Demux:
         return CONNECT_INDS
 
     def run_select(self, num, on_duration=None):
-        print(f"run: {num}")  # {vars(self).keys()}
+        print(f"on: {num}")  # {vars(self).keys()}
         if on_duration:
             if not isinstance(on_duration, (int, float)):
                 raise ValueError(
@@ -142,22 +143,23 @@ class Demux:
 def main(num: int, dev: bool = False):
     INDEX_PINS = [25, 23, 24, 17]
     PWR_PIN = 27
-    UNCONNECTED = []  # TODO: allow for manual off of pins
-    CONNECTED = [0]
+    UNCONNECTED = [12,13,14,15]  # TODO: allow for manual off of pins
+    CONNECTED = []
 
     if dev:
         Device.pin_factory = MockFactory()
     else:
         Device.pin_factory = NativeFactory()
-    sleep(1)
-    sprayer = Demux(INDEX_PINS, PWR_PIN, connected=CONNECTED, unconnected=UNCONNECTED)
 
-    for n in range(num):
-        print(f"round num: {num}")
+    sprayer = Demux(INDEX_PINS, PWR_PIN, connected=CONNECTED, unconnected=UNCONNECTED)
+    sleep(2)
+    time_end = time.monotonic() + 60 * num
+    while time.monotonic() < time_end:
+        print(f"minute: {time.monotonic()} < {time_end}")
         for i in sprayer.connect_inds:
             sprayer.run_select(i)
-            sleep(0.5)
-
+            sleep(2)
+        sleep(30)
 
 if __name__ == "__main__":
     typer.run(main)
