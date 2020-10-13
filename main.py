@@ -142,8 +142,8 @@ class Demux:
 def main(num: int, dev: bool = False):
     INDEX_PINS = [25, 23, 24, 17]
     PWR_PIN = 27
-    UNCONNECTED = []  # TODO: allow for manual off of pins
-    CONNECTED = [1]
+    UNCONNECTED = [11,12,13,14,15]  # TODO: allow for manual off of pins
+    CONNECTED = []
 
     if dev:
         Device.pin_factory = MockFactory()
