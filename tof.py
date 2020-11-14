@@ -1,11 +1,11 @@
 import time
 
+import typer
+
+import adafruit_tca9548a
+import adafruit_vl53l0x
 import board
 import busio
-
-import adafruit_vl53l0x
-import adafruit_tca9548a
-
 
 # Initialize I2C bus and sensor.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -31,12 +31,10 @@ def main(num: int = 100):
             a_in = f"{vl53_a.range * MM_TO_INCH: 0.3f}"
         except OSError:
             a_in = None
-            pass
         try:
             b_in = f"{vl53_b.range * MM_TO_INCH: 0.3f}"
         except OSError:
             b_in = None
-            pass
         print(f"dist. a:{a_in} b: {b_in}")
         time.sleep(1.0)
 
