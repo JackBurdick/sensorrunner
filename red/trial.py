@@ -3,17 +3,13 @@ import time
 import typer
 
 from demux import Demux
+from i2c_mux import TofMux
+
 from gpiozero import Device
 from gpiozero.pins.mock import MockFactory
 from gpiozero.pins.native import NativeFactory
 
 import board
-import busio
-import adafruit_tca9548a
-import adafruit_vl53l0x
-
-
-MM_TO_INCH = 0.0393701
 
 
 def loop_sprayer(sprayer):
@@ -22,14 +18,31 @@ def loop_sprayer(sprayer):
         time.sleep(0.5)  # rest between each
 
 
+def loop_dist(dists):
+    out = []
+    for i in dists.connect_inds:
+        out.append((i, dists.obtain_reading(i, precision=4, unit="in")))
+    return out
+
+
 def main(dev: bool = False):
+
+    # TODO: use only single pin lib
+
+    # sprayer
     INDEX_PINS = [25, 23, 24, 17]
     PWR_PIN = 27
     UNCONNECTED = [11, 12, 13, 14, 15]  # TODO: allow for manual off of pins
     CONNECTED = []
     DELAY_SEC = 3
-    ON_DURATION = 1
+    ON_DURATION = 0.3
 
+    # tof
+    SCL_pin = board.SCL
+    SDA_pin = board.SDA
+    I2C_CHANNELS = [0, 1]
+
+    # other
     LOOPS = 10
 
     if dev:
@@ -45,23 +58,16 @@ def main(dev: bool = False):
         on_duration=ON_DURATION,
     )
 
-    # TODO: use only single pin lib
-    # Initialize I2C bus and sensor.
-    i2c = busio.I2C(board.SCL, board.SDA)
-
-    # mux
-    tca = adafruit_tca9548a.TCA9548A(i2c)
-
-    # each sensor
-    vl53_a = adafruit_vl53l0x.VL53L0X(tca[0])
-    vl53_a.measurement_timing_budget = 200000
-
-    vl53_b = adafruit_vl53l0x.VL53L0X(tca[1])
-    vl53_b.measurement_timing_budget = 200000
-    # The default timing budget is 33ms
+    dists = TofMux(
+        channels=I2C_CHANNELS,
+        SCL_pin=SCL_pin,
+        SDA_pin=SDA_pin,
+    )
 
     # init
     time.sleep(2)
+
+    # main loop
     try:
         for i in range(LOOPS):
             # sprayer
@@ -69,15 +75,8 @@ def main(dev: bool = False):
             print("done sprayer")
 
             # dist
-            try:
-                a_in = f"{vl53_a.range * MM_TO_INCH: 0.3f}"
-            except OSError:
-                a_in = None
-            try:
-                b_in = f"{vl53_b.range * MM_TO_INCH: 0.3f}"
-            except OSError:
-                b_in = None
-            print(f"dist. a:{a_in} b: {b_in}")
+            ret_val = loop_dist(dists)
+            print(f"dists: {ret_val}")
 
             time.sleep(DELAY_SEC)
 
