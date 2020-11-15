@@ -24,7 +24,7 @@ class TofMux:
                 )
             if c > 7 or c < 0:
                 raise ValueError(f"channel ({c}) expected to be in [0,7]")
-        
+
         self.connect_inds = channels
 
         # Initialize I2C bus and sensor.
@@ -36,6 +36,7 @@ class TofMux:
         # each sensor
         sensors = {}
         for c in channels:
+            # TODO: TimeoutError: [Errno 110] Connection timed out
             tmp_sensor = adafruit_vl53l0x.VL53L0X(tca[c])
             tmp_sensor.measurement_timing_budget = 200000
             sensors[c] = tmp_sensor
@@ -52,7 +53,7 @@ class TofMux:
             )
 
         try:
-            tmp_range = f"{self.sensors[c_num].range * self.MM_TO_INCH: 0.3f}"
+            tmp_range = self.sensors[c_num].range
         except OSError:
             tmp_range = None
 
