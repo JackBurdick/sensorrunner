@@ -87,10 +87,36 @@ start
 sudo service postgresql start
 ```
 
+grab db
+`\connect` `\c` <name>
+```bash
+\c test
+```
+
+list tables
+```bash
+\dt
+```
+
+view size of table
+```bash
+select pg_size_pretty(pg_relation_size('users'));
+```
+
+drop table
+```bash
+DROP TABLE
+```
+quit
+```
+\q
+```
+
 ## SQA
 ```bash
 conda install -c anaconda sqlalchemy
 pip install psycopg2
+pip install sqlalchemy-utils
 ```
 
 

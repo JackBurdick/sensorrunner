@@ -12,25 +12,31 @@ from gpiozero.pins.native import NativeFactory
 
 import board
 
-from sa import MyRow, SESSION_MyRow
+from sa import MyRow, SESSION_MyRow, MyDist, SESSION_MyDist
 
 
 def loop_demux(demuxer_a):
     global SESSION_MyRow
-    for cur_id in demuxer_a.connect_inds:
+    for cur_ind in demuxer_a.connect_inds:
         start = datetime.utcnow()
-        demuxer_a.run_select(cur_id)
+        demuxer_a.run_select(cur_ind)
         stop = datetime.utcnow()
-        cur_entry = MyRow(index=cur_id, start=start, stop=stop)
+        cur_entry = MyRow(index=cur_ind, start=start, stop=stop)
         cur_entry.add(SESSION_MyRow)
         # rest between each
         time.sleep(0.5)
 
 
 def loop_dist(dists):
+    global SESSION_MyDist
+    UNIT = "in"
+    PRECISION = 4
     out = []
-    for i in dists.connect_inds:
-        out.append((i, dists.obtain_reading(i, precision=4, unit="in")))
+    for cur_ind in dists.connect_inds:
+        cur_v = dists.obtain_reading(cur_ind, precision=PRECISION, unit=UNIT)
+        cur_entry = MyDist(index=cur_ind, value=cur_v, unit=UNIT)
+        cur_entry.add(SESSION_MyDist)
+        out.append((cur_ind, cur_v))
     return out
 
 
