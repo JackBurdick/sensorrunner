@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 import typer
 
@@ -11,11 +12,19 @@ from gpiozero.pins.native import NativeFactory
 
 import board
 
+from sa import MyRow, SESSION_MyRow
 
-def loop_sprayer(sprayer):
-    for i in sprayer.connect_inds:
-        sprayer.run_select(i)
-        time.sleep(0.5)  # rest between each
+
+def loop_demux(demuxer_a):
+    global SESSION_MyRow
+    for cur_id in demuxer_a.connect_inds:
+        start = datetime.utcnow()
+        demuxer_a.run_select(cur_id)
+        stop = datetime.utcnow()
+        cur_entry = MyRow(index=cur_id, start=start, stop=stop)
+        cur_entry.add(SESSION_MyRow)
+        # rest between each
+        time.sleep(0.5)
 
 
 def loop_dist(dists):
@@ -29,7 +38,7 @@ def main(dev: bool = False):
 
     # TODO: use only single pin lib
 
-    # sprayer
+    # demux
     INDEX_PINS = [25, 23, 24, 17]
     PWR_PIN = 27
     UNCONNECTED = [11, 12, 13, 14, 15]  # TODO: allow for manual off of pins
@@ -50,7 +59,7 @@ def main(dev: bool = False):
     else:
         Device.pin_factory = NativeFactory()
 
-    sprayer = Demux(
+    demuxer_a = Demux(
         INDEX_PINS,
         PWR_PIN,
         connected=CONNECTED,
@@ -70,9 +79,9 @@ def main(dev: bool = False):
     # main loop
     try:
         for i in range(LOOPS):
-            # sprayer
-            loop_sprayer(sprayer)
-            print("done sprayer")
+            # demuxer_a
+            loop_demux(demuxer_a)
+            print("done demuxer_a")
 
             # dist
             ret_val = loop_dist(dists)
@@ -81,8 +90,8 @@ def main(dev: bool = False):
             time.sleep(DELAY_SEC)
 
     except KeyboardInterrupt:
-        sprayer.zero()
-        print("sprayer zeroed")
+        demuxer_a.zero()
+        print("demuxer_a zeroed")
 
 
 if __name__ == "__main__":
