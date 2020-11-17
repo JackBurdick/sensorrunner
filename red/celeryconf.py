@@ -18,4 +18,4 @@ beat_schedule = {}
 
 # queue
 broker_transport_options = {"queue_order_strategy": "priority"}
-task_queues = (Queue(Q_A), Queue(Q_B), Queue(Q_C))
+task_queues = (Queue("main"), Queue("collect"), Queue("loging"))

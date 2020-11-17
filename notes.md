@@ -43,6 +43,11 @@ pip install adafruit-circuitpython-tca9548a
 pinout
 ```
 
+### ssh
+```bash
+ssh-keygen -p
+```
+
 ### scan all ic devices
 
 scan ic devices
@@ -152,6 +157,12 @@ kill -9 $PID
 ```
 
 ## celery
+```bash
+celery -A cluster worker -l info -Q "celery" -n "main"
+celery -A cluster worker -l info -Q "logging" -n "queue_logging" -c 1
+celery -A cluster worker -l info -Q "collect" -n "queue_collect" -c 1
+```
+
 
 # TODO: https://docs.celeryproject.org/en/stable/userguide/daemonizing.html
 
