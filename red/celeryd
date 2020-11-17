@@ -1,0 +1,8 @@
+
+CELERYD_NODES="main logger collect"
+
+CELERY_BIN="/home/pi/.conda/envs/aero/bin/celery"
+
+CELERYD_CHDIR="/home/pi/dev/aeropi/red"
+
+CELERYD_OPTS="-Q:main 'celery' -Q:logger 'queue_logging' -Q:collect 'queue_collect' -c:logger 1 -c:collect 1"
