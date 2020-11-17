@@ -1,4 +1,4 @@
-from secrets import BROKER_URL, RESULT_BACKEND, REDBEAT_URL, SERIALIZER, Q_A, Q_B, Q_C
+from secrets import BROKER_URL, RESULT_BACKEND, REDBEAT_URL, SERIALIZER
 from kombu import Queue
 from kombu.serialization import registry
 
