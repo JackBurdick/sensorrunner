@@ -5,8 +5,6 @@ import celery
 import celeryconf
 from sa import MyDist, MyRow, SESSION_MyRow, SESSION_MyDist
 
-from devices import DEMUX, DISTS
-
 app = celery.Celery(__name__)
 app.config_from_object(celeryconf)
 
@@ -28,7 +26,8 @@ def _demux_run_select(self, demux, cur_ind, duration):
 
 @app.task(bind=True, queue="collect")
 def demux_select(self, cur_id, duration):
-    global DEMUX
+    from devices import DEMUX
+
     return celery.chain(
         _demux_run_select.s(DEMUX, cur_id, duration), _log_demux.s()
     ).apply_async()
@@ -54,7 +53,8 @@ def _dist_run_select(self, dists, cur_ind):
 
 @app.task(bind=True, queue="collect")
 def dist_select(self, cur_ind):
-    global DISTS
+    from devices import DISTS
+
     return celery.chain(_dist_run_select.s(DISTS, cur_ind), _log_dist.s()).apply_async()
 
 
