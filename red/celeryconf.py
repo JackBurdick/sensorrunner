@@ -3,6 +3,7 @@ from kombu import Queue
 from kombu.serialization import registry
 
 registry.enable(SERIALIZER)
+
 task_serializer = SERIALIZER
 result_serializer = SERIALIZER
 accept_content = [SERIALIZER]
@@ -17,4 +18,10 @@ beat_schedule = {}
 
 # queue
 broker_transport_options = {"queue_order_strategy": "priority"}
-task_queues = (Queue("main"), Queue("collect"), Queue("loging"))
+task_queues = (
+    Queue("collect"),
+    Queue("q_demux_run"),
+    Queue("q_demux_log"),
+    Queue("q_dists_run"),
+    Queue("q_dists_log"),
+)
