@@ -158,11 +158,16 @@ kill -9 $PID
 
 ## celery
 ```bash
-celery -A cluster worker -l info -Q "celery" -n "main"
-celery -A cluster worker -l info -Q "logging" -n "queue_logging" -c 1
-celery -A cluster worker -l info -Q "collect" -n "queue_collect" -c 1
+celery -A cluster worker -l info -Q "collect" -n "main"
+celery -A cluster worker -l info -Q "q_demux_run" -n "demux_run" -c 1
+celery -A cluster worker -l info -Q "q_demux_log" -n "demux_log" -c 1
+celery -A cluster worker -l info -Q "q_dists_run" -n "dists_run" -c 1
+celery -A cluster worker -l info -Q "q_dists_log" -n "dists_log" -c 1
 ```
-
+### Readbeat
+```bash
+pip install celery-redbeat
+```
 
 # TODO: https://docs.celeryproject.org/en/stable/userguide/daemonizing.html
 

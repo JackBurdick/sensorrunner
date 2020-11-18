@@ -17,6 +17,9 @@ class MyRow(Base):
     __tablename__ = "things"
     __table_args__ = {"extend_existing": True}
 
+    # TODO: SENSOR ID
+    # TODO: PINS
+
     id = Column(Integer, primary_key=True)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     #
@@ -39,12 +42,15 @@ class MyDist(Base):
     __tablename__ = "dists"
     __table_args__ = {"extend_existing": True}
 
+    # TODO: SENSOR ID
+
     id = Column(Integer, primary_key=True)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     #
     index = Column(Integer)
     value = Column(Float)
     unit = Column(String)
+    measurement_time = Column(TIMESTAMP)
 
     def add(self, session):
         try:
@@ -54,7 +60,7 @@ class MyDist(Base):
             print(f"row {self.index} not added: {e}")
 
     def __repr__(self):
-        return f"<MyDist(id='{self.id}', index={self.index}, value='{self.value}', unit={self.unit})>"
+        return f"<MyDist(id='{self.id}', index={self.index}, value='{self.value}', unit={self.unit}, measurement_time={self.measurement_time})>"
 
 
 Base.metadata.create_all(engine)
