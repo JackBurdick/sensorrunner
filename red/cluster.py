@@ -5,6 +5,8 @@ import celery
 import celeryconf
 from sa import MyDist, MyRow, SESSION_MyRow, SESSION_MyDist
 
+# from devices import DEMUX, DISTS
+
 app = celery.Celery(__name__)
 app.config_from_object(celeryconf)
 
@@ -16,9 +18,9 @@ def _log_demux(self, row):
 
 
 @app.task(bind=True, queue="q_demux_run")
-def _demux_run_select(self, demux, cur_ind):
+def _demux_run_select(self, demux, cur_ind, duration):
     start = datetime.utcnow()
-    demux.run_select(cur_ind)
+    demux.run_select(cur_ind, on_duration=duration)
     stop = datetime.utcnow()
     entry = MyRow(index=cur_ind, start=start, stop=stop)
     return entry
@@ -50,5 +52,22 @@ def _dist_run_select(self, dists, cur_ind):
 
 
 @app.task(bind=True, queue="collect")
-def dist_select(self, demux, cur_id):
-    return celery.chain(_dist_run_select.s(demux, cur_id), _log_dist.s()).apply_async()
+def dist_select(self, dists, cur_ind):
+    return celery.chain(_dist_run_select.s(dists, cur_ind), _log_dist.s()).apply_async()
+
+
+# dist0 = Entry(
+#     "run_dists_0",
+#     "cluster.dist_select",
+#     schedule=celery.schedules.schedule(run_every=2.1),
+#     kwargs={"dists": DISTS, "cur_ind": 0},
+#     app=cluster.app,
+# )
+
+# demux0 = Entry(
+#     "run_demux_0",
+#     "cluster.demux_select",
+#     schedule=celery.schedules.schedule(run_every=1.3),
+#     kwargs={"demux": DEMUX, "cur_ind": 0, "duration": 0.3},
+#     app=cluster.app,
+# )
