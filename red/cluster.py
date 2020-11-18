@@ -25,11 +25,11 @@ def _demux_run_select(self, demux, cur_ind, duration):
 
 
 @app.task(bind=True, queue="collect")
-def demux_select(self, cur_id, duration):
+def demux_select(self, cur_ind, duration):
     from devices import DEMUX
 
     return celery.chain(
-        _demux_run_select.s(DEMUX, cur_id, duration), _log_demux.s()
+        _demux_run_select.s(DEMUX, cur_ind, duration), _log_demux.s()
     ).apply_async()
 
 
@@ -71,5 +71,13 @@ def dist_select(self, cur_ind):
 #     "cluster.demux_select",
 #     schedule=celery.schedules.schedule(run_every=1.3),
 #     kwargs={"cur_ind": 0, "duration": 0.3},
+#     app=cluster.app,
+# )
+
+# demux1 = Entry(
+#     "run_demux_1",
+#     "cluster.demux_select",
+#     schedule=celery.schedules.schedule(run_every=1.3),
+#     kwargs={"cur_ind": 1, "duration": 0.3},
 #     app=cluster.app,
 # )
