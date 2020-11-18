@@ -1,17 +1,7 @@
 import time
-from datetime import datetime
-
 import typer
-
-from demux import Demux
-from i2c_mux import TofMux
-
-from gpiozero import Device
-from gpiozero.pins.mock import MockFactory
-from gpiozero.pins.native import NativeFactory
-
-import board
-
+from datetime import datetime
+from devices import DEMUX, DISTS
 from sa import MyRow, SESSION_MyRow, MyDist, SESSION_MyDist
 
 
@@ -40,63 +30,26 @@ def loop_dist(dists):
     return out
 
 
-def main(dev: bool = False):
-
-    # TODO: use only single pin lib
-
-    # demux
-    INDEX_PINS = [25, 23, 24, 17]
-    PWR_PIN = 27
-    UNCONNECTED = [11, 12, 13, 14, 15]  # TODO: allow for manual off of pins
-    CONNECTED = []
-    DELAY_SEC = 3
-    ON_DURATION = 0.3
-
-    # tof
-    SCL_pin = board.SCL
-    SDA_pin = board.SDA
-    I2C_CHANNELS = [0, 1]
-
-    # other
-    LOOPS = 10
-
-    if dev:
-        Device.pin_factory = MockFactory()
-    else:
-        Device.pin_factory = NativeFactory()
-
-    demuxer_a = Demux(
-        INDEX_PINS,
-        PWR_PIN,
-        connected=CONNECTED,
-        unconnected=UNCONNECTED,
-        on_duration=ON_DURATION,
-    )
-
-    dists = TofMux(
-        channels=I2C_CHANNELS,
-        SCL_pin=SCL_pin,
-        SDA_pin=SDA_pin,
-    )
+def main(loops: int = 10):
 
     # init
-    time.sleep(2)
+    time.sleep(1)
 
     # main loop
     try:
-        for i in range(LOOPS):
+        for i in range(loops):
             # demuxer_a
-            loop_demux(demuxer_a)
+            loop_demux(DEMUX)
             print("done demuxer_a")
 
             # dist
-            ret_val = loop_dist(dists)
+            ret_val = loop_dist(DISTS)
             print(f"dists: {ret_val}")
 
-            time.sleep(DELAY_SEC)
+            time.sleep(2)
 
     except KeyboardInterrupt:
-        demuxer_a.zero()
+        DEMUX.zero()
         print("demuxer_a zeroed")
 
 
