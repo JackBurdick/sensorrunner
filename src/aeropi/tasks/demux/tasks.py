@@ -1,9 +1,8 @@
 import celery
 from .device import DEMUX
-#from ...celery_app import app
-from celery_run.celery_app import app
-from ..sa import MyRow, SESSION_MyRow
-import datetime
+from aeropi.celery_app import app
+from aeropi.sa import MyRow, SESSION_MyRow
+from datetime import datetime
 
 
 @app.task(bind=True, queue="q_demux_log")
@@ -13,9 +12,11 @@ def _log_demux(self, row):
 
 
 @app.task(bind=True, queue="q_demux_run")
-def _demux_run_select(self, demux, cur_ind, duration):
+def _demux_run_select(self, cur_ind, duration):
+    global DEMUX
+    global MyRow
     start = datetime.utcnow()
-    demux.run_select(cur_ind, on_duration=duration)
+    DEMUX.run_select(cur_ind, on_duration=duration)
     stop = datetime.utcnow()
     entry = MyRow(index=cur_ind, start=start, stop=stop)
     return entry
@@ -23,8 +24,6 @@ def _demux_run_select(self, demux, cur_ind, duration):
 
 @app.task(bind=True, queue="collect")
 def demux_select(self, cur_ind, duration):
-    global DEMUX
-
     return celery.chain(
-        _demux_run_select.s(DEMUX, cur_ind, duration), _log_demux.s()
+        _demux_run_select.s(cur_ind, duration), _log_demux.s()
     ).apply_async()
