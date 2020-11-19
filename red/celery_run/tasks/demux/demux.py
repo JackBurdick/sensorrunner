@@ -1,6 +1,12 @@
 from time import sleep
 
+from gpiozero import Device
+
+# from gpiozero.pins.mock import MockFactory
+from gpiozero.pins.native import NativeFactory
 from gpiozero import DigitalOutputDevice
+
+Device.pin_factory = NativeFactory()
 
 
 class Demux:
