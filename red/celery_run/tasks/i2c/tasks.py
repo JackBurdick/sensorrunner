@@ -1,7 +1,7 @@
 import celery
 from .device import DISTS
-from ...celery_app import app
-from ...sa import MyDist, SESSION_MyDist
+from ..celery_app import app
+from ..sa import MyDist, SESSION_MyDist
 import datetime
 
 

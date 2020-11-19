@@ -1,7 +1,8 @@
 import celery
 from .device import DEMUX
-from ...celery_app import app
-from ...sa import MyRow, SESSION_MyRow
+#from ...celery_app import app
+from celery_run.celery_app import app
+from ..sa import MyRow, SESSION_MyRow
 import datetime
 
 
