@@ -130,4 +130,4 @@ dmypy.json
 
 .vscode/
 
-/red/celery_run/secrets.py
+/src/aeropi/secrets.py
