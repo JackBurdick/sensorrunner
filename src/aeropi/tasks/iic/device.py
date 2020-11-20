@@ -12,4 +12,4 @@ def return_tof():
     return dists
 
 
-DIST = return_tof()
+DISTS = return_tof()
