@@ -1,16 +1,11 @@
-import board
-import busio
 import adafruit_tca9548a
 import adafruit_vl53l0x
+import board
+import busio
 
 
 class TofMux:
-    def __init__(
-        self,
-        channels,
-        SCL_pin=board.SCL,
-        SDA_pin=board.SDA,
-    ):
+    def __init__(self, channels, SCL_pin=board.SCL, SDA_pin=board.SDA):
         self.MM_TO_INCH = 0.0393701
 
         if not isinstance(channels, list):
