@@ -2,7 +2,7 @@ import celery
 from .device import DISTS
 from aeropi.celery_app import app
 from aeropi.sa import MyDist, SESSION_MyDist
-import datetime
+from datetime import datetime
 
 
 @app.task(bind=True, queue="q_dists_log")
