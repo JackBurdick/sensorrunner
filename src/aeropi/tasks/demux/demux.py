@@ -1,10 +1,10 @@
+import datetime as dt
 from time import sleep
 
-from gpiozero import Device
+from gpiozero import Device, DigitalOutputDevice
 
 # from gpiozero.pins.mock import MockFactory
 from gpiozero.pins.native import NativeFactory
-from gpiozero import DigitalOutputDevice
 
 Device.pin_factory = NativeFactory()
 
@@ -121,6 +121,9 @@ class Demux:
             duration = on_duration
         else:
             duration = self.on_duration
+        start = dt.datetime.utcnow()
         self._on_select(num)
         sleep(duration)
         self.zero()
+        stop = dt.datetime.utcnow()
+        return (start, stop)
