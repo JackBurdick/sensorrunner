@@ -11,9 +11,8 @@ import busio
 i2c = busio.I2C(board.SCL, board.SDA)
 
 # mux
-tca = adafruit_tca9548a.TCA9548A(i2c)
-
-tca2 = adafruit_tca9548a.TCA9548A(i2c)
+tca = adafruit_tca9548a.TCA9548A(i2c, address=0x70)
+tca2 = adafruit_tca9548a.TCA9548A(i2c, address=0x72)
 
 
 # each sensor
@@ -25,8 +24,8 @@ vl53_b.measurement_timing_budget = 200000
 # The default timing budget is 33ms
 
 
-vl53_c = adafruit_vl53l0x.VL53L0X(tca2[6])
-vl53_d = adafruit_vl53l0x.VL53L0X(tca2[7])
+vl53_c = adafruit_vl53l0x.VL53L0X(tca2[0])
+vl53_d = adafruit_vl53l0x.VL53L0X(tca2[1])
 
 MM_TO_INCH = 0.0393701
 
@@ -49,7 +48,7 @@ def main(num: int = 100):
             d_in = f"{vl53_d.range * MM_TO_INCH: 0.3f}"
         except OSError:
             d_in = None
-        print(f"dist. a:{a_in} b: {b_in}")
+        print(f"dist. a:{a_in} b: {b_in}, c:{c_in}, d:{d_in}")
         time.sleep(1.0)
 
 
