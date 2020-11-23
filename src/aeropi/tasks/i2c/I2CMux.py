@@ -1,9 +1,8 @@
+import adafruit_si7021
 import adafruit_tca9548a
+import adafruit_vl53l0x
 import board
 import busio
-
-import adafruit_vl53l0x
-import adafruit_si7021
 
 
 class I2CMux:
@@ -105,10 +104,7 @@ class I2CMux:
 
         return out
 
-    def _env_val(
-        self,
-        device,
-    ):
+    def _env_val(self, device):
         try:
             tmp_temp = device.temperature * 1.8 + 32
         except OSError:
@@ -127,7 +123,7 @@ class I2CMux:
         if not isinstance(name, str):
             return ValueError(f"`name` is expected to be type {str}, not {type(name)}")
         try:
-            dev_d = devices[name]
+            dev_d = self.devices[name]
         except KeyError:
             raise ValueError(
                 f"{name} is not available. please select from {self.devices.keys()}"
