@@ -86,7 +86,7 @@ class I2CMux:
 
         self.devices = devices
 
-    def _tof_val(device, precision=3, unit="in"):
+    def _tof_val(self, device, precision=3, unit="in"):
         MM_TO_INCH = 0.0393701
         try:
             tmp_range = device.range
@@ -106,6 +106,7 @@ class I2CMux:
         return out
 
     def _env_val(
+        self,
         device,
     ):
         try:
@@ -118,7 +119,7 @@ class I2CMux:
             tmp_rh = None
         return (tmp_temp, tmp_rh)
 
-    def return_value(name, **kwargs):
+    def return_value(self, name, **kwargs):
         if name is None:
             return ValueError(
                 f"no name specified. please select from {self.devices.keys()}"
