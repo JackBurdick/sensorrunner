@@ -6,40 +6,6 @@ import adafruit_vl53l0x
 import adafruit_si7021
 
 
-def tof_val(device, precision=3, unit="in"):
-    MM_TO_INCH = 0.0393701
-    try:
-        tmp_range = device.range
-    except OSError:
-        tmp_range = None
-
-    # TODO: keep track of these in dict
-    if tmp_range is not None:
-        if unit == "in":
-            tmp_range *= MM_TO_INCH
-        else:
-            raise ValueError(f"unit {unit} not currently supported")
-        out = round(tmp_range, precision)
-    else:
-        out = tmp_range
-
-    return out
-
-
-def env_val(
-    device,
-):
-    try:
-        tmp_temp = device.temperature * 1.8 + 32
-    except OSError:
-        tmp_temp = None
-    try:
-        tmp_rh = device.relative_humidity
-    except OSError:
-        tmp_rh = None
-    return (tmp_temp, tmp_rh)
-
-
 class I2CMux:
     def __init__(self, device_tuple, SCL_pin=board.SCL, SDA_pin=board.SDA):
         # NOTE: accepting tuples currently because I'm not sure what the config
@@ -55,8 +21,8 @@ class I2CMux:
         device_types = {dt[3] for dt in device_tuple}
 
         ALLOWED_DEVICES = {
-            "vl53l0x": {"device_class": adafruit_vl53l0x.VL53L0X, "fn": tof_val},
-            "si7021": {"device_class": adafruit_si7021.SI7021, "fn": env_val},
+            "vl53l0x": {"device_class": adafruit_vl53l0x.VL53L0X, "fn": self._tof_val},
+            "si7021": {"device_class": adafruit_si7021.SI7021, "fn": self._env_val},
         }
         self.allowed_devices = ALLOWED_DEVICES
         for dt in device_tuple:
@@ -120,20 +86,50 @@ class I2CMux:
 
         self.devices = devices
 
-        def return_value(name, **kwargs):
-            if name is None:
-                return ValueError(
-                    f"no name specified. please select from {self.devices.keys()}"
-                )
-            if not isinstance(name, str):
-                return ValueError(
-                    f"`name` is expected to be type {str}, not {type(name)}"
-                )
-            try:
-                dev_d = devices[name]
-            except KeyError:
-                raise ValueError(
-                    f"{name} is not available. please select from {self.devices.keys()}"
-                )
-            value = dev_d["fn"](dev_d["device"], **kwargs)
-            return value
+    def _tof_val(device, precision=3, unit="in"):
+        MM_TO_INCH = 0.0393701
+        try:
+            tmp_range = device.range
+        except OSError:
+            tmp_range = None
+
+        # TODO: keep track of these in dict
+        if tmp_range is not None:
+            if unit == "in":
+                tmp_range *= MM_TO_INCH
+            else:
+                raise ValueError(f"unit {unit} not currently supported")
+            out = round(tmp_range, precision)
+        else:
+            out = tmp_range
+
+        return out
+
+    def _env_val(
+        device,
+    ):
+        try:
+            tmp_temp = device.temperature * 1.8 + 32
+        except OSError:
+            tmp_temp = None
+        try:
+            tmp_rh = device.relative_humidity
+        except OSError:
+            tmp_rh = None
+        return (tmp_temp, tmp_rh)
+
+    def return_value(name, **kwargs):
+        if name is None:
+            return ValueError(
+                f"no name specified. please select from {self.devices.keys()}"
+            )
+        if not isinstance(name, str):
+            return ValueError(f"`name` is expected to be type {str}, not {type(name)}")
+        try:
+            dev_d = devices[name]
+        except KeyError:
+            raise ValueError(
+                f"{name} is not available. please select from {self.devices.keys()}"
+            )
+        value = dev_d["fn"](dev_d["device"], **kwargs)
+        return value
