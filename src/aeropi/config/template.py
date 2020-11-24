@@ -13,10 +13,10 @@ TEMPLATE = {
     KPH("I2C", exact=True): {
         KPH("name", multi=True): {
             "channel": Numeric(
-                required=True, bounds=(0, 7), bounds_inclusive=(True, True)
+                required=True, is_type=int, bounds=(0, 7), bounds_inclusive=(True, True)
             ),
             "address": Numeric(
-                required=True, bounds=(0x70, 0x77), bounds_inclusive=(True, True)
+                required=True, is_type=int,  bounds=(0x70, 0x77), bounds_inclusive=(True, True)
             ),
             "device": Text(required=True, is_in_list=I2C_DEVICES),
         }
