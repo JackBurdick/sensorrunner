@@ -1,0 +1,21 @@
+I2C:
+  env_a:
+    device: "si7021"
+    address: 0x72
+    channel: 2
+  dist_a:
+    device: "si7021"
+    address: 0x70
+    channel: 0
+  dist_b:
+    device: "si7021"
+    address: 0x70
+    channel: 1
+  dist_c:
+    device: "si7021"
+    address: 0x72
+    channel: 0
+  dist_d:
+    device: "si7021"
+    address: 0x72
+    channel: 1
