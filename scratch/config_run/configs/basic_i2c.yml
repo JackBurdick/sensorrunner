@@ -19,3 +19,16 @@ I2C:
     device: "vl53l0x"
     address: 0x72
     channel: 1
+
+my_demux:
+  init:
+    gpio_pins_ordered: [25, 23, 24, 17]
+    pwr_pin: 27
+    on_duration: 3.3
+  devices:
+    a:
+      index: 0
+      on_duration: 1.7
+    b:
+      index: 1
+      on_duration: 1.3
