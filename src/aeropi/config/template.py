@@ -31,7 +31,7 @@ TEMPLATE = {
                 element_types=Numeric(
                     required=True,
                     is_type=int,
-                    bounds=(0, 26),
+                    bounds=(0, 27),
                     bounds_inclusive=(True, True),
                 ),
                 required=True,
@@ -40,7 +40,7 @@ TEMPLATE = {
             "pwr_pin": Numeric(
                 required=True,
                 is_type=int,
-                bounds=(0, 26),
+                bounds=(0, 27),
                 bounds_inclusive=(True, True),
             ),
             "on_duration": Numeric(required=True, is_type=float, bounds=(0, 5)),
