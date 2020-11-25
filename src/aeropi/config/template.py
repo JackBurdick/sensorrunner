@@ -25,36 +25,38 @@ TEMPLATE = {
             "device": Text(required=True, is_in_list=I2C_DEVICES),
         }
     },
-    KPH("demux_name", required=False, ends_with="_demux"): {
-        "init": {
-            "gpio_pins_ordered": Multi(
-                element_types=Numeric(
+    KPH("demux", exact=True, required=False): {
+        KPH("demux_name", required=True, multi=True): {
+            "init": {
+                "gpio_pins_ordered": Multi(
+                    element_types=Numeric(
+                        required=True,
+                        is_type=int,
+                        bounds=(0, 27),
+                        bounds_inclusive=(True, True),
+                    ),
+                    required=True,
+                    homogeneous=True,
+                ),
+                "pwr_pin": Numeric(
                     required=True,
                     is_type=int,
                     bounds=(0, 27),
                     bounds_inclusive=(True, True),
                 ),
-                required=True,
-                homogeneous=True,
-            ),
-            "pwr_pin": Numeric(
-                required=True,
-                is_type=int,
-                bounds=(0, 27),
-                bounds_inclusive=(True, True),
-            ),
-            "on_duration": Numeric(required=True, is_type=float, bounds=(0, 5)),
-        },
-        "devices": {
-            KPH("name", multi=True): {
-                "index": Numeric(
-                    required=True,
-                    is_type=int,
-                    bounds=(0, 15),
-                    bounds_inclusive=(True, True),
-                ),
                 "on_duration": Numeric(required=True, is_type=float, bounds=(0, 5)),
-            }
-        },
+            },
+            "devices": {
+                KPH("name", multi=True): {
+                    "index": Numeric(
+                        required=True,
+                        is_type=int,
+                        bounds=(0, 15),
+                        bounds_inclusive=(True, True),
+                    ),
+                    "on_duration": Numeric(required=True, is_type=float, bounds=(0, 5)),
+                }
+            },
+        }
     },
 }
