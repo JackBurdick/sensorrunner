@@ -13,20 +13,32 @@ class GPIODemux:
     """
     IMPORTANT: can only be in use one at a time, right now a flag (in_use) is
     used, but maybe this could be controlled outside by a queue in the future?
-    (Not sure, because we wouldn't want it to get too large)
+    (Not sure, because we wouldn't want it to get too large) - note this logic
+    likely belongs in the config
 
-    # TODO: convert this to a baseclass
     """
 
     def __init__(
         self,
+        # init params
+        name,
         gpio_pins_ordered,
         pwr_pin,
         on_duration=3,
         stabilize_time=0.05,
-        connected=None,
-        unconnected=None,
+        # devices
+        devices_config=None,
     ):
+        if not isinstance(name, str):
+            raise ValueError(
+                f"name ({name}) expected to be type {str}, not {type(name)}"
+            )
+        self.name = name
+
+        if not isinstance(pwr_pin, int):
+            raise ValueError(
+                f"pwr_pin ({pwr_pin}) expected to be type {int}, not {type(pwr_pin)}"
+            )
         self.pwr = DigitalOutputDevice(pwr_pin)
         self.pwr.off()
 
@@ -41,10 +53,12 @@ class GPIODemux:
             )
         self.on_duration = on_duration
 
-        self.connect_inds = self._define_connections(
-            gpio_pins_ordered, connected=connected, unconnected=unconnected
+        # name to ind
+        self.connected_name_to_ind = self._define_connections(
+            gpio_pins_ordered, connected_sensors=devices_config
         )
-        self.num_to_bin = self._num_to_bin(self.connect_inds)
+
+        self.ind_to_bin = self._num_to_bin(self.connected_name_to_ind.values())
 
         if not isinstance(stabilize_time, (int, float)):
             raise ValueError(
@@ -61,14 +75,33 @@ class GPIODemux:
             raise ValueError(f"{num} is not int")
         return f"{num:b}".zfill(self._width)
 
-    def _on_select(self, num):
+    def _num_to_bin(self, connected_inds):
+        ind_to_bin = {}
+        for ind in connected_inds:
+            ind_to_bin[ind] = self._to_bin(ind)
+        return ind_to_bin
+
+    def _define_connections(self, index_pins, connected_sensors):
+        avail_connects = range(len(index_pins) ** 2)
+        connected = {}
+        for name, sensor_d in connected_sensors:
+            cur_ind = sensor_d["index"]
+            if cur_ind not in avail_connects:
+                raise ValueError(f"cur_ind not available in {avail_connects}")
+            else:
+                connected[name] = cur_ind
+        return connected
+
+    def _on_select(self, index):
         if self.in_use:
             raise ValueError(f"can only be in use once at a time, currently in use!")
         self.zero()
         try:
-            bin_rep = self.num_to_bin[num]
+            bin_rep = self.ind_to_bin[index]
         except KeyError:
-            raise KeyError(f"num {num} is not available in {self.num_to_bin.keys()}")
+            raise KeyError(
+                f"index {index} is not available in {self.ind_to_bin.keys()}"
+            )
         for i, v in enumerate(bin_rep[::-1]):
             if int(v):
                 self.select[i].on()
@@ -76,9 +109,9 @@ class GPIODemux:
         self.pwr.on()
         self.in_use = True
 
-    def _off_select(self, num):
+    def _off_select(self, index):
         self.pwr.off()  # TODO: maybe check first?
-        bin_rep = self.num_to_bin[num]
+        bin_rep = self.ind_to_bin[index]
         for i, v in enumerate(bin_rep[::-1]):
             if int(v):
                 self.select[i].off()
@@ -92,27 +125,7 @@ class GPIODemux:
             p.off()
         self.in_use = False
 
-    def _num_to_bin(self, nums):
-        num_bin = {}
-        for v in nums:
-            num_bin[v] = self._to_bin(v)
-        return num_bin
-
-    def _define_connections(self, index_pins, connected=None, unconnected=None):
-        avail_connects = len(index_pins) ** 2
-        if connected and unconnected:
-            raise ValueError(
-                f"please only specify connected ({connected}) or unconnected ({unconnected}), not both"
-            )
-        elif connected:
-            CONNECT_INDS = connected
-        elif unconnected:
-            CONNECT_INDS = [i for i in range(avail_connects) if i not in unconnected]
-        else:
-            CONNECT_INDS = [i for i in range(avail_connects)]
-        return CONNECT_INDS
-
-    def run_select(self, num, on_duration=None):
+    def _run_select(self, num, on_duration=None):
         if on_duration:
             if not isinstance(on_duration, (int, float)):
                 raise ValueError(
@@ -127,3 +140,14 @@ class GPIODemux:
         self.zero()
         stop = dt.datetime.utcnow()
         return (start, stop)
+
+    def return_value(self, name, on_duration=None):
+        try:
+            num = self.connected_name_to_ind[name]
+        except KeyError:
+            raise KeyError(
+                f"device {self.name} does not have device named {name}\n"
+                f"please select from {self.connected_name_to_ind.keys()}"
+            )
+        out = self._run_select(num, on_duration)
+        return out
