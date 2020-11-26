@@ -28,15 +28,15 @@ class I2CMux:
         # TODO: ensure no channel duplicates
         addr_to_tca = {}
         devices = {}
-        for name, dd in devices_dict:
+        for name, dd in devices_dict.items():
             devices[name] = {}
             cur_dev_class = self.ALLOWED_DEVICES[dd["device"]]["device_class"]
             if dd["address"] not in addr_to_tca:
                 addr_to_tca[dd["address"]] = adafruit_tca9548a.TCA9548A(
-                    i2c, address=addr
+                    i2c, address=dd["address"]
                 )
             cur_tca = addr_to_tca[dd["address"]]
-            cur_device = cur_dev_class(cur_tca[channel])
+            cur_device = cur_dev_class(cur_tca[dd["channel"]])
             devices[name]["device"] = cur_device
             available_fns = [
                 f
