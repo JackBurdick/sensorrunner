@@ -22,13 +22,21 @@ class GPIODemux:
         self,
         # init params
         name,
-        gpio_pins_ordered,
-        pwr_pin,
-        on_duration=3,
-        stabilize_time=0.05,
+        init_config,
         # devices
-        devices_config=None,
+        devices_config,
     ):
+        STABILIZE_TIME = 0.05
+        if not isinstance(STABILIZE_TIME, (int, float)):
+            raise ValueError(
+                f"stabilize_time ({STABILIZE_TIME}) must be type int or float not {type(STABILIZE_TIME)}"
+            )
+        self.stabilize_time = STABILIZE_TIME
+
+        gpio_pins_ordered = init_config["gpio_pins_ordered"]
+        pwr_pin = init_config["pwr_pin"]
+        on_duration = init_config["default_on_duration"]
+
         if not isinstance(name, str):
             raise ValueError(
                 f"name ({name}) expected to be type {str}, not {type(name)}"
@@ -51,20 +59,12 @@ class GPIODemux:
             raise ValueError(
                 f"on_duration ({on_duration}) must be type int or float not {type(on_duration)}"
             )
-        self.on_duration = on_duration
+        self.default_on_duration = on_duration
 
         # name to ind
-        self.connected_name_to_ind = self._define_connections(
+        self.connected_name_to_conf = self._define_connections(
             gpio_pins_ordered, connected_sensors=devices_config
         )
-
-        self.ind_to_bin = self._num_to_bin(self.connected_name_to_ind.values())
-
-        if not isinstance(stabilize_time, (int, float)):
-            raise ValueError(
-                f"stabilize_time ({stabilize_time}) must be type int or float not {type(stabilize_time)}"
-            )
-        self.stabilize_time = stabilize_time
 
         self.in_use = False  # attempt at preventing multiple calls at the same time
 
@@ -75,33 +75,32 @@ class GPIODemux:
             raise ValueError(f"{num} is not int")
         return f"{num:b}".zfill(self._width)
 
-    def _num_to_bin(self, connected_inds):
-        ind_to_bin = {}
-        for ind in connected_inds:
-            ind_to_bin[ind] = self._to_bin(ind)
-        return ind_to_bin
-
     def _define_connections(self, index_pins, connected_sensors):
+        # self.ind_to_bin = self._num_to_bin(self.connected_name_to_conf.values())
         avail_connects = range(len(index_pins) ** 2)
         connected = {}
-        for name, sensor_d in connected_sensors:
+        for name, sensor_d in connected_sensors.items():
+            connected[name] = {}
+            # index
             cur_ind = sensor_d["index"]
             if cur_ind not in avail_connects:
                 raise ValueError(f"cur_ind not available in {avail_connects}")
-            else:
-                connected[name] = cur_ind
+            connected[name]["index"] = cur_ind
+            connected[name]["bin"] = self._to_bin(cur_ind)
+
+            # on duration
+            try:
+                on_duration = sensor_d["on_duration"]
+            except KeyError:
+                on_duration = self.default_on_duration
+            connected[name]["on_duration"] = on_duration
+
         return connected
 
-    def _on_select(self, index):
+    def _on_select(self, bin_rep):
         if self.in_use:
             raise ValueError(f"can only be in use once at a time, currently in use!")
         self.zero()
-        try:
-            bin_rep = self.ind_to_bin[index]
-        except KeyError:
-            raise KeyError(
-                f"index {index} is not available in {self.ind_to_bin.keys()}"
-            )
         for i, v in enumerate(bin_rep[::-1]):
             if int(v):
                 self.select[i].on()
@@ -109,9 +108,8 @@ class GPIODemux:
         self.pwr.on()
         self.in_use = True
 
-    def _off_select(self, index):
+    def _off_select(self, bin_rep):
         self.pwr.off()  # TODO: maybe check first?
-        bin_rep = self.ind_to_bin[index]
         for i, v in enumerate(bin_rep[::-1]):
             if int(v):
                 self.select[i].off()
@@ -125,7 +123,10 @@ class GPIODemux:
             p.off()
         self.in_use = False
 
-    def _run_select(self, num, on_duration=None):
+    def _run_select(self, dev_dict):
+        # num = dev_dict["index"]
+        bin_rep = dev_dict["bin"]
+        on_duration = dev_dict["on_duration"]
         if on_duration:
             if not isinstance(on_duration, (int, float)):
                 raise ValueError(
@@ -133,21 +134,24 @@ class GPIODemux:
                 )
             duration = on_duration
         else:
-            duration = self.on_duration
+            raise ValueError(
+                f"No on_duration specified for {dev_dict} in device {self.name}"
+            )
+
         start = dt.datetime.utcnow()
-        self._on_select(num)
+        self._on_select(bin_rep)
         sleep(duration)
         self.zero()
         stop = dt.datetime.utcnow()
         return (start, stop)
 
-    def return_value(self, name, on_duration=None):
+    def return_value(self, name):
         try:
-            num = self.connected_name_to_ind[name]
+            dev_dict = self.connected_name_to_conf[name]
         except KeyError:
             raise KeyError(
                 f"device {self.name} does not have device named {name}\n"
-                f"please select from {self.connected_name_to_ind.keys()}"
+                f"please select from {self.connected_name_to_conf.keys()}"
             )
-        out = self._run_select(num, on_duration)
+        out = self._run_select(dev_dict)
         return out
