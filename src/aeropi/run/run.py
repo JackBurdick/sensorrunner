@@ -9,7 +9,7 @@ def _build_devices():
 
 def _flatten_i2c(i2c_d):
     flat = []
-    for name, d in i2c_d:
+    for name, d in i2c_d.items():
         try:
             fn = d["fn_name"]
         except KeyError:
@@ -22,7 +22,7 @@ def start_tasks_from_config(config_path: str, template=DEFAULT_TEMPLATE):
     config = ccm.generate(config_path, template=template)
 
     try:
-        i2c_confg = _flatten_i2c()
+        i2c_confg = _flatten_i2c(config["I2C"])
     except KeyError:
         i2c_confg = None
 

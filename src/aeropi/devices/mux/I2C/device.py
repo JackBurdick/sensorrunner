@@ -14,11 +14,11 @@ class I2CMux:
         if device_tuple is None:
             raise ValueError("no devices specified in `device_tuple`")
 
-        names = {dt[0] for dt in device_tuple}
-        addresses = {dt[1] for dt in device_tuple}
-        channels = {dt[2] for dt in device_tuple}
-        device_types = {dt[3] for dt in device_tuple}
-        device_fns = {dt[4] for dt in device_tuple}
+        names = [dt[0] for dt in device_tuple]
+        addresses = [dt[1] for dt in device_tuple]
+        channels = [dt[2] for dt in device_tuple]
+        device_types = [dt[3] for dt in device_tuple]
+        device_fns = [dt[4] for dt in device_tuple]
 
         # "fn": None --> resort to default fn
         ALLOWED_DEVICES = {
@@ -26,10 +26,10 @@ class I2CMux:
             "si7021": {"device_class": SI7021, "fn": None},
         }
         for dt in device_tuple:
-            if len(dt) != 4:
+            if len(dt) != 5:
                 raise ValueError(
                     f"`device_tuple` entry expected to be length 4, not {len(dt)}: {device_tuple}\n"
-                    f"> `device_tuple` should be (name, address, channel, device_type)"
+                    f"> `device_tuple` should be (name, address, channel, device_type, fn_name)"
                 )
 
         if not names:
@@ -72,7 +72,7 @@ class I2CMux:
         else:
             if len(device_fns) != len(device_types):
                 raise ValueError(
-                    f"device_fns does not match device_types: \nfns:{device_types}, \ndts:{device_types}"
+                    f"device_fns does not match device_types: \nfns:{device_fns}, \ndts:{device_types}"
                 )
 
         # Initialize I2C bus and sensor.
@@ -90,9 +90,7 @@ class I2CMux:
             cur_tca = addr_to_tca[addr]
             device = cur_dev_class(cur_tca[channel])
             devices[name]["device"] = device
-            available_fns = [
-                f for f in dir(devices[name]["device"]) if not f.startswith("_")
-            ]
+            available_fns = [f for f in dir(device) if callable(getattr(device, f)) and not f.startswith("_")]
             if dev_fn is not None:
                 if dev_fn not in available_fns:
                     raise ValueError(
@@ -103,7 +101,7 @@ class I2CMux:
             else:
                 fn_name = "return_value"
             try:
-                devices[name]["fn"] = devices[name]["device"].__dict__[fn_name]
+                devices[name]["fn"] = getattr(devices[name]["device"],fn_name)
             except KeyError:
                 raise ValueError(
                     f"specified fn ({fn_name}) for {name} not available for {device}.\n"
