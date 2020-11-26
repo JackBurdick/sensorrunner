@@ -1,11 +1,18 @@
 import crummycm as ccm
 from aeropi.config.template import TEMPLATE as DEFAULT_TEMPLATE
-from aeropi.devices.mux.I2C.device import I2CMux
 from aeropi.devices.demux.gpio.device import GPIODemux
+from aeropi.devices.mux.I2C.device import I2CMux
 
 
 def build_devices_from_config(config_path: str, template=DEFAULT_TEMPLATE):
     config = ccm.generate(config_path, template=template)
+
+    """
+    TODO:
+      1) create dict that is {"name": Device}
+      2) check config keys against a dict of all classes in `devices` 
+      3) have config mirror init params of Devices such that Device(**params)
+    """
 
     try:
         i2cmux_config = config["I2CMux"]
@@ -21,7 +28,6 @@ def build_devices_from_config(config_path: str, template=DEFAULT_TEMPLATE):
     for gpiod_name, gpio_d in GPIODemux_config.items():
 
         gpio_dev = GPIODemux(gpiod_name, gpio_d["init"], gpio_d["devices"])
-
     print(gpio_dev)
 
     raise NotImplementedError(
