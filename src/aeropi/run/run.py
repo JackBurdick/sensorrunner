@@ -3,26 +3,11 @@ from aeropi.config.template import TEMPLATE as DEFAULT_TEMPLATE
 from aeropi.devices.mux.I2C.device import I2CMux
 
 
-def _build_devices():
-    pass
-
-
-def _flatten_i2c(i2c_d):
-    flat = []
-    for name, d in i2c_d.items():
-        try:
-            fn = d["fn_name"]
-        except KeyError:
-            fn = None
-        flat.append((name, d["address"], d["channel"], d["device"], fn))
-    return flat
-
-
 def start_tasks_from_config(config_path: str, template=DEFAULT_TEMPLATE):
     config = ccm.generate(config_path, template=template)
 
     try:
-        i2c_confg = _flatten_i2c(config["I2C"])
+        i2c_confg = config["I2C"]
     except KeyError:
         i2c_confg = None
 
