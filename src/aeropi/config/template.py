@@ -11,7 +11,7 @@ I2C_DEVICES = ["vl53l0x", "si7021"]
 
 TEMPLATE = {
     # TODO: include task information
-    KPH("I2C", exact=True, required=False): {
+    KPH("I2CMux", exact=True, required=False): {
         KPH("name", multi=True): {
             "channel": Numeric(
                 required=True, is_type=int, bounds=(0, 7), bounds_inclusive=(True, True)
@@ -26,7 +26,7 @@ TEMPLATE = {
             "fn_name": Text(required=False),
         }
     },
-    KPH("demux", exact=True, required=False): {
+    KPH("GPIODemux", exact=True, required=False): {
         KPH("demux_name", required=True, multi=True): {
             "init": {
                 "gpio_pins_ordered": Multi(
@@ -45,7 +45,9 @@ TEMPLATE = {
                     bounds=(0, 27),
                     bounds_inclusive=(True, True),
                 ),
-                "on_duration": Numeric(required=True, is_type=float, bounds=(0, 5)),
+                "default_on_duration": Numeric(
+                    required=True, is_type=float, bounds=(0, 5)
+                ),
             },
             "devices": {
                 KPH("name", multi=True): {
@@ -55,7 +57,9 @@ TEMPLATE = {
                         bounds=(0, 15),
                         bounds_inclusive=(True, True),
                     ),
-                    "on_duration": Numeric(required=True, is_type=float, bounds=(0, 5)),
+                    "on_duration": Numeric(
+                        required=False, is_type=float, bounds=(0, 5)
+                    ),
                 }
             },
         }

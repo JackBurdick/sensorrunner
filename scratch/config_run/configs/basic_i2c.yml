@@ -1,4 +1,4 @@
-I2C:
+I2CMux:
   env_a:
     device: "si7021"
     address: 0x72
@@ -20,12 +20,12 @@ I2C:
     address: 0x72
     channel: 1
 
-demux:
+GPIODemux:
   demux_a:
     init:
       gpio_pins_ordered: [25, 23, 24, 17]
       pwr_pin: 27
-      on_duration: 3.3
+      default_on_duration: 3.3
     devices:
       a:
         index: 0
