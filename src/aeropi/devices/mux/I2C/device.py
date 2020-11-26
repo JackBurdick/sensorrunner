@@ -1,8 +1,8 @@
-import adafruit_si7021
 import adafruit_tca9548a
-import adafruit_vl53l0x
 import board
 import busio
+from aeropi.devices.sensor.I2C.air.si7021 import SI7021
+from aeropi.devices.sensor.I2C.distance.vl53l0x import VL5310X
 
 
 class I2CMux:
@@ -10,7 +10,7 @@ class I2CMux:
         # NOTE: accepting tuples currently because I'm not sure what the config
         # will look like yet
 
-        # connected = (name, address, channel, device)
+        # connected = (name, address, channel, device, fn)
         if device_tuple is None:
             raise ValueError("no devices specified in `device_tuple`")
 
@@ -18,12 +18,13 @@ class I2CMux:
         addresses = {dt[1] for dt in device_tuple}
         channels = {dt[2] for dt in device_tuple}
         device_types = {dt[3] for dt in device_tuple}
+        device_fns = {dt[4] for dt in device_tuple}
 
+        # "fn": None --> resort to default fn
         ALLOWED_DEVICES = {
-            "vl53l0x": {"device_class": adafruit_vl53l0x.VL53L0X, "fn": self._tof_val},
-            "si7021": {"device_class": adafruit_si7021.SI7021, "fn": self._env_val},
+            "vl53l0x": {"device_class": VL5310X, "fn": None},
+            "si7021": {"device_class": SI7021, "fn": None},
         }
-        self.allowed_devices = ALLOWED_DEVICES
         for dt in device_tuple:
             if len(dt) != 4:
                 raise ValueError(
@@ -66,6 +67,14 @@ class I2CMux:
                     f"device {device_name} not currently allowed. please select from {ALLOWED_DEVICES.keys()}"
                 )
 
+        if not device_fns:
+            pass
+        else:
+            if len(device_fns) != len(device_types):
+                raise ValueError(
+                    f"device_fns does not match device_types: \nfns:{device_types}, \ndts:{device_types}"
+                )
+
         # Initialize I2C bus and sensor.
         i2c = busio.I2C(SCL_pin, SDA_pin)
 
@@ -74,46 +83,34 @@ class I2CMux:
             addr_to_tca[addr] = adafruit_tca9548a.TCA9548A(i2c, address=addr)
 
         devices = {}
-        for name, addr, channel, device_name in device_tuple:
+        for name, addr, channel, device_name, dev_fn in device_tuple:
             devices[name] = {}
             # TODO: could allow options here
             cur_dev_class = ALLOWED_DEVICES[device_name]["device_class"]
             cur_tca = addr_to_tca[addr]
             device = cur_dev_class(cur_tca[channel])
             devices[name]["device"] = device
-            devices[name]["fn"] = ALLOWED_DEVICES[device_name]["fn"]
+            available_fns = [
+                f for f in dir(devices[name]["device"]) if not f.startswith("_")
+            ]
+            if dev_fn is not None:
+                if dev_fn not in available_fns:
+                    raise ValueError(
+                        f"specified fn ({dev_fn}) for {name} not available for {device}.\n"
+                        f"please select from {available_fns}"
+                    )
+                fn_name = dev_fn
+            else:
+                fn_name = "return_value"
+            try:
+                devices[name]["fn"] = devices[name]["device"].__dict__[fn_name]
+            except KeyError:
+                raise ValueError(
+                    f"specified fn ({fn_name}) for {name} not available for {device}.\n"
+                    f"please select from {available_fns}"
+                )
 
         self.devices = devices
-
-    def _tof_val(self, device, precision=3, unit="in"):
-        MM_TO_INCH = 0.0393701
-        try:
-            tmp_range = device.range
-        except OSError:
-            tmp_range = None
-
-        # TODO: keep track of these in dict
-        if tmp_range is not None:
-            if unit == "in":
-                tmp_range *= MM_TO_INCH
-            else:
-                raise ValueError(f"unit {unit} not currently supported")
-            out = round(tmp_range, precision)
-        else:
-            out = tmp_range
-
-        return out
-
-    def _env_val(self, device):
-        try:
-            tmp_temp = device.temperature * 1.8 + 32
-        except OSError:
-            tmp_temp = None
-        try:
-            tmp_rh = device.relative_humidity
-        except OSError:
-            tmp_rh = None
-        return (tmp_temp, tmp_rh)
 
     def return_value(self, name, **kwargs):
         if name is None:
@@ -128,5 +125,5 @@ class I2CMux:
             raise ValueError(
                 f"{name} is not available. please select from {self.devices.keys()}"
             )
-        value = dev_d["fn"](dev_d["device"], **kwargs)
+        value = dev_d["fn"](**kwargs)
         return value

@@ -9,7 +9,7 @@ from gpiozero.pins.native import NativeFactory
 Device.pin_factory = NativeFactory()
 
 
-class Demux:
+class GPIODemux:
     """
     IMPORTANT: can only be in use one at a time, right now a flag (in_use) is
     used, but maybe this could be controlled outside by a queue in the future?

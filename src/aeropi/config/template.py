@@ -1,6 +1,6 @@
 from crummycm.validation.types.placeholders.placeholder import KeyPlaceholder as KPH
-from crummycm.validation.types.values.element.numeric import Numeric
 from crummycm.validation.types.values.compound.multi import Multi
+from crummycm.validation.types.values.element.numeric import Numeric
 from crummycm.validation.types.values.element.text import Text
 
 # from crummycm.validation.types.values.element.bool import Bool
@@ -23,6 +23,7 @@ TEMPLATE = {
                 bounds_inclusive=(True, True),
             ),
             "device": Text(required=True, is_in_list=I2C_DEVICES),
+            "fn_name": Text(required=False),
         }
     },
     KPH("demux", exact=True, required=False): {

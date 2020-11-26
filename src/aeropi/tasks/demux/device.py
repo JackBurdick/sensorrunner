@@ -1,4 +1,4 @@
-from .demux import Demux
+from aeropi.devices.demux.gpio.device import GPIODemux
 from gpiozero import Device
 from gpiozero.pins.mock import MockFactory
 from gpiozero.pins.native import NativeFactory
@@ -20,7 +20,7 @@ def return_demux():
     CONNECTED = []
     ON_DURATION = 0.3
 
-    demuxer_a = Demux(
+    demuxer_a = GPIODemux(
         INDEX_PINS,
         PWR_PIN,
         connected=CONNECTED,
