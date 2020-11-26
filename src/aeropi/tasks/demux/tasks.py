@@ -1,5 +1,4 @@
 import celery
-from .device import DEMUX
 from aeropi.celery_app import app
 from aeropi.sa import MyRow, SESSION_MyRow
 import datetime as dt
