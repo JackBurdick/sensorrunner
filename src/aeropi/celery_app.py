@@ -1,3 +1,4 @@
+import importlib
 import os
 from pathlib import Path
 
@@ -17,23 +18,6 @@ try:
     out = ccm.generate(L_CONFIG_DIR, TEMPLATE)
 except FileNotFoundError:
     out = ccm.generate(P_CONFIG_DIR, TEMPLATE)
-
-
-# set Queues
-# TODO: tie Queues to task
-tmp = list(celeryconf.task_queues)
-tmp.extend(
-    [
-        Queue("q_demux_run"),
-        Queue("q_demux_log"),
-        Queue("q_dists_run"),
-        Queue("q_dists_log"),
-    ]
-)
-celeryconf.task_queues = tuple(tmp)
-
-app.config_from_object(celeryconf)
-
 
 path = os.path.abspath(aeropi.__file__)
 o = path.split("/")[:-1]
@@ -66,6 +50,34 @@ def _return_task_modules(out, device_dir):
 
 
 m_names = _return_task_modules(out, DEV_TASK_DIR)
+
+used_queues = []
+for m_name in m_names:
+    cur_mod = importlib.import_module(f"{m_name}.tasks")
+    cur_tasks = [
+        getattr(cur_mod, o)
+        for o in dir(cur_mod)
+        if type(getattr(cur_mod, o)).__name__ == "PromiseProxy"
+    ]
+    for t in cur_tasks:
+        try:
+            q = t.queue
+        except KeyError:
+            q = None
+        if q:
+            if q not in used_queues:
+                used_queues.append(q)
+
+queues = [Queue(q) for q in used_queues]
+
+# set Queues
+tmp = list(celeryconf.task_queues)
+tmp.extend(queues)
+celeryconf.task_queues = tuple(tmp)
+
+app.config_from_object(celeryconf)
+
+
 app.autodiscover_tasks(m_names, force=True)
 
 # aeropi/scratch/config_run/configs/basic_i2c.yml
