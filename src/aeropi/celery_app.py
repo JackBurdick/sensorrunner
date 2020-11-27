@@ -1,11 +1,30 @@
 import celery
 import celeryconf
 import crummycm as ccm
+from kombu import Queue
 from aeropi.config.template import TEMPLATE
 
 app = celery.Celery("celery_run")
 
-print(celeryconf)
+
+# Queue("q_demux_run"),
+# Queue("q_demux_log"),
+# Queue("q_dists_run"),
+# Queue("q_dists_log"),
+print(celeryconf.task_queues)
+tmp = list(celeryconf.task_queues)
+tmp.extend(
+    [
+        Queue("q_demux_run"),
+        Queue("q_demux_log"),
+        Queue("q_dists_run"),
+        Queue("q_dists_log"),
+    ]
+)
+tmp = tuple(tmp)
+print(tmp)
+celeryconf.task_queues = tmp
+print(celeryconf.task_queues)
 
 app.config_from_object(celeryconf)
 
