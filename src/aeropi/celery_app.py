@@ -1,6 +1,6 @@
 import celery
 from celery import bootsteps
-from celery.bin import Option
+from celery.bin.base import CeleryOption
 import celeryconf
 
 
@@ -8,7 +8,7 @@ app = celery.Celery("celery_run")
 
 # # https://stackoverflow.com/questions/21365101/celery-worker-and-command-line-args
 app.user_options["worker"].add(
-    Option(
+    CeleryOption(
         "--config_file", dest="raw_config", default=None, help="Config File Required"
     )
 )
