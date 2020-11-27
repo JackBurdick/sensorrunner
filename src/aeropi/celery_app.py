@@ -3,16 +3,17 @@ from celery import bootsteps
 
 from celery.bin.base import CeleryOption
 import celeryconf
+import click
 
 app = celery.Celery("celery_run")
 
 # https://github.com/celery/celery/blob/07000d826573a97ff633b688bda7bf30db114dfe/docs/userguide/extending.rst
 # def add_worker_arguments(parser):
-#     parser.add_argument("--rawconfig", default=None, help="Config File Required"),
+#     parser.add_argument("--rawconfig", default=None)
 
 
 app.user_options["worker"].add(
-    CeleryOption("--rawconfig", default=None, help="Config File Required")
+    click.option("--rawconfig", default=None, help="Config File Required")
 )  # add_worker_arguments
 
 
