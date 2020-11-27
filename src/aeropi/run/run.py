@@ -12,13 +12,14 @@ def build_devices_from_config(config):
       2) check config keys against a dict of all classes in `devices` 
       3) have config mirror init params of Devices such that Device(**params)
     """
+    DEVICES = {}
 
     try:
         i2cmux_config = config["I2CMux"]
     except KeyError:
         i2cmux_config = None
     i2c_dev = I2CMux(i2cmux_config)
-    print(i2c_dev)
+    DEVICES["I2CMux"] = i2c_dev
 
     try:
         GPIODemux_config = config["GPIODemux"]
@@ -27,10 +28,9 @@ def build_devices_from_config(config):
     for gpiod_name, gpio_d in GPIODemux_config.items():
         gpio_dev = GPIODemux(gpiod_name, gpio_d["init"], gpio_d["devices"])
         print(gpio_dev)
+    DEVICES["GPIODemux"] = gpio_dev
 
-    raise NotImplementedError(
-        f"`build_devices_from_config` not yet capable of starting tasks"
-    )
+    return DEVICES
 
 
 # {
