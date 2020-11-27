@@ -1,19 +1,22 @@
+import os
 from pathlib import Path
 
 import celery
 from kombu import Queue
 
-import celeryconf
+import aeropi
 import crummycm as ccm
+from aeropi import celeryconf
 from aeropi.config.template import TEMPLATE
+from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
 
 app = celery.Celery("celery_run")
 
-
 # obtain parse config
-out = ccm.generate(
-    "/home/pi/dev/aeropi/scratch/config_run/configs/basic_i2c.yml", TEMPLATE
-)
+try:
+    out = ccm.generate(L_CONFIG_DIR, TEMPLATE)
+except FileNotFoundError:
+    out = ccm.generate(P_CONFIG_DIR, TEMPLATE)
 
 
 # set Queues
@@ -31,7 +34,11 @@ celeryconf.task_queues = tuple(tmp)
 
 app.config_from_object(celeryconf)
 
-DEV_TASK_DIR = "./tasks"
+
+path = os.path.abspath(aeropi.__file__)
+o = path.split("/")[:-1]
+o.append("tasks")
+DEV_TASK_DIR = "/".join(o)
 
 
 def _obtain_relevant_task_dirs(out, device_dir):
@@ -54,7 +61,7 @@ def _return_task_modules(out, device_dir):
     dir_name = DEV_TASK_DIR.split("/")[-1]
     m_names = []
     for d in relevant_dirs:
-        m_names.append(f"{dir_name}.{d}")
+        m_names.append(f"aeropi.{dir_name}.{d}")
     return m_names
 
 

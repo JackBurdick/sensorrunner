@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.ext.declarative import declarative_base
-from secrets import POSTGRES
+from aeropi.secrets import POSTGRES
 
 engine = create_engine(POSTGRES)
 if not database_exists(engine.url):
