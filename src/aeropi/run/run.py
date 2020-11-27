@@ -27,7 +27,6 @@ def build_devices_from_config(config):
         GPIODemux_config = None
     for gpiod_name, gpio_d in GPIODemux_config.items():
         gpio_dev = GPIODemux(gpiod_name, gpio_d["init"], gpio_d["devices"])
-        print(gpio_dev)
     DEVICES["GPIODemux"] = gpio_dev
 
     return DEVICES

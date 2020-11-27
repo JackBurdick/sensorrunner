@@ -2,6 +2,8 @@ import celery
 from aeropi.celery_app import app
 from aeropi.sa import MyDist, SESSION_MyDist
 from datetime import datetime
+from aeropi.celery_app import USER_CONFIG
+from aeropi.run.run import build_devices_from_config
 
 
 @app.task(bind=True, queue="q_dists_log")
@@ -15,7 +17,7 @@ def _dist_run_select(self, cur_ind):
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
     # global DISTS
     # global MyDist
-    DISTS = None
+    DISTS = build_devices_from_config(USER_CONFIG["I2CMux"])
     UNIT = "in"
     PRECISION = 4
     measurement_time = datetime.utcnow()

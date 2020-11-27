@@ -25,7 +25,7 @@ try:
     out = ccm.generate(L_CONFIG_DIR, TEMPLATE)
 except FileNotFoundError:
     out = ccm.generate(P_CONFIG_DIR, TEMPLATE)
-user_config = out
+USER_CONFIG = out
 
 
 def _obtain_relevant_task_dirs(out, device_dir):
@@ -52,7 +52,7 @@ def _return_task_modules(out, device_dir):
     return m_names
 
 
-m_names = _return_task_modules(user_config, DEV_TASK_DIR)
+m_names = _return_task_modules(USER_CONFIG, DEV_TASK_DIR)
 
 
 def _return_queues(m_names):
@@ -92,4 +92,4 @@ app.autodiscover_tasks(m_names, force=True)
 # possibly helpful later:
 # https://gist.github.com/chenjianjx/53d8c2317f6023dc2fa0
 
-DEVICES = build_devices_from_config(user_config)
+# DEVICES = build_devices_from_config(USER_CONFIG)

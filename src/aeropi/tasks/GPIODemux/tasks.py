@@ -3,6 +3,8 @@ from aeropi.celery_app import app
 from aeropi.sa import MyRow, SESSION_MyRow
 import datetime as dt
 import time
+from aeropi.celery_app import USER_CONFIG
+from aeropi.run.run import build_devices_from_config
 
 
 @app.task(bind=True, queue="q_demux_log")
@@ -16,7 +18,8 @@ def _demux_run_select(self, cur_ind, duration, wait_secs=0.1):
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
     # global DEMUX
     # global MyRow
-    DEMUX = None
+    # DEMUX = None
+    DEMUX = build_devices_from_config(USER_CONFIG["GPIODemux"])
     wait = dt.timedelta(seconds=wait_secs).seconds
 
     # run device
