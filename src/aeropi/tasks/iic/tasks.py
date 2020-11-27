@@ -12,6 +12,7 @@ def _log_dist(self, row):
 
 @app.task(bind=True, queue="q_dists_run")
 def _dist_run_select(self, cur_ind):
+    # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
     global DISTS
     global MyDist
     UNIT = "in"
@@ -24,6 +25,7 @@ def _dist_run_select(self, cur_ind):
     return entry
 
 
+# @app.task(ignore_result=True)
 @app.task(bind=True, queue="collect")
 def dist_select(self, cur_ind):
     return celery.chain(_dist_run_select.s(cur_ind), _log_dist.s()).apply_async()
