@@ -1,9 +1,11 @@
+from pathlib import Path
+
 import celery
+from kombu import Queue
+
 import celeryconf
 import crummycm as ccm
-from kombu import Queue
 from aeropi.config.template import TEMPLATE
-from pathlib import Path
 
 app = celery.Celery("celery_run")
 
@@ -12,12 +14,10 @@ app = celery.Celery("celery_run")
 out = ccm.generate(
     "/home/pi/dev/aeropi/scratch/config_run/configs/basic_i2c.yml", TEMPLATE
 )
-print("=====" * 8)
-print(out)
-print("=====" * 8)
 
 
 # set Queues
+# TODO: tie Queues to task
 tmp = list(celeryconf.task_queues)
 tmp.extend(
     [
@@ -29,20 +29,19 @@ tmp.extend(
 )
 celeryconf.task_queues = tuple(tmp)
 
-
 app.config_from_object(celeryconf)
 
 DEV_TASK_DIR = "./tasks"
 
 
-def obtain_relevant_task_dirs(out):
+def _obtain_relevant_task_dirs(out, device_dir):
     # NOTE: I'm not sure how I want to link the name to tasks. Right now I like
     # the concept of having a separate tasks directory, but that may change such
     # that the tasks are in the devices location and only highlevel/catchall
     # tasks are in the tasks directory
     dirs = []
     device_tasks = [
-        x.name for x in list(filter(lambda x: x.is_dir(), Path(DEV_TASK_DIR).iterdir()))
+        x.name for x in list(filter(lambda x: x.is_dir(), Path(device_dir).iterdir()))
     ]
     for dev_name in out.keys():
         if dev_name in device_tasks:
@@ -50,16 +49,17 @@ def obtain_relevant_task_dirs(out):
     return dirs
 
 
-dirs = obtain_relevant_task_dirs(out)
-print(dirs)
-dir_name = DEV_TASK_DIR.split("/")[-1]
-d_names = []
-for d in dirs:
-    d_names.append(f"{dir_name}.{d}")
-print(d_names)
-app.autodiscover_tasks(d_names, force=True)
-# app.autodiscover_tasks(["tasks.demux.tasks", "tasks.iic.tasks"], force=True)
+def _return_task_modules(out, device_dir):
+    relevant_dirs = _obtain_relevant_task_dirs(out, device_dir)
+    dir_name = DEV_TASK_DIR.split("/")[-1]
+    m_names = []
+    for d in relevant_dirs:
+        m_names.append(f"{dir_name}.{d}")
+    return m_names
 
+
+m_names = _return_task_modules(out, DEV_TASK_DIR)
+app.autodiscover_tasks(m_names, force=True)
 
 # aeropi/scratch/config_run/configs/basic_i2c.yml
 # possibly helpful later:
