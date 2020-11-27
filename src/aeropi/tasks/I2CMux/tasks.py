@@ -6,15 +6,16 @@ from datetime import datetime
 
 @app.task(bind=True, queue="q_dists_log")
 def _log_dist(self, row):
-    global SESSION_MyDist
+    # global SESSION_MyDist
     row.add(SESSION_MyDist)
 
 
 @app.task(bind=True, queue="q_dists_run")
 def _dist_run_select(self, cur_ind):
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
-    global DISTS
-    global MyDist
+    # global DISTS
+    # global MyDist
+    DISTS = None
     UNIT = "in"
     PRECISION = 4
     measurement_time = datetime.utcnow()

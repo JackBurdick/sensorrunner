@@ -7,15 +7,16 @@ import time
 
 @app.task(bind=True, queue="q_demux_log")
 def _log_demux(self, row):
-    global SESSION_MyRow
+    # global SESSION_MyRow
     row.add(SESSION_MyRow)
 
 
 @app.task(bind=True, queue="q_demux_run")
 def _demux_run_select(self, cur_ind, duration, wait_secs=0.1):
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
-    global DEMUX
-    global MyRow
+    # global DEMUX
+    # global MyRow
+    DEMUX = None
     wait = dt.timedelta(seconds=wait_secs).seconds
 
     # run device
