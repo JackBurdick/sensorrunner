@@ -8,16 +8,14 @@ app = celery.Celery("celery_run")
 
 # # https://stackoverflow.com/questions/21365101/celery-worker-and-command-line-args
 app.user_options["worker"].add(
-    CeleryOption(
-        "--config_file", dest="raw_config", default=None, help="Config File Required"
-    )
+    CeleryOption("--config_file", default=None, help="Config File Required")
 )
 
 
 class CustomArgs(bootsteps.Step):
-    def __init__(self, worker, raw_config=None, **options):
-        if raw_config is not None:
-            print(raw_config)
+    def __init__(self, worker, config_file=None, **options):
+        if config_file is not None:
+            print(config_file)
         else:
             raise ValueError(f"no config_file specified")
 
