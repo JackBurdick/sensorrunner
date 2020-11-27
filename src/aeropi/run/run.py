@@ -4,8 +4,7 @@ from aeropi.devices.demux.gpio.device import GPIODemux
 from aeropi.devices.mux.I2C.device import I2CMux
 
 
-def build_devices_from_config(config_path: str, template=DEFAULT_TEMPLATE):
-    config = ccm.generate(config_path, template=template)
+def build_devices_from_config(config):
 
     """
     TODO:
@@ -26,9 +25,8 @@ def build_devices_from_config(config_path: str, template=DEFAULT_TEMPLATE):
     except KeyError:
         GPIODemux_config = None
     for gpiod_name, gpio_d in GPIODemux_config.items():
-
         gpio_dev = GPIODemux(gpiod_name, gpio_d["init"], gpio_d["devices"])
-    print(gpio_dev)
+        print(gpio_dev)
 
     raise NotImplementedError(
         f"`build_devices_from_config` not yet capable of starting tasks"
