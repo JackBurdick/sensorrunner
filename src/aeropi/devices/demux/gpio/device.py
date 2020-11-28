@@ -1,6 +1,10 @@
 import datetime as dt
 from time import sleep
 
+# import celery
+# from aeropi.celery_app import app
+# from redbeat import RedBeatSchedulerEntry as Entry
+
 from gpiozero import Device, DigitalOutputDevice
 
 # from gpiozero.pins.mock import MockFactory
@@ -15,6 +19,8 @@ class GPIODemux:
     used, but maybe this could be controlled outside by a queue in the future?
     (Not sure, because we wouldn't want it to get too large) - note this logic
     likely belongs in the config
+
+    TODO: mirror I2C device specification of sensors
 
     """
 
@@ -150,3 +156,20 @@ class GPIODemux:
 
         out = self._run_select(dev_dict, on_duration)
         return out
+
+    @staticmethod
+    def build_task_params(device_name, device_dict):
+        """
+        demux0 = Entry(
+            "run_demux_0",
+            "tasks.demux.tasks.demux_select",
+            schedule=celery.schedules.schedule(run_every=1.8),
+            kwargs={"cur_ind": 0, "duration": 0.35},
+            app=app,
+        )
+        """
+        for comp_name, comp_dict in device_dict.items():
+            pass
+        print(device_dict)
+        pass
+

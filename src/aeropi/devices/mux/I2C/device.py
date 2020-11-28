@@ -4,6 +4,10 @@ import busio
 from aeropi.devices.sensor.I2C.air.si7021 import SI7021
 from aeropi.devices.sensor.I2C.distance.vl53l0x import VL5310X
 
+# import celery
+# from aeropi.celery_app import app
+# from redbeat import RedBeatSchedulerEntry as Entry
+
 
 class I2CMux:
     def __init__(self, devices_dict, SCL_pin=board.SCL, SDA_pin=board.SDA):
@@ -29,14 +33,14 @@ class I2CMux:
         devices = {}
         for name, dd in devices_dict.items():
             devices[name] = {}
-            cur_dev_class = self.ALLOWED_DEVICES[dd["device"]]["device_class"]
+            cur_dev_class = self.ALLOWED_DEVICES[dd["device_type"]]["device_class"]
             if dd["address"] not in addr_to_tca:
                 addr_to_tca[dd["address"]] = adafruit_tca9548a.TCA9548A(
                     i2c, address=dd["address"]
                 )
             cur_tca = addr_to_tca[dd["address"]]
             cur_device = cur_dev_class(cur_tca[dd["channel"]])
-            devices[name]["device"] = cur_device
+            devices[name]["device_type"] = cur_device
             available_fns = [
                 f
                 for f in dir(cur_device)
@@ -56,7 +60,7 @@ class I2CMux:
             else:
                 fn_name = "return_value"
             try:
-                devices[name]["fn"] = getattr(devices[name]["device"], fn_name)
+                devices[name]["fn"] = getattr(devices[name]["device_type"], fn_name)
             except KeyError:
                 raise ValueError(
                     f"specified fn ({fn_name}) for {name} not available for {cur_device}.\n"
@@ -79,3 +83,19 @@ class I2CMux:
             )
         value = dev_d["fn"](**kwargs)
         return value
+
+    @staticmethod
+    def build_task_params(device_name, device_dict):
+        """
+        dist0 = Entry(
+            "run_dist_0",
+            "tasks.iic.tasks.dist_select",
+            schedule=celery.schedules.schedule(run_every=2),
+            kwargs={"cur_ind": 0},
+            app=celery_app.app,
+        )
+        """
+        for comp_name, comp_dict in device_dict.items():
+            pass
+        print(device_dict)
+        pass

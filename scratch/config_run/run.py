@@ -1,6 +1,7 @@
 import crummycm as ccm
 from aeropi.config.template import TEMPLATE
 from aeropi.run.run import build_devices_from_config
+from aeropi.run.run import build_tasks_from_config
 from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
 
 try:
@@ -15,3 +16,6 @@ print(conf)
 print("-----" * 8)
 devs = build_devices_from_config(conf)
 print(devs)
+print("========" * 8)
+tasks = build_tasks_from_config(conf)
+print(tasks)

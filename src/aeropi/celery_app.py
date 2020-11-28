@@ -10,7 +10,8 @@ import crummycm as ccm
 from aeropi import celeryconf
 from aeropi.config.template import TEMPLATE
 from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
-from aeropi.run.run import build_devices_from_config
+
+# from aeropi.run.run import build_devices_from_config
 
 path = os.path.abspath(aeropi.__file__)
 o = path.split("/")[:-1]
