@@ -202,9 +202,7 @@ class GPIODemux:
             # TODO: make more robust
             entry_d["task"] = "tasks.devices.GPIODemux.tasks.GPIODemux_run"
             # maybe make schedule outside this?
-            entry_d["schedule"] = celery.schedules.schedule(
-                run_every=comp_dict["params"]["schedule"]["frequency"]
-            )
+            entry_d["run_every"] = comp_dict["params"]["schedule"]["frequency"]
             cur_kwargs = comp_dict["params"]["run"]
             if not isinstance(cur_kwargs, dict):
                 raise ValueError(
