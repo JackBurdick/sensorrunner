@@ -1,7 +1,8 @@
 import datetime as dt
 from time import sleep
 
-# import celery
+import celery
+
 # from aeropi.celery_app import app
 # from redbeat import RedBeatSchedulerEntry as Entry
 
@@ -167,9 +168,49 @@ class GPIODemux:
             kwargs={"cur_ind": 0, "duration": 0.35},
             app=app,
         )
+
+        {
+            "a": {
+                "index": 0,
+                "device_type": "switch_low",
+                "params": {
+                    "run": {"on_duration": 1.7, "unit": "seconds"},
+                    "schedule": {"frequency": 4.0},
+                },
+                "fn_name": None,
+            },
+            "b": {
+                "index": 1,
+                "device_type": "switch_low",
+                "params": {
+                    "run": {"on_duration": 1.3, "unit": "seconds"},
+                    "schedule": {"frequency": 3.0},
+                },
+                "fn_name": None,
+            },
+        }
+
         """
+        DEFAULT_FN_NAME = "return_value"
+        entry_specs = {}
         for comp_name, comp_dict in device_dict.items():
-            pass
-        print(device_dict)
-        pass
+            entry_d = {}
+            fn_name = comp_dict["fn_name"]
+            if fn_name is None:
+                fn_name = DEFAULT_FN_NAME
+            entry_d["name"] = f"{device_name}_{comp_name}_{fn_name}"
+            # TODO: make more robust
+            entry_d["task"] = "tasks.devices.GPIODemux.tasks.GPIODemux_run"
+            # maybe make schedule outside this?
+            entry_d["schedule"] = celery.schedules.schedule(
+                run_every=comp_dict["params"]["schedule"]["frequency"]
+            )
+            cur_kwargs = comp_dict["params"]["run"]
+            if not isinstance(cur_kwargs, dict):
+                raise ValueError(
+                    f"run params ({cur_kwargs}) expected to be type {dict}, not {type(cur_kwargs)}"
+                )
+            entry_d["kwargs"] = cur_kwargs
+            entry_specs[comp_name] = entry_d
+        return entry_specs
 

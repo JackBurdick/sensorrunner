@@ -4,7 +4,8 @@ import busio
 from aeropi.devices.sensor.I2C.air.si7021 import SI7021
 from aeropi.devices.sensor.I2C.distance.vl53l0x import VL5310X
 
-# import celery
+import celery
+
 # from aeropi.celery_app import app
 # from redbeat import RedBeatSchedulerEntry as Entry
 
@@ -94,8 +95,45 @@ class I2CMux:
             kwargs={"cur_ind": 0},
             app=celery_app.app,
         )
+        # name=None, task=None, schedule=None, kwargs, app
+
+        {
+            "env_a": {
+                "channel": 2,
+                "address": 114,
+                "device_type": "si7021",
+                "params": {"run": {"unit": "f"}, "schedule": {"frequency": 1800.0}},
+                "fn_name": None,
+            },
+            "dist_a": {
+                "channel": 0,
+                "address": 112,
+                "device_type": "vl53l0x",
+                "params": {"run": {"unit": "in"}, "schedule": {"frequency": 1800.0}},
+                "fn_name": None,
+            },
+        }
         """
+        DEFAULT_FN_NAME = "return_value"
+
+        entry_specs = {}
         for comp_name, comp_dict in device_dict.items():
-            pass
-        print(device_dict)
-        pass
+            entry_d = {}
+            fn_name = comp_dict["fn_name"]
+            if fn_name is None:
+                fn_name = DEFAULT_FN_NAME
+            entry_d["name"] = f"{device_name}_{comp_name}_{fn_name}"
+            # TODO: make more robust
+            entry_d["task"] = "tasks.devices.I2CMux.tasks.I2CMux_run"
+            # maybe make schedule outside this?
+            entry_d["schedule"] = celery.schedules.schedule(
+                run_every=comp_dict["params"]["schedule"]["frequency"]
+            )
+            cur_kwargs = comp_dict["params"]["run"]
+            if not isinstance(cur_kwargs, dict):
+                raise ValueError(
+                    f"run params ({cur_kwargs}) expected to be type {dict}, not {type(cur_kwargs)}"
+                )
+            entry_d["kwargs"] = cur_kwargs
+            entry_specs[comp_name] = entry_d
+        return entry_specs
