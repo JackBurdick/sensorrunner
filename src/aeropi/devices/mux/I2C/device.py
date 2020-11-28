@@ -29,14 +29,14 @@ class I2CMux:
         devices = {}
         for name, dd in devices_dict.items():
             devices[name] = {}
-            cur_dev_class = self.ALLOWED_DEVICES[dd["device"]]["device_class"]
+            cur_dev_class = self.ALLOWED_DEVICES[dd["device_type"]]["device_class"]
             if dd["address"] not in addr_to_tca:
                 addr_to_tca[dd["address"]] = adafruit_tca9548a.TCA9548A(
                     i2c, address=dd["address"]
                 )
             cur_tca = addr_to_tca[dd["address"]]
             cur_device = cur_dev_class(cur_tca[dd["channel"]])
-            devices[name]["device"] = cur_device
+            devices[name]["device_type"] = cur_device
             available_fns = [
                 f
                 for f in dir(cur_device)
@@ -56,7 +56,7 @@ class I2CMux:
             else:
                 fn_name = "return_value"
             try:
-                devices[name]["fn"] = getattr(devices[name]["device"], fn_name)
+                devices[name]["fn"] = getattr(devices[name]["device_type"], fn_name)
             except KeyError:
                 raise ValueError(
                     f"specified fn ({fn_name}) for {name} not available for {cur_device}.\n"
