@@ -4,6 +4,9 @@ from aeropi.devices.demux.gpio.device import GPIODemux
 from aeropi.devices.mux.I2C.device import I2CMux
 
 
+# TODO: Mapper, config key to class
+
+
 def build_devices_from_config(config):
 
     """
@@ -30,6 +33,17 @@ def build_devices_from_config(config):
     DEVICES["GPIODemux"] = gpio_dev
 
     return DEVICES
+
+
+def build_tasks_from_config(config):
+
+    """
+
+    """
+    tasks = {}
+    print(config)
+    raise NotImplementedError(f"Still need to determine how best to structure tasks")
+    return tasks
 
 
 # {
