@@ -1,35 +1,64 @@
 I2CMux:
   env_a:
-    device: "si7021"
+    device_type: "si7021"
     address: 0x72
     channel: 2
+    params:
+      run: null
+      schedule:
+        frequency: 1800
   dist_a:
-    device: "vl53l0x"
+    device_type: "vl53l0x"
     address: 0x70
     channel: 0
+    params:
+      run: null
+      schedule:
+        frequency: 1800
   dist_b:
-    device: "vl53l0x"
+    device_type: "vl53l0x"
     address: 0x70
     channel: 1
+    params:
+      run: null
+      schedule:
+        frequency: 1800
   dist_c:
-    device: "vl53l0x"
+    device_type: "vl53l0x"
     address: 0x72
     channel: 0
+    params:
+      run: null
+      schedule:
+        frequency: 1800
   dist_d:
-    device: "vl53l0x"
+    device_type: "vl53l0x"
     address: 0x72
     channel: 1
+    params:
+      run: null
+      schedule:
+        frequency: 1800
 
 GPIODemux:
   demux_a:
     init:
       gpio_pins_ordered: [25, 23, 24, 17]
       pwr_pin: 27
-      default_on_duration: 3.3
     devices:
       a:
         index: 0
-        on_duration: 1.7
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 1.7
+          schedule:
+            frequency: 4
       b:
         index: 1
-        on_duration: 1.3
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 1.3
+          schedule:
+            frequency: 3

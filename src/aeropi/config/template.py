@@ -1,4 +1,5 @@
 from crummycm.validation.types.placeholders.placeholder import KeyPlaceholder as KPH
+from crummycm.validation.types.placeholders.placeholder import ValuePlaceholder as VPH
 from crummycm.validation.types.values.compound.multi import Multi
 from crummycm.validation.types.values.element.numeric import Numeric
 from crummycm.validation.types.values.element.text import Text
@@ -6,8 +7,8 @@ from crummycm.validation.types.values.element.text import Text
 # from crummycm.validation.types.values.element.bool import Bool
 
 
-I2C_DEVICES = ["vl53l0x", "si7021"]
-
+I2CMux_DEVICES = ["vl53l0x", "si7021"]
+GPIODemux_DEVICES = ["switch_low"]
 
 TEMPLATE = {
     # TODO: include task information
@@ -22,7 +23,19 @@ TEMPLATE = {
                 bounds=(0x70, 0x77),
                 bounds_inclusive=(True, True),
             ),
-            "device": Text(required=True, is_in_list=I2C_DEVICES),
+            "device_type": Text(required=True, is_in_list=I2CMux_DEVICES),
+            "params": {
+                "run": {
+                    KPH("run_param_name", multi=True, required=False): VPH(
+                        "run_param_value"
+                    )
+                },
+                "schedule": {
+                    "frequency": Numeric(
+                        required=False, is_type=float, bounds=(0, 3600)
+                    )
+                },
+            },
             "fn_name": Text(required=False),
         }
     },
@@ -45,9 +58,6 @@ TEMPLATE = {
                     bounds=(0, 27),
                     bounds_inclusive=(True, True),
                 ),
-                "default_on_duration": Numeric(
-                    required=True, is_type=float, bounds=(0, 5)
-                ),
             },
             "devices": {
                 KPH("name", multi=True): {
@@ -57,9 +67,19 @@ TEMPLATE = {
                         bounds=(0, 15),
                         bounds_inclusive=(True, True),
                     ),
-                    "on_duration": Numeric(
-                        required=False, is_type=float, bounds=(0, 5)
-                    ),
+                    "device_type": Text(required=True, is_in_list=GPIODemux_DEVICES),
+                    "params": {
+                        "run": {
+                            "on_duration": Numeric(
+                                required=True, is_type=float, bounds=(0, 5)
+                            )
+                        },
+                        "schedule": {
+                            "frequency": Numeric(
+                                required=False, is_type=float, bounds=(0, 3600)
+                            )
+                        },
+                    },
                 }
             },
         }
