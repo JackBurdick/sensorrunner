@@ -1,11 +1,6 @@
 import datetime as dt
 from time import sleep
 
-import celery
-
-# from aeropi.celery_app import app
-# from redbeat import RedBeatSchedulerEntry as Entry
-
 from gpiozero import Device, DigitalOutputDevice
 
 # from gpiozero.pins.mock import MockFactory

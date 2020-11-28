@@ -34,7 +34,7 @@ def build_devices_from_config(config):
     return DEVICES
 
 
-def build_tasks_from_config(config):
+def build_task_params_from_config(config):
 
     """
     TODO: standardize getattr(DEV, 'build_tasks')
@@ -61,11 +61,6 @@ def build_tasks_from_config(config):
         else:
             raise ValueError(f"device type {device_type} unsupported")
 
-    print(task_params)
-
-    raise NotImplementedError(
-        f"Still need to determine how best to structure task_params"
-    )
     return task_params
 
 

@@ -4,11 +4,6 @@ import busio
 from aeropi.devices.sensor.I2C.air.si7021 import SI7021
 from aeropi.devices.sensor.I2C.distance.vl53l0x import VL5310X
 
-import celery
-
-# from aeropi.celery_app import app
-# from redbeat import RedBeatSchedulerEntry as Entry
-
 
 class I2CMux:
     def __init__(self, devices_dict, SCL_pin=board.SCL, SDA_pin=board.SDA):
