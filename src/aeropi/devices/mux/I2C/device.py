@@ -23,7 +23,6 @@ class I2CMux:
         # Initialize I2C bus and sensor.
         i2c = busio.I2C(SCL_pin, SDA_pin)
 
-        #
         #     addr_to_tca[addr] = adafruit_tca9548a.TCA9548A(i2c, address=addr)
         # TODO: ensure no channel duplicates
         addr_to_tca = {}

@@ -35,7 +35,6 @@ class GPIODemux:
 
         gpio_pins_ordered = init_config["gpio_pins_ordered"]
         pwr_pin = init_config["pwr_pin"]
-        on_duration = init_config["default_on_duration"]
 
         if not isinstance(name, str):
             raise ValueError(
@@ -54,12 +53,6 @@ class GPIODemux:
             [(i, DigitalOutputDevice(p)) for i, p in enumerate(gpio_pins_ordered)]
         )
         self._width = len(self.select)
-
-        if not isinstance(on_duration, (int, float)):
-            raise ValueError(
-                f"on_duration ({on_duration}) must be type int or float not {type(on_duration)}"
-            )
-        self.default_on_duration = on_duration
 
         # name to ind
         self.connected_name_to_conf = self._define_connections(
@@ -87,14 +80,6 @@ class GPIODemux:
                 raise ValueError(f"cur_ind not available in {avail_connects}")
             connected[name]["index"] = cur_ind
             connected[name]["bin"] = self._to_bin(cur_ind)
-
-            # on duration
-            try:
-                on_duration = sensor_d["on_duration"]
-            except KeyError:
-                on_duration = self.default_on_duration
-            connected[name]["on_duration"] = on_duration
-
         return connected
 
     def _on_select(self, bin_rep):
@@ -123,14 +108,14 @@ class GPIODemux:
             p.off()
         self.in_use = False
 
-    def _run_select(self, dev_dict):
+    def _run_select(self, dev_dict, on_duration):
         # num = dev_dict["index"]
         bin_rep = dev_dict["bin"]
         on_duration = dev_dict["on_duration"]
         if on_duration:
             if not isinstance(on_duration, (int, float)):
                 raise ValueError(
-                    f"on_duration ({on_duration}) must be type int or float not {type(on_duration)}"
+                    f"on_duration ({on_duration}) must be type {int} or {float} not {type(on_duration)}"
                 )
             duration = on_duration
         else:
@@ -145,7 +130,7 @@ class GPIODemux:
         stop = dt.datetime.utcnow()
         return (start, stop)
 
-    def return_value(self, name):
+    def return_value(self, name, params):
         try:
             dev_dict = self.connected_name_to_conf[name]
         except KeyError:
@@ -153,5 +138,15 @@ class GPIODemux:
                 f"device {self.name} does not have device named {name}\n"
                 f"please select from {self.connected_name_to_conf.keys()}"
             )
-        out = self._run_select(dev_dict)
+
+        # TODO: clunky
+        if params:
+            try:
+                on_duration = params["on_duration"]
+            except KeyError:
+                raise ValueError(f"must specify the on_duration for {name}")
+        else:
+            raise ValueError(f"no run params specified for {name}")
+
+        out = self._run_select(dev_dict, on_duration)
         return out
