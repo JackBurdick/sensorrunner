@@ -28,7 +28,8 @@ TEMPLATE = {
                 "run": {
                     KPH("run_param_name", multi=True, required=False): VPH(
                         "run_param_value"
-                    )
+                    ),
+                    "unit": Text(required=True),
                 },
                 "schedule": {
                     "frequency": Numeric(
@@ -72,7 +73,8 @@ TEMPLATE = {
                         "run": {
                             "on_duration": Numeric(
                                 required=True, is_type=float, bounds=(0, 5)
-                            )
+                            ),
+                            "unit": Text(required=True),
                         },
                         "schedule": {
                             "frequency": Numeric(

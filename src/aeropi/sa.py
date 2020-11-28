@@ -23,19 +23,20 @@ class MyRow(Base):
     id = Column(Integer, primary_key=True)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     #
-    index = Column(Integer)
+    name = Column(String)
     start = Column(TIMESTAMP)
     stop = Column(TIMESTAMP)
+    unit = Column(String)
 
     def add(self, session):
         try:
             session.add(self)
             session.commit()
         except Exception as e:
-            print(f"row {self.index} not added: {e}")
+            print(f"row {self.name} not added: {e}")
 
     def __repr__(self):
-        return f"<MyRow(id='{self.id}', index={self.index}, created='{self.created_at}', duration={self.stop-self.start})>"
+        return f"<MyRow(id='{self.id}', name={self.name}, created='{self.created_at}', duration={self.stop-self.start}), unit={self.unit}>"
 
 
 class MyDist(Base):
@@ -47,7 +48,7 @@ class MyDist(Base):
     id = Column(Integer, primary_key=True)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     #
-    index = Column(Integer)
+    name = Column(String)
     value = Column(Float)
     unit = Column(String)
     measurement_time = Column(TIMESTAMP)
@@ -57,10 +58,10 @@ class MyDist(Base):
             session.add(self)
             session.commit()
         except Exception as e:
-            print(f"row {self.index} not added: {e}")
+            print(f"row {self.name} not added: {e}")
 
     def __repr__(self):
-        return f"<MyDist(id='{self.id}', index={self.index}, value='{self.value}', unit={self.unit}, measurement_time={self.measurement_time})>"
+        return f"<MyDist(id='{self.id}', name={self.name}, value='{self.value}', unit={self.unit}, measurement_time={self.measurement_time})>"
 
 
 Base.metadata.create_all(engine)
