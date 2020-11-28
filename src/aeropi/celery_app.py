@@ -14,7 +14,7 @@ from aeropi.run.run import build_devices_from_config
 
 path = os.path.abspath(aeropi.__file__)
 o = path.split("/")[:-1]
-o.append("tasks")
+o.extend(["tasks", "devices"])
 DEV_TASK_DIR = "/".join(o)
 
 
@@ -45,7 +45,9 @@ def _obtain_relevant_task_dirs(out, device_dir):
 
 def _return_task_modules(out, device_dir):
     relevant_dirs = _obtain_relevant_task_dirs(out, device_dir)
-    dir_name = DEV_TASK_DIR.split("/")[-1]
+    # TODO: more robust logic
+    dir_name = device_dir.split("/")[-2:]
+    dir_name = ".".join(dir_name)
     m_names = []
     for d in relevant_dirs:
         m_names.append(f"aeropi.{dir_name}.{d}")
