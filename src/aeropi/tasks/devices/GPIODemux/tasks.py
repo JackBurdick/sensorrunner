@@ -55,7 +55,10 @@ def _demux_run_select(self, dev_dict, wait_secs=0.1):
     # NOTE: I'm not sure how best to handle this.. passing through the queue is
     # not currently an options since it is not serialized by standard methods
     if GPIODEMUX is None:
-        GPIODEMUX = build_devices_from_config({"GPIODemux": USER_CONFIG["GPIODemux"]})
+        gpio_demux_wrapped = build_devices_from_config(
+            {"GPIODemux": USER_CONFIG["GPIODemux"]}
+        )
+        GPIODEMUX = gpio_demux_wrapped["GPIODemux"]
     else:
         pass
 

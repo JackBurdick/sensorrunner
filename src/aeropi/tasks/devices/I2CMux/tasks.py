@@ -47,7 +47,8 @@ def _i2c_run_select(self, dev_dict):
     # NOTE: I'm not sure how best to handle this.. passing through the queue is
     # not currently an options since it is not serialized by standard methods
     if IICMUX is None:
-        IICMUX = build_devices_from_config({"I2CMux": USER_CONFIG["I2CMux"]})
+        iicmux_wrapped = build_devices_from_config({"I2CMux": USER_CONFIG["I2CMux"]})
+        IICMUX = iicmux_wrapped["I2CMux"]
     else:
         pass
 
