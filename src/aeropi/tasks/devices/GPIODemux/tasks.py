@@ -1,5 +1,6 @@
 import celery
 import importlib
+import aeropi
 
 importlib.reload(aeropi)
 from aeropi.celery_app import app
