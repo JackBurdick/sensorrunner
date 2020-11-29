@@ -6,8 +6,8 @@ registry.enable(SERIALIZER)
 
 task_serializer = SERIALIZER
 result_serializer = SERIALIZER
-accept_content = [SERIALIZER]
-result_accept_content = [SERIALIZER]
+accept_content = [SERIALIZER, "json"]
+result_accept_content = [SERIALIZER, "json"]
 
 # dynamic
 broker_url = BROKER_URL
