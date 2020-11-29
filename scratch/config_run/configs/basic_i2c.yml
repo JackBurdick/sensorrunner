@@ -45,36 +45,36 @@ I2CMux:
 #       schedule:
 #         frequency: 1800
 
-# GPIODemux:
-#   demux_a:
-#     init:
-#       gpio_pins_ordered: [25, 23, 24, 17]
-#       pwr_pin: 27
-#     devices:
-#       a:
-#         index: 0
-#         device_type: "switch_low"
-#         params:
-#           run:
-#             on_duration: 0.4
-#             unit: "seconds"
-#           schedule:
-#             frequency: 2
-#       b:
-#         index: 1
-#         device_type: "switch_low"
-#         params:
-#           run:
-#             on_duration: 0.3
-#             unit: "seconds"
-#           schedule:
-#             frequency: 3
-#       c:
-#         index: 2
-#         device_type: "switch_low"
-#         params:
-#           run:
-#             on_duration: 0.1
-#             unit: "seconds"
-#           schedule:
-#             frequency: 1
+GPIODemux:
+  demux_a:
+    init:
+      gpio_pins_ordered: [25, 23, 24, 17]
+      pwr_pin: 27
+    devices:
+      a:
+        index: 0
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 0.4
+            unit: "seconds"
+          schedule:
+            frequency: 2
+      b:
+        index: 1
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 0.3
+            unit: "seconds"
+          schedule:
+            frequency: 3
+      c:
+        index: 2
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 0.1
+            unit: "seconds"
+          schedule:
+            frequency: 1
