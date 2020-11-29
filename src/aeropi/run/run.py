@@ -31,6 +31,8 @@ def build_devices_from_config(config):
     if GPIODemux_config:
         for gpiod_name, gpio_d in GPIODemux_config.items():
             gpio_dev = GPIODemux(gpiod_name, gpio_d["init"], gpio_d["devices"])
+            # TODO: fix
+            # DEVICES["GPIODemux"][gpiod_name] = gpio_dev
         DEVICES["GPIODemux"] = gpio_dev
 
     return DEVICES

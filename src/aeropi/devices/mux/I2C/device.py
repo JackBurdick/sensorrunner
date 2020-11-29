@@ -64,7 +64,7 @@ class I2CMux:
                 )
         self.devices = devices
 
-    def return_value(self, name, **kwargs):
+    def return_value(self, name, params):
         if name is None:
             return ValueError(
                 f"no name specified. please select from {self.devices.keys()}"
@@ -77,7 +77,11 @@ class I2CMux:
             raise ValueError(
                 f"{name} is not available. please select from {self.devices.keys()}"
             )
-        value = dev_d["fn"](**kwargs)
+        if params:
+            value = dev_d["fn"](**params)
+        else:
+            # TODO: try
+            value = dev_d["fn"]()
         return value
 
     @staticmethod

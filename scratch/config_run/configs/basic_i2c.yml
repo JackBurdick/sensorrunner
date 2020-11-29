@@ -7,7 +7,7 @@ I2CMux:
       run:
         unit: "f"
       schedule:
-        frequency: 1800
+        frequency: 2
 #   dist_a:
 #     device_type: "vl53l0x"
 #     address: 0x70
