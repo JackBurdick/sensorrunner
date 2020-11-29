@@ -1,4 +1,7 @@
 import celery
+import importlib
+
+importlib.reload(aeropi)
 from aeropi.celery_app import app
 from aeropi.sa import VL53l0X, SI7021, SESSION_VL53l0X, SESSION_SI7021
 from datetime import datetime

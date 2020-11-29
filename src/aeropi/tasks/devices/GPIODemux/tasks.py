@@ -1,4 +1,7 @@
 import celery
+import importlib
+
+importlib.reload(aeropi)
 from aeropi.celery_app import app
 from aeropi.sa import SWITCHLOW, SESSION_SWITCHLOW
 import datetime as dt
