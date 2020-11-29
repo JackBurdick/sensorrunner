@@ -13,8 +13,8 @@ if not database_exists(engine.url):
 Base = declarative_base()
 
 
-class MyRow(Base):
-    __tablename__ = "things"
+class SWITCHLOW(Base):
+    __tablename__ = "SWITCHLOW"
     __table_args__ = {"extend_existing": True}
 
     # TODO: SENSOR ID
@@ -36,7 +36,7 @@ class MyRow(Base):
             print(f"row {self.name} not added: {e}")
 
     def __repr__(self):
-        return f"<MyRow(id='{self.id}', name={self.name}, created='{self.created_at}', duration={self.stop-self.start}), unit={self.unit}>"
+        return f"<SWITCHLOW(id='{self.id}', name={self.name}, created='{self.created_at}', duration={self.stop-self.start}), unit={self.unit}>"
 
 
 class VL53l0X(Base):
@@ -104,6 +104,6 @@ Session.configure(bind=engine)
 
 # TODO: I'm not sure how to best handle this yet. We need multiple sessions, for
 # concurrent interaction but I'm not sure global is best
-SESSION_MyRow = Session()
+SESSION_SWITCHLOW = Session()
 SESSION_VL53l0X = Session()
 SESSION_SI7021 = Session()

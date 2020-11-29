@@ -9,7 +9,7 @@ import aeropi
 import crummycm as ccm
 from aeropi import celeryconf
 from aeropi.config.template import TEMPLATE
-from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
+from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR, SERIALIZER
 
 # from aeropi.run.run import build_devices_from_config
 
@@ -85,7 +85,11 @@ queues = [Queue(q) for q in used_queues]
 tmp = list(celeryconf.task_queues)
 tmp.extend(queues)
 celeryconf.task_queues = tuple(tmp)
-
+# attempt to force when adding new queues
+celeryconf.task_serializer = SERIALIZER
+celeryconf.result_serializer = SERIALIZER
+celeryconf.accept_content = [SERIALIZER]
+celeryconf.result_accept_content = [SERIALIZER]
 app.config_from_object(celeryconf)
 
 

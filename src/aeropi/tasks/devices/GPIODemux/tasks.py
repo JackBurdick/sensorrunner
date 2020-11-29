@@ -1,6 +1,6 @@
 import celery
 from aeropi.celery_app import app
-from aeropi.sa import MyRow, SESSION_MyRow
+from aeropi.sa import SWITCHLOW, SESSION_SWITCHLOW
 import datetime as dt
 import time
 from aeropi.celery_app import USER_CONFIG
@@ -12,8 +12,8 @@ GPIODEMUX = None
 @app.task(bind=True, queue="q_demux_log")
 def _log_demux(self, row):
     if row:
-        if isinstance(row, MyRow):
-            row.add(SESSION_MyRow)
+        if isinstance(row, SWITCHLOW):
+            row.add(SESSION_SWITCHLOW)
         else:
             raise ValueError(f"unable to match entry {row} to accepted row types")
     else:
@@ -72,7 +72,7 @@ def _demux_run_select(self, dev_dict, wait_secs=0.1):
 
     if dev_type == "switch_low":
         #  db entry
-        entry = MyRow(name=cur_name, start=start, stop=stop, unit=unit)
+        entry = SWITCHLOW(name=cur_name, start=start, stop=stop, unit=unit)
     else:
         entry = None
 
