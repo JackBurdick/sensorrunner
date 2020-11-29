@@ -89,10 +89,7 @@ tmp = list(celeryconf.task_queues)
 tmp.extend(queues)
 celeryconf.task_queues = tuple(tmp)
 # attempt to force when adding new queues
-celeryconf.task_serializer = SERIALIZER
-celeryconf.result_serializer = SERIALIZER
-celeryconf.accept_content = [SERIALIZER, "json"]
-celeryconf.result_accept_content = [SERIALIZER, "json"]
+
 app.config_from_object(celeryconf)
 
 
