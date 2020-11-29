@@ -73,7 +73,7 @@ def _demux_run_select(self, dev_dict, wait_secs=0.1):
 
     if dev_type == "switch_low":
         #  db entry
-        entry = MyRow(index=cur_name, start=start, stop=stop, unit=unit)
+        entry = MyRow(name=cur_name, start=start, stop=stop, unit=unit)
     else:
         entry = None
 
