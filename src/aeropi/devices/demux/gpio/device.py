@@ -146,9 +146,11 @@ class GPIODemux:
             try:
                 on_duration = params["on_duration"]
             except KeyError:
-                raise ValueError(f"must specify the on_duration for {name}")
+                raise ValueError(
+                    f"must specify the on_duration for {name}:\n> params:{params}"
+                )
         else:
-            raise ValueError(f"no run params specified for {name}")
+            raise ValueError(f"no run params specified for {name}:\n> params:{params}")
 
         out = self._run_select(dev_dict, on_duration)
         return out

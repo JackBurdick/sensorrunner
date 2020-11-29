@@ -36,7 +36,7 @@ def _i2c_run_select(self, dev_dict):
         cur_run_params = dev_dict["params"]["run"]
     except KeyError:
         raise ValueError(
-            f"now run params specified for {cur_name}\n> dev_dict: {dev_dict}"
+            f"no run params specified for {cur_name}\n> dev_dict: {dev_dict}"
         )
 
     try:
