@@ -13,7 +13,6 @@ GPIODEMUX = None
 def _log_demux(self, row):
     if row:
         if isinstance(row, MyRow):
-            # global SESSION_MyRow
             row.add(SESSION_MyRow)
         else:
             raise ValueError(f"unable to match entry {row} to accepted row types")

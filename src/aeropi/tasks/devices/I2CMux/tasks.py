@@ -1,6 +1,6 @@
 import celery
 from aeropi.celery_app import app
-from aeropi.sa import MyDist, SESSION_MyDist
+from aeropi.sa import MyDist, SI7021, SESSION_MyDist, SESSION_SI7021
 from datetime import datetime
 from aeropi.celery_app import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
@@ -10,7 +10,15 @@ IICMUX = None
 
 @app.task(bind=True, queue="q_dists_log")
 def _log_dist(self, row):
-    row.add(SESSION_MyDist)
+    if row:
+        if isinstance(row, MyDist):
+            row.add(SESSION_MyDist)
+        elif isinstance(row, SI7021):
+            row.add(SESSION_SI7021)
+        else:
+            raise ValueError(f"unable to match entry {row} to accepted row types")
+    else:
+        pass
 
 
 @app.task(bind=True, queue="q_dists_run")
@@ -54,9 +62,21 @@ def _i2c_run_select(self, dev_dict):
 
     measurement_time = datetime.utcnow()
     cur_v = IICMUX.return_value(cur_name, cur_run_params)
-    entry = MyDist(
-        name=cur_name, value=cur_v, unit=unit, measurement_time=measurement_time
-    )
+    if dev_type == "vl53l0x":
+        entry = MyDist(
+            name=cur_name, value=cur_v, unit=unit, measurement_time=measurement_time
+        )
+    elif dev_type == "si7021":
+        entry = SI7021(
+            name=cur_name,
+            temp_value=cur_v[0],
+            temp_unit=unit,
+            rh_value=cur_v[1],
+            rh_unit="%",
+            measurement_time=measurement_time,
+        )
+    else:
+        raise ValueError(f"device type {dev_type} unsupported")
     return entry
 
 

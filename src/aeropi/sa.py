@@ -64,6 +64,36 @@ class MyDist(Base):
         return f"<MyDist(id='{self.id}', name={self.name}, value='{self.value}', unit={self.unit}, measurement_time={self.measurement_time})>"
 
 
+class SI7021(Base):
+    __tablename__ = "SI7021"
+    __table_args__ = {"extend_existing": True}
+
+    # TODO: SENSOR ID
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    #
+    name = Column(String)
+    temp_value = Column(Float)
+    temp_unit = Column(String)
+    rh_value = Column(Float)
+    rh_unit = Column(String)
+    measurement_time = Column(TIMESTAMP)
+
+    def add(self, session):
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            print(f"row {self.name} not added: {e}")
+
+    def __repr__(self):
+        return (
+            f"<SI7021(id='{self.id}', name={self.name}, temp='{self.temp_value} *{self.temp_unit}'"
+            f", rh='{self.rh_value} {self.rh_unit}', measurement_time={self.measurement_time})>"
+        )
+
+
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
@@ -73,3 +103,4 @@ Session.configure(bind=engine)
 # concurrent interaction but I'm not sure global is best
 SESSION_MyRow = Session()
 SESSION_MyDist = Session()
+SESSION_SI7021 = Session()
