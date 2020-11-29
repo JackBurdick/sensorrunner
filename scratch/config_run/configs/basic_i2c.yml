@@ -1,31 +1,31 @@
-I2CMux:
-  env_a:
-    device_type: "si7021"
-    address: 0x72
-    channel: 2
-    params:
-      run:
-        unit: "f"
-      schedule:
-        frequency: 2
-  dist_a:
-    device_type: "vl53l0x"
-    address: 0x70
-    channel: 0
-    params:
-      run:
-        unit: "in"
-      schedule:
-        frequency: 3
-  dist_b:
-    device_type: "vl53l0x"
-    address: 0x70
-    channel: 1
-    params:
-      run:
-        unit: "in"
-      schedule:
-        frequency: 3
+# I2CMux:
+#   env_a:
+#     device_type: "si7021"
+#     address: 0x72
+#     channel: 2
+#     params:
+#       run:
+#         unit: "f"
+#       schedule:
+#         frequency: 2
+#   dist_a:
+#     device_type: "vl53l0x"
+#     address: 0x70
+#     channel: 0
+#     params:
+#       run:
+#         unit: "in"
+#       schedule:
+#         frequency: 3
+#   dist_b:
+#     device_type: "vl53l0x"
+#     address: 0x70
+#     channel: 1
+#     params:
+#       run:
+#         unit: "in"
+#       schedule:
+#         frequency: 3
 #   dist_c:
 #     device_type: "vl53l0x"
 #     address: 0x72
