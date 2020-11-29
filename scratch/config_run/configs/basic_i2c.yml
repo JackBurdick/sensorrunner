@@ -1,13 +1,13 @@
-# I2CMux:
-#   env_a:
-#     device_type: "si7021"
-#     address: 0x72
-#     channel: 2
-#     params:
-#       run:
-#         unit: "f"
-#       schedule:
-#         frequency: 2
+I2CMux:
+  env_a:
+    device_type: "si7021"
+    address: 0x72
+    channel: 2
+    params:
+      run:
+        unit: "f"
+      schedule:
+        frequency: 2
 #   dist_a:
 #     device_type: "vl53l0x"
 #     address: 0x70
@@ -60,21 +60,21 @@ GPIODemux:
             unit: "seconds"
           schedule:
             frequency: 2
-      b:
-        index: 1
-        device_type: "switch_low"
-        params:
-          run:
-            on_duration: 0.3
-            unit: "seconds"
-          schedule:
-            frequency: 3
-      c:
-        index: 2
-        device_type: "switch_low"
-        params:
-          run:
-            on_duration: 0.1
-            unit: "seconds"
-          schedule:
-            frequency: 1
+      # b:
+      #   index: 1
+      #   device_type: "switch_low"
+      #   params:
+      #     run:
+      #       on_duration: 0.3
+      #       unit: "seconds"
+      #     schedule:
+      #       frequency: 3
+      # c:
+      #   index: 2
+      #   device_type: "switch_low"
+      #   params:
+      #     run:
+      #       on_duration: 0.1
+      #       unit: "seconds"
+      #     schedule:
+      #       frequency: 1

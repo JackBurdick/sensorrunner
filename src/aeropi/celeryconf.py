@@ -7,6 +7,7 @@ registry.enable(SERIALIZER)
 task_serializer = SERIALIZER
 result_serializer = SERIALIZER
 accept_content = [SERIALIZER]
+result_accept_content = [SERIALIZER]
 
 # dynamic
 broker_url = BROKER_URL
