@@ -203,6 +203,8 @@ class GPIODemux:
                 raise ValueError(
                     f"run params ({cur_kwargs}) expected to be type {dict}, not {type(cur_kwargs)}"
                 )
+            # add component name
+            cur_kwargs["name"] = comp_name
             entry_d["kwargs"] = {"dev_dict": cur_kwargs}
             entry_specs[comp_name] = entry_d
         return entry_specs
