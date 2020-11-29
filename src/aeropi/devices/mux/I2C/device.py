@@ -87,7 +87,7 @@ class I2CMux:
             "run_dist_0",
             "tasks.iic.tasks.dist_select",
             schedule=celery.schedules.schedule(run_every=2),
-            kwargs={"cur_ind": 0},
+            kwargs={},
             app=celery_app.app,
         )
         # name=None, task=None, schedule=None, kwargs, app
@@ -113,6 +113,7 @@ class I2CMux:
 
         entry_specs = {}
         for comp_name, comp_dict in device_dict.items():
+            dev_dict = comp_dict.copy()
             entry_d = {}
             fn_name = comp_dict["fn_name"]
             if fn_name is None:
@@ -122,13 +123,12 @@ class I2CMux:
             entry_d["task"] = "aeropi.tasks.devices.I2CMux.tasks.I2CMux_run"
             # maybe make schedule outside this?
             entry_d["run_every"] = comp_dict["params"]["schedule"]["frequency"]
-            cur_kwargs = comp_dict["params"]["run"]
-            if not isinstance(cur_kwargs, dict):
+            if not isinstance(dev_dict, dict):
                 raise ValueError(
-                    f"run params ({cur_kwargs}) expected to be type {dict}, not {type(cur_kwargs)}"
+                    f"run params ({dev_dict}) expected to be type {dict}, not {type(dev_dict)}"
                 )
             # add component name
-            cur_kwargs["name"] = comp_name
-            entry_d["kwargs"] = {"dev_dict": cur_kwargs}
+            dev_dict["name"] = comp_name
+            entry_d["kwargs"] = {"dev_dict": dev_dict}
             entry_specs[comp_name] = entry_d
         return entry_specs
