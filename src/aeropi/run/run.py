@@ -20,16 +20,18 @@ def build_devices_from_config(config):
         i2cmux_config = config["I2CMux"]
     except KeyError:
         i2cmux_config = None
-    i2c_dev = I2CMux(i2cmux_config)
-    DEVICES["I2CMux"] = i2c_dev
+    if i2cmux_config:
+        i2c_dev = I2CMux(i2cmux_config)
+        DEVICES["I2CMux"] = i2c_dev
 
     try:
         GPIODemux_config = config["GPIODemux"]
     except KeyError:
         GPIODemux_config = None
-    for gpiod_name, gpio_d in GPIODemux_config.items():
-        gpio_dev = GPIODemux(gpiod_name, gpio_d["init"], gpio_d["devices"])
-    DEVICES["GPIODemux"] = gpio_dev
+    if GPIODemux_config:
+        for gpiod_name, gpio_d in GPIODemux_config.items():
+            gpio_dev = GPIODemux(gpiod_name, gpio_d["init"], gpio_d["devices"])
+        DEVICES["GPIODemux"] = gpio_dev
 
     return DEVICES
 

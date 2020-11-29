@@ -23,22 +23,26 @@ def _i2c_run_select(self, dev_dict):
     try:
         cur_name = dev_dict["name"]
     except KeyError:
-        raise ValueError(f"no name is specified in {dev_dict}")
+        raise ValueError(f"no name is specified in {dev_dict}\n> dev_dict: {dev_dict}")
 
     try:
         dev_type = dev_dict["device_type"]
     except KeyError:
-        raise ValueError(f"no `device_type` specified for {cur_name}")
+        raise ValueError(
+            f"no `device_type` specified for {cur_name}\n> dev_dict: {dev_dict}"
+        )
 
     try:
         cur_run_params = dev_dict["params"]["run"]
     except KeyError:
-        raise ValueError(f"now run params specified for {cur_name}")
+        raise ValueError(
+            f"now run params specified for {cur_name}\n> dev_dict: {dev_dict}"
+        )
 
     try:
         unit = cur_run_params["unit"]
     except KeyError:
-        raise ValueError(f"no unit is specified for {cur_name}")
+        raise ValueError(f"no unit is specified for {cur_name}\n> dev_dict: {dev_dict}")
 
     # NOTE: I'm not sure how best to handle this.. passing through the queue is
     # not currently an options since it is not serialized by standard methods

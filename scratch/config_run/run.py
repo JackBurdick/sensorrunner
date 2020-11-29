@@ -63,3 +63,14 @@ if __name__ == "__main__":
     delete_entries(entries)
     print("done")
 
+# dev_dict = {
+#     "index": 0,
+#     "device_type": "switch_low",
+#     "params": {
+#         "run": {"on_duration": 0.4, "unit": "seconds"},
+#         "schedule": {"frequency": 2.0},
+#     },
+#     "fn_name": None,
+#     "name": "a",
+# }
+
