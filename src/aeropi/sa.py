@@ -39,8 +39,8 @@ class MyRow(Base):
         return f"<MyRow(id='{self.id}', name={self.name}, created='{self.created_at}', duration={self.stop-self.start}), unit={self.unit}>"
 
 
-class MyDist(Base):
-    __tablename__ = "dists"
+class VL53l0X(Base):
+    __tablename__ = "VL53l0X"
     __table_args__ = {"extend_existing": True}
 
     # TODO: SENSOR ID
@@ -61,7 +61,10 @@ class MyDist(Base):
             print(f"row {self.name} not added: {e}")
 
     def __repr__(self):
-        return f"<MyDist(id='{self.id}', name={self.name}, value='{self.value}', unit={self.unit}, measurement_time={self.measurement_time})>"
+        return (
+            f"<VL53l0X(id='{self.id}', name={self.name}, value='{self.value}', "
+            f"unit={self.unit}, measurement_time={self.measurement_time})>"
+        )
 
 
 class SI7021(Base):
@@ -102,5 +105,5 @@ Session.configure(bind=engine)
 # TODO: I'm not sure how to best handle this yet. We need multiple sessions, for
 # concurrent interaction but I'm not sure global is best
 SESSION_MyRow = Session()
-SESSION_MyDist = Session()
+SESSION_VL53l0X = Session()
 SESSION_SI7021 = Session()

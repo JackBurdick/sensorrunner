@@ -1,6 +1,6 @@
 import celery
 from aeropi.celery_app import app
-from aeropi.sa import MyDist, SI7021, SESSION_MyDist, SESSION_SI7021
+from aeropi.sa import VL53l0X, SI7021, SESSION_VL53l0X, SESSION_SI7021
 from datetime import datetime
 from aeropi.celery_app import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
@@ -11,8 +11,8 @@ IICMUX = None
 @app.task(bind=True, queue="q_dists_log")
 def _log_dist(self, row):
     if row:
-        if isinstance(row, MyDist):
-            row.add(SESSION_MyDist)
+        if isinstance(row, VL53l0X):
+            row.add(SESSION_VL53l0X)
         elif isinstance(row, SI7021):
             row.add(SESSION_SI7021)
         else:
@@ -63,7 +63,7 @@ def _i2c_run_select(self, dev_dict):
     measurement_time = datetime.utcnow()
     cur_v = IICMUX.return_value(cur_name, cur_run_params)
     if dev_type == "vl53l0x":
-        entry = MyDist(
+        entry = VL53l0X(
             name=cur_name, value=cur_v, unit=unit, measurement_time=measurement_time
         )
     elif dev_type == "si7021":
