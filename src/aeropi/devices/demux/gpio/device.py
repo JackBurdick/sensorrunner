@@ -111,9 +111,7 @@ class GPIODemux:
         self.in_use = False
 
     def _run_select(self, dev_dict, on_duration):
-        # num = dev_dict["index"]
         bin_rep = dev_dict["bin"]
-        on_duration = dev_dict["on_duration"]
         if on_duration:
             if not isinstance(on_duration, (int, float)):
                 raise ValueError(
