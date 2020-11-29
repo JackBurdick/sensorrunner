@@ -119,7 +119,7 @@ class I2CMux:
                 fn_name = DEFAULT_FN_NAME
             entry_d["name"] = f"{device_name}_{comp_name}_{fn_name}"
             # TODO: make more robust
-            entry_d["task"] = "tasks.devices.I2CMux.tasks.I2CMux_run"
+            entry_d["task"] = "aeropi.tasks.devices.I2CMux.tasks.I2CMux_run"
             # maybe make schedule outside this?
             entry_d["run_every"] = comp_dict["params"]["schedule"]["frequency"]
             cur_kwargs = comp_dict["params"]["run"]
@@ -127,6 +127,6 @@ class I2CMux:
                 raise ValueError(
                     f"run params ({cur_kwargs}) expected to be type {dict}, not {type(cur_kwargs)}"
                 )
-            entry_d["kwargs"] = cur_kwargs
+            entry_d["kwargs"] = {"dev_dict": cur_kwargs}
             entry_specs[comp_name] = entry_d
         return entry_specs

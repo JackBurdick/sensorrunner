@@ -58,6 +58,7 @@ if __name__ == "__main__":
         time.sleep(max(0, 60))
     except KeyboardInterrupt:
         delete_entries(entries)
+        print("entries deleted")
 
     delete_entries(entries)
     print("done")

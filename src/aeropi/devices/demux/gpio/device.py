@@ -195,7 +195,7 @@ class GPIODemux:
                 fn_name = DEFAULT_FN_NAME
             entry_d["name"] = f"{device_name}_{comp_name}_{fn_name}"
             # TODO: make more robust
-            entry_d["task"] = "tasks.devices.GPIODemux.tasks.GPIODemux_run"
+            entry_d["task"] = "aeropi.tasks.devices.GPIODemux.tasks.GPIODemux_run"
             # maybe make schedule outside this?
             entry_d["run_every"] = comp_dict["params"]["schedule"]["frequency"]
             cur_kwargs = comp_dict["params"]["run"]
@@ -203,7 +203,7 @@ class GPIODemux:
                 raise ValueError(
                     f"run params ({cur_kwargs}) expected to be type {dict}, not {type(cur_kwargs)}"
                 )
-            entry_d["kwargs"] = cur_kwargs
+            entry_d["kwargs"] = {"dev_dict": cur_kwargs}
             entry_specs[comp_name] = entry_d
         return entry_specs
 
