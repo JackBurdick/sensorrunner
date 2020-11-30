@@ -97,6 +97,34 @@ class SI7021(Base):
         )
 
 
+class PT19(Base):
+    __tablename__ = "PT19"
+    __table_args__ = {"extend_existing": True}
+
+    # TODO: SENSOR ID
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    #
+    name = Column(String)
+    value = Column(Float)
+    unit = Column(String)
+    measurement_time = Column(TIMESTAMP)
+
+    def add(self, session):
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            print(f"row {self.name} not added: {e}")
+
+    def __repr__(self):
+        return (
+            f"<PT19(id='{self.id}', name={self.name}, value='{self.value}', "
+            f"unit={self.unit}, measurement_time={self.measurement_time})>"
+        )
+
+
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
@@ -107,3 +135,4 @@ Session.configure(bind=engine)
 SESSION_SWITCHLOW = Session()
 SESSION_VL53l0X = Session()
 SESSION_SI7021 = Session()
+SESSION_PT19 = Session()
