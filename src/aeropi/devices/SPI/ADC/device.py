@@ -11,7 +11,6 @@ class MDC3800:
     def __init__(
         self,
         name,
-        init_config,
         # devices
         devices_dict,
     ):

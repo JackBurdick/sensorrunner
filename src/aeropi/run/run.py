@@ -41,7 +41,7 @@ def build_devices_from_config(config):
     except KeyError:
         MDC3800_config = None
     if MDC3800_config:
-        MDC3800_dev = MDC3800(MDC3800_config)
+        MDC3800_dev = MDC3800("MDC3800", MDC3800_config)
         DEVICES["MDC3800"] = MDC3800_dev
 
     return DEVICES
