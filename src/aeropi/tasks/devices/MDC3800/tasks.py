@@ -58,7 +58,7 @@ def _mdc3800_run_select(self, dev_dict):
     # NOTE: I'm not sure how best to handle this.. passing through the queue is
     # not currently an options since it is not serialized by standard methods
     if MDC3800_Dev is None:
-        mdc3800_wrapped = build_devices_from_config({"I2CMux": USER_CONFIG["MDC3800"]})
+        mdc3800_wrapped = build_devices_from_config({"MDC3800": USER_CONFIG["MDC3800"]})
         MDC3800_Dev = mdc3800_wrapped["MDC3800"]
     else:
         pass
