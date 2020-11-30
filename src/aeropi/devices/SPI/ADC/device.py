@@ -1,4 +1,4 @@
-from aeropi.devices.sensor.spi.adc.light.pt19 import PT19
+from aeropi.devices.sensor.SPI.ADC.light.pt19 import PT19
 from gpiozero import MCP3008, Device
 
 # from gpiozero.pins.mock import MockFactory

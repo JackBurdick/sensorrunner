@@ -4,7 +4,7 @@ from crummycm.validation.types.values.compound.multi import Multi
 from crummycm.validation.types.values.element.numeric import Numeric
 from crummycm.validation.types.values.element.text import Text
 
-from aeropi.devices.spi.ADC.device import MDC3800
+from aeropi.devices.SPI.ADC.device import MDC3800
 
 # from crummycm.validation.types.values.element.bool import Bool
 

@@ -2,7 +2,7 @@ import crummycm as ccm
 from aeropi.config.template import TEMPLATE as DEFAULT_TEMPLATE
 from aeropi.devices.demux.gpio.device import GPIODemux
 from aeropi.devices.mux.I2C.device import I2CMux
-from aeropi.devices.spi.ADC.device import MDC3800
+from aeropi.devices.SPI.ADC.device import MDC3800
 
 # TODO: Mapper, config key to class
 
