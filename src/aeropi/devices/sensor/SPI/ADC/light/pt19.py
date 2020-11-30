@@ -4,11 +4,11 @@ class PT19:
         self.precision = precision
         self.accepted_units = ["%"]
 
-    def return_value(self, params):
+    def return_value(self, **kwargs):
         try:
-            unit = params["unit"]
+            unit = kwargs["unit"]
         except KeyError:
-            raise ValueError(f"unit not in {params}")
+            raise ValueError(f"unit not in {kwargs}")
         if unit:
             if not isinstance(unit, str):
                 raise ValueError(
