@@ -2,6 +2,7 @@ import crummycm as ccm
 from aeropi.config.template import TEMPLATE as DEFAULT_TEMPLATE
 from aeropi.devices.demux.gpio.device import GPIODemux
 from aeropi.devices.mux.I2C.device import I2CMux
+from aeropi.devices.spi.ADC.device import MDC3800
 
 # TODO: Mapper, config key to class
 
@@ -35,6 +36,14 @@ def build_devices_from_config(config):
             # DEVICES["GPIODemux"][gpiod_name] = gpio_dev
         DEVICES["GPIODemux"] = gpio_dev
 
+    try:
+        MDC3800_config = config["MDC3800"]
+    except KeyError:
+        MDC3800_config = None
+    if MDC3800_config:
+        MDC3800_dev = MDC3800(MDC3800_config)
+        DEVICES["MDC3800"] = MDC3800_dev
+
     return DEVICES
 
 
@@ -53,6 +62,11 @@ def build_task_params_from_config(config):
             cur_dev_name = device_type
             task_params[device_type] = {}
             cur_tasks = I2CMux.build_task_params(device_type, config["I2CMux"])
+            task_params[device_type][cur_dev_name] = cur_tasks
+        elif device_type == "MDC3800":
+            cur_dev_name = device_type
+            task_params[device_type] = {}
+            cur_tasks = MDC3800.build_task_params(device_type, config["MDC3800"])
             task_params[device_type][cur_dev_name] = cur_tasks
         elif device_type == "GPIODemux":
             task_params[device_type] = {}

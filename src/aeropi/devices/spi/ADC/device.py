@@ -13,7 +13,7 @@ class MDC3800:
         name,
         init_config,
         # devices
-        devices_config,
+        devices_dict,
     ):
         # NOTE: accepting tuples currently because I'm not sure what the config
         # will look like yet

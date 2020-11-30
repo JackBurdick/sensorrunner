@@ -40,6 +40,28 @@ TEMPLATE = {
             "fn_name": Text(required=False),
         }
     },
+    KPH("MDC3800", exact=True, required=False): {
+        KPH("name", multi=True): {
+            "channel": Numeric(
+                required=True, is_type=int, bounds=(0, 7), bounds_inclusive=(True, True)
+            ),
+            "device_type": Text(required=True, is_in_list=I2CMux_DEVICES),
+            "params": {
+                "run": {
+                    KPH("run_param_name", multi=True, required=False): VPH(
+                        "run_param_value"
+                    ),
+                    "unit": Text(required=True),
+                },
+                "schedule": {
+                    "frequency": Numeric(
+                        required=False, is_type=float, bounds=(0, 3600)
+                    )
+                },
+            },
+            "fn_name": Text(required=False),
+        }
+    },
     KPH("GPIODemux", exact=True, required=False): {
         KPH("demux_name", required=True, multi=True): {
             "init": {
