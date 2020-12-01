@@ -4,7 +4,14 @@ import aeropi
 
 importlib.reload(aeropi)
 from aeropi.celery_app import app
-from aeropi.sa import VL53l0X, SI7021, SESSION_VL53l0X, SESSION_SI7021
+from aeropi.sa import (
+    VL53l0X,
+    SI7021,
+    SESSION_VL53l0X,
+    SESSION_SI7021,
+    VEML6070,
+    SESSION_VEML6070,
+)
 from datetime import datetime
 from aeropi.celery_app import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
@@ -19,6 +26,8 @@ def _log_dist(self, row):
             row.add(SESSION_VL53l0X)
         elif isinstance(row, SI7021):
             row.add(SESSION_SI7021)
+        elif isinstance(VEML6070):
+            row.add(SESSION_VEML6070)
         else:
             raise ValueError(f"unable to match entry {row} to accepted row types")
     else:
@@ -78,6 +87,10 @@ def _i2c_run_select(self, dev_dict):
             rh_value=cur_v[1],
             rh_unit="%",
             measurement_time=measurement_time,
+        )
+    elif dev_type == "veml6070":
+        entry = VEML6070(
+            name=cur_name, value=cur_v, unit=unit, measurement_time=measurement_time
         )
     else:
         raise ValueError(f"device type {dev_type} unsupported")
