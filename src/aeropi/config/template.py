@@ -9,7 +9,7 @@ from aeropi.devices.SPI.ADC.device import MDC3800
 # from crummycm.validation.types.values.element.bool import Bool
 
 
-I2CMux_DEVICES = ["vl53l0x", "si7021"]
+I2CMux_DEVICES = ["vl53l0x", "si7021", "veml6070"]
 GPIODemux_DEVICES = ["switch_low"]
 MDC3800_DEVICES = ["pt19"]
 
