@@ -26,7 +26,7 @@ def _log_dist(self, row):
             row.add(SESSION_VL53l0X)
         elif isinstance(row, SI7021):
             row.add(SESSION_SI7021)
-        elif isinstance(VEML6070):
+        elif isinstance(row, VEML6070):
             row.add(SESSION_VEML6070)
         else:
             raise ValueError(f"unable to match entry {row} to accepted row types")
