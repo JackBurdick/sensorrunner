@@ -15,6 +15,20 @@ MDC3800_DEVICES = ["pt19"]
 
 TEMPLATE = {
     # TODO: include task information
+    "DEVICE": {
+        KPH("name"): {
+            "device_type": Text(required=True, is_in_list=["current_device"]),
+            "params": {
+                "schedule": {
+                    # 0-6hrs
+                    "frequency": Numeric(
+                        required=False, is_type=float, bounds=(0, 21600)
+                    )
+                }
+            },
+            "fn_name": Text(required=False),
+        }
+    },
     KPH("I2CMux", exact=True, required=False): {
         KPH("name", multi=True): {
             "channel": Numeric(

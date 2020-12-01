@@ -1,22 +1,28 @@
-I2CMux:
-  uv_a:
-    device_type: "veml6070"
-    address: 0x72
-    channel: 4
+DEVICE:
+  my_pi_4:
+    device_type: "current_device"
     params:
-      run:
-        unit: "intensity"
       schedule:
         frequency: 4
-  # env_a:
-  #   device_type: "si7021"
-  #   address: 0x72
-  #   channel: 2
-  #   params:
-  #     run:
-  #       unit: "f"
-  #     schedule:
-  #       frequency: 2
+# I2CMux:
+#   uv_a:
+#     device_type: "veml6070"
+#     address: 0x72
+#     channel: 4
+#     params:
+#       run:
+#         unit: "intensity"
+#       schedule:
+#         frequency: 4
+#   env_a:
+#     device_type: "si7021"
+#     address: 0x72
+#     channel: 2
+#     params:
+#       run:
+#         unit: "f"
+#       schedule:
+#         frequency: 2
 #   dist_a:
 #     device_type: "vl53l0x"
 #     address: 0x70
