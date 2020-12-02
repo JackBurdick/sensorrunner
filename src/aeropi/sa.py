@@ -154,12 +154,6 @@ class VEML6070(Base):
         )
 
 
-Base.metadata.create_all(engine)
-
-Session = sessionmaker(bind=engine)
-Session.configure(bind=engine)
-
-
 class CurrentDevice(Base):
     __tablename__ = "CurrentDevice"
     __table_args__ = {"extend_existing": True}
@@ -196,6 +190,11 @@ class CurrentDevice(Base):
         return f"<CurrentDevice(id='{self.id}', name={self.name})>"
 
 
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+Session.configure(bind=engine)
+
 # TODO: I'm not sure how to best handle this yet. We need multiple sessions, for
 # concurrent interaction but I'm not sure global is best
 SESSION_SWITCHLOW = Session()
@@ -203,4 +202,4 @@ SESSION_VL53l0X = Session()
 SESSION_SI7021 = Session()
 SESSION_PT19 = Session()
 SESSION_VEML6070 = Session()
-SESSION_DEVICE = Session()
+SESSION_CurrentDevice = Session()
