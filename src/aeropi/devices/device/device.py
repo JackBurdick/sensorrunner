@@ -71,3 +71,31 @@ class CurrentDevice:
         device_dict["mac"] = mac
 
         return device_dict
+
+    @staticmethod
+    def build_task_params(device_name, device_dict):
+        """
+        """
+        DEFAULT_FN_NAME = "return_value"
+
+        entry_specs = {}
+        for comp_name, comp_dict in device_dict.items():
+            dev_dict = comp_dict.copy()
+            entry_d = {}
+            fn_name = comp_dict["fn_name"]
+            if fn_name is None:
+                fn_name = DEFAULT_FN_NAME
+            entry_d["name"] = f"{device_name}_{comp_name}_{fn_name}"
+            # TODO: make more robust
+            entry_d["task"] = "aeropi.tasks.devices.DEVICE.tasks.CurrentDevice_run"
+            # maybe make schedule outside this?
+            entry_d["run_every"] = comp_dict["params"]["schedule"]["frequency"]
+            if not isinstance(dev_dict, dict):
+                raise ValueError(
+                    f"run params ({dev_dict}) expected to be type {dict}, not {type(dev_dict)}"
+                )
+            # add component name
+            dev_dict["name"] = comp_name
+            entry_d["kwargs"] = {"dev_dict": dev_dict}
+            entry_specs[comp_name] = entry_d
+        return entry_specs

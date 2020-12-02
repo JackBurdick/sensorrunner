@@ -85,6 +85,13 @@ def build_task_params_from_config(config):
                     cur_dev_name, cur_config["devices"]
                 )
                 task_params[device_type][cur_dev_name] = cur_tasks
+        elif device_type == "CurrentDevice":
+            cur_dev_name = device_type
+            task_params[device_type] = {}
+            cur_tasks = CurrentDevice.build_task_params(
+                device_type, config["CurrentDevice"]
+            )
+            task_params[device_type][cur_dev_name] = cur_tasks
         else:
             raise ValueError(f"device type {device_type} unsupported")
 
