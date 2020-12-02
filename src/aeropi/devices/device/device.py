@@ -20,19 +20,19 @@ class CurrentDevice:
         _disk = psutil.disk_usage("/")
         # int
         disk_total = _disk.total
-        device_dict["disk_total"] = disk_total
+        device_dict["disk_total_GB"] = disk_total / 1000000000
         # int
         disk_used = _disk.used
-        device_dict["disk_used"] = disk_used
+        device_dict["disk_used_GB"] = disk_used / 1000000000
 
         # memory
         _mem = psutil.virtual_memory()
         # int
         mem_total = _mem.total
-        device_dict["mem_total"] = mem_total
+        device_dict["mem_total_GB"] = mem_total / 1000000000
         # int
         mem_used = _mem.used
-        device_dict["mem_used"] = mem_used
+        device_dict["mem_used_GB"] = mem_used / 1000000000
 
         # load
         # float
@@ -58,7 +58,7 @@ class CurrentDevice:
         _boot_time = datetime.datetime.fromtimestamp(psutil.boot_time())
         # int
         run_time = (_cur_time - _boot_time).seconds
-        device_dict["run_time"] = run_time
+        device_dict["run_time_hrs"] = run_time / 60 / 60
 
         # identifier
         # int

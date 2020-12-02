@@ -1,15 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import (
-    TIMESTAMP,
-    BigInteger,
-    Boolean,
-    Column,
-    Float,
-    Integer,
-    String,
-    create_engine,
-)
+from sqlalchemy import TIMESTAMP, Boolean, Column, Float, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import create_database, database_exists
@@ -172,16 +163,16 @@ class CurrentDevice(Base):
     id = Column(Integer, primary_key=True)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     name = Column(String)
-    disk_total = Column(BigInteger)
-    disk_used = Column(BigInteger)
-    mem_total = Column(BigInteger)
-    mem_used = Column(BigInteger)
+    disk_total_GB = Column(Float)
+    disk_used_GB = Column(Float)
+    mem_total_GB = Column(Float)
+    mem_used_GB = Column(Float)
     load_min_avg = Column(Float)
     cpu_temp = Column(Float)
     num_pids = Column(Integer)
     wifi_isup = Column(Boolean)
-    run_time = Column(BigInteger)
-    uuid_ident = Column(BigInteger)
+    run_time_hrs = Column(Float)
+    uuid_ident = Column(String)
     load_min_avg = Column(Float)
     load_min_avg = Column(Float)
     load_min_avg = Column(Float)
