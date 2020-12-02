@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP, Float
-from datetime import timedelta, datetime
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import database_exists, create_database
+from datetime import datetime
+
+from sqlalchemy import TIMESTAMP, Boolean, Column, Float, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import create_database, database_exists
+
 from aeropi.secrets import POSTGRES
 
 engine = create_engine(POSTGRES)
@@ -165,3 +166,39 @@ SESSION_VL53l0X = Session()
 SESSION_SI7021 = Session()
 SESSION_PT19 = Session()
 SESSION_VEML6070 = Session()
+
+
+class DEVICE(Base):
+    __tablename__ = "DEVICE"
+    __table_args__ = {"extend_existing": True}
+
+    # TODO: SENSOR ID
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    name = Column(String)
+    disk_total = Column(Integer)
+    disk_used = Column(Integer)
+    mem_total = Column(Integer)
+    mem_used = Column(Integer)
+    load_min_avg = Column(Float)
+    cpu_temp = Column(Float)
+    num_pids = Column(Integer)
+    wifi_isup = Column(Boolean)
+    run_time = Column(Integer)
+    uuid_ident = Column(Integer)
+    load_min_avg = Column(Float)
+    load_min_avg = Column(Float)
+    load_min_avg = Column(Float)
+    mac = Column(String)
+    measurement_time = Column(TIMESTAMP)
+
+    def add(self, session):
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            print(f"row {self.name} not added: {e}")
+
+    def __repr__(self):
+        return f"<DEVICE(id='{self.id}', name={self.name})>"
