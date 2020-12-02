@@ -3,6 +3,7 @@ from aeropi.config.template import TEMPLATE as DEFAULT_TEMPLATE
 from aeropi.devices.demux.gpio.device import GPIODemux
 from aeropi.devices.mux.I2C.device import I2CMux
 from aeropi.devices.SPI.ADC.device import MDC3800
+from aeropi.devices.device.device import CurrentDevice
 
 # TODO: Mapper, config key to class
 
@@ -43,6 +44,14 @@ def build_devices_from_config(config):
     if MDC3800_config:
         MDC3800_dev = MDC3800("MDC3800", MDC3800_config)
         DEVICES["MDC3800"] = MDC3800_dev
+
+    try:
+        CurrentDevice_config = config["CurrentDevice"]
+    except KeyError:
+        CurrentDevice_config = None
+    if CurrentDevice_config:
+        CurrentDevice_dev = CurrentDevice("CurrentDevice", CurrentDevice_config)
+        DEVICES["CurrentDevice"] = CurrentDevice_dev
 
     return DEVICES
 
