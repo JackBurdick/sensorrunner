@@ -43,13 +43,6 @@ def _run_device(self, dev_dict):
             f"no `device_type` specified for {cur_name}\n> dev_dict: {dev_dict}"
         )
 
-    try:
-        cur_run_params = dev_dict["params"]["run"]
-    except KeyError:
-        raise ValueError(
-            f"no run params specified for {cur_name}\n> dev_dict: {dev_dict}"
-        )
-
     # NOTE: I'm not sure how best to handle this.. passing through the queue is
     # not currently an options since it is not serialized by standard methods
     if CURRENTDEVICE_Dev is None:
@@ -61,7 +54,7 @@ def _run_device(self, dev_dict):
         pass
 
     measurement_time = datetime.utcnow()
-    cur_stats = CURRENTDEVICE_Dev.return_value(cur_name, cur_run_params)
+    cur_stats = CURRENTDEVICE_Dev.return_value()
     if dev_type == "current_device":
         entry = CurrentDevice(
             name=cur_name, measurement_time=measurement_time, **cur_stats
