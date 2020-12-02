@@ -17,8 +17,6 @@ class CurrentDevice:
         # TODO: wrap in try + include defaults
         device_dict = {}
 
-        device_dict["name"] = self.name
-
         _disk = psutil.disk_usage("/")
         # int
         disk_total = _disk.total
