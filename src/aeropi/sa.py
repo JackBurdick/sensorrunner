@@ -159,17 +159,9 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 Session.configure(bind=engine)
 
-# TODO: I'm not sure how to best handle this yet. We need multiple sessions, for
-# concurrent interaction but I'm not sure global is best
-SESSION_SWITCHLOW = Session()
-SESSION_VL53l0X = Session()
-SESSION_SI7021 = Session()
-SESSION_PT19 = Session()
-SESSION_VEML6070 = Session()
 
-
-class DEVICE(Base):
-    __tablename__ = "DEVICE"
+class CurrentDevice(Base):
+    __tablename__ = "CurrentDevice"
     __table_args__ = {"extend_existing": True}
 
     # TODO: SENSOR ID
@@ -201,4 +193,14 @@ class DEVICE(Base):
             print(f"row {self.name} not added: {e}")
 
     def __repr__(self):
-        return f"<DEVICE(id='{self.id}', name={self.name})>"
+        return f"<CurrentDevice(id='{self.id}', name={self.name})>"
+
+
+# TODO: I'm not sure how to best handle this yet. We need multiple sessions, for
+# concurrent interaction but I'm not sure global is best
+SESSION_SWITCHLOW = Session()
+SESSION_VL53l0X = Session()
+SESSION_SI7021 = Session()
+SESSION_PT19 = Session()
+SESSION_VEML6070 = Session()
+SESSION_DEVICE = Session()

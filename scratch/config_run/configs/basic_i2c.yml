@@ -1,4 +1,4 @@
-DEVICE:
+CurrentDevice:
   my_pi_4:
     device_type: "current_device"
     params:

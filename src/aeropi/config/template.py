@@ -15,7 +15,7 @@ MDC3800_DEVICES = ["pt19"]
 
 TEMPLATE = {
     # TODO: include task information
-    "DEVICE": {
+    "CurrentDevice": {
         KPH("name"): {
             "device_type": Text(required=True, is_in_list=["current_device"]),
             "params": {
