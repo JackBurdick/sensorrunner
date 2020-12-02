@@ -50,7 +50,7 @@ def build_devices_from_config(config):
     except KeyError:
         CurrentDevice_config = None
     if CurrentDevice_config:
-        CurrentDevice_dev = CurrentDevice("CurrentDevice", CurrentDevice_config)
+        CurrentDevice_dev = CurrentDevice("CurrentDevice")
         DEVICES["CurrentDevice"] = CurrentDevice_dev
 
     return DEVICES
