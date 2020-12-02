@@ -10,7 +10,7 @@ from aeropi.sa import CurrentDevice, SESSION_CurrentDevice
 
 importlib.reload(aeropi)
 
-DEVICE_Dev = None
+CURRENTDEVICE_Dev = None
 
 
 @app.task(bind=True, queue="q_device")
@@ -26,7 +26,7 @@ def _log_device(self, row):
 
 @app.task(bind=True, queue="q_device")
 def _run_device(self, dev_dict):
-    global DEVICE_Dev
+    global CURRENTDEVICE_Dev
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
     if dev_dict is None:
         raise ValueError("no dev_dict is present")
@@ -52,16 +52,16 @@ def _run_device(self, dev_dict):
 
     # NOTE: I'm not sure how best to handle this.. passing through the queue is
     # not currently an options since it is not serialized by standard methods
-    if DEVICE_Dev is None:
+    if CURRENTDEVICE_Dev is None:
         device_wrapped = build_devices_from_config(
             {"CurrentDevice": USER_CONFIG["CurrentDevice"]}
         )
-        DEVICE_Dev = device_wrapped["CurrentDevice"]
+        CURRENTDEVICE_Dev = device_wrapped["CurrentDevice"]
     else:
         pass
 
     measurement_time = datetime.utcnow()
-    cur_stats = DEVICE_Dev.return_value(cur_name, cur_run_params)
+    cur_stats = CURRENTDEVICE_Dev.return_value(cur_name, cur_run_params)
     if dev_type == "current_device":
         entry = CurrentDevice(
             name=cur_name, measurement_time=measurement_time, **cur_stats

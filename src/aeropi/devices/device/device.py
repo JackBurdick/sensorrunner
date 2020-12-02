@@ -87,7 +87,9 @@ class CurrentDevice:
                 fn_name = DEFAULT_FN_NAME
             entry_d["name"] = f"{device_name}_{comp_name}_{fn_name}"
             # TODO: make more robust
-            entry_d["task"] = "aeropi.tasks.devices.DEVICE.tasks.CurrentDevice_run"
+            entry_d[
+                "task"
+            ] = "aeropi.tasks.devices.CurrentDevice.tasks.CurrentDevice_run"
             # maybe make schedule outside this?
             entry_d["run_every"] = comp_dict["params"]["schedule"]["frequency"]
             if not isinstance(dev_dict, dict):
