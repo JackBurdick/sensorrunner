@@ -1,11 +1,7 @@
-import crummycm as ccm
-from aeropi.config.template import TEMPLATE as DEFAULT_TEMPLATE
 from aeropi.devices.demux.gpio.device import GPIODemux
 from aeropi.devices.mux.I2C.device import I2CMux
 from aeropi.devices.SPI.ADC.device import MDC3800
 from aeropi.devices.device.device import CurrentDevice
-
-# TODO: Mapper, config key to class
 
 
 def build_devices_from_config(config):
@@ -13,7 +9,7 @@ def build_devices_from_config(config):
     """
     TODO:
       1) create dict that is {"name": Device}
-      2) check config keys against a dict of all classes in `devices` 
+      2) check config keys against a dict of all classes in `devices`
       3) have config mirror init params of Devices such that Device(**params)
     """
     DEVICES = {}
@@ -92,71 +88,9 @@ def build_task_params_from_config(config):
                 device_type, config["CurrentDevice"]
             )
             task_params[device_type][cur_dev_name] = cur_tasks
+        elif device_type == "Event":
+            pass
         else:
             raise ValueError(f"device type {device_type} unsupported")
 
     return task_params
-
-
-# {
-#     "I2CMux": {
-#         "env_a": {
-#             "channel": 2,
-#             "address": 114,
-#             "device_type": "si7021",
-#             "params": {"run": {"unit": "f"}, "schedule": {"frequency": 1800.0}},
-#             "fn_name": None,
-#         },
-#         "dist_a": {
-#             "channel": 0,
-#             "address": 112,
-#             "device_type": "vl53l0x",
-#             "params": {"run": {"unit": "in"}, "schedule": {"frequency": 1800.0}},
-#             "fn_name": None,
-#         },
-#         "dist_b": {
-#             "channel": 1,
-#             "address": 112,
-#             "device_type": "vl53l0x",
-#             "params": {"run": {"unit": "in"}, "schedule": {"frequency": 1800.0}},
-#             "fn_name": None,
-#         },
-#         "dist_c": {
-#             "channel": 0,
-#             "address": 114,
-#             "device_type": "vl53l0x",
-#             "params": {"run": {"unit": "in"}, "schedule": {"frequency": 1800.0}},
-#             "fn_name": None,
-#         },
-#         "dist_d": {
-#             "channel": 1,
-#             "address": 114,
-#             "device_type": "vl53l0x",
-#             "params": {"run": {"unit": "in"}, "schedule": {"frequency": 1800.0}},
-#             "fn_name": None,
-#         },
-#     },
-#     "GPIODemux": {
-#         "demux_a": {
-#             "init": {"gpio_pins_ordered": [25, 23, 24, 17], "pwr_pin": 27},
-#             "devices": {
-#                 "a": {
-#                     "index": 0,
-#                     "device_type": "switch_low",
-#                     "params": {
-#                         "run": {"on_duration": 1.7, "unit": "seconds"},
-#                         "schedule": {"frequency": 4.0},
-#                     },
-#                 },
-#                 "b": {
-#                     "index": 1,
-#                     "device_type": "switch_low",
-#                     "params": {
-#                         "run": {"on_duration": 1.3, "unit": "seconds"},
-#                         "schedule": {"frequency": 3.0},
-#                     },
-#                 },
-#             },
-#         }
-#     },
-# }
