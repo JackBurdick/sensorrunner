@@ -1,9 +1,17 @@
-CurrentDevice:
-  my_pi_4:
-    device_type: "current_device"
+# CurrentDevice:
+#   my_pi_4:
+#     device_type: "current_device"
+#     params:
+#       schedule:
+#         frequency: 4
+Event:
+  vib_sensor:
+    device_type: "vib801s"
     params:
-      schedule:
-        frequency: 4
+      init:
+        pin: 22
+        when_activated: "on"
+        when_deactivated: "off"
 # I2CMux:
 #   uv_a:
 #     device_type: "veml6070"

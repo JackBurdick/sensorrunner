@@ -12,6 +12,7 @@ from aeropi.devices.SPI.ADC.device import MDC3800
 I2CMux_DEVICES = ["vl53l0x", "si7021", "veml6070"]
 GPIODemux_DEVICES = ["switch_low"]
 MDC3800_DEVICES = ["pt19"]
+EVENT_DEVICES = ["VIB801S"]
 
 TEMPLATE = {
     # TODO: include task information
@@ -55,6 +56,23 @@ TEMPLATE = {
                 },
             },
             "fn_name": Text(required=False),
+        }
+    },
+    KPH("Event", exact=True, required=False): {
+        KPH("name", multi=True): {
+            "device_type": Text(required=True, is_in_list=EVENT_DEVICES),
+            "params": {
+                "init": {
+                    "pin": Numeric(
+                        required=True,
+                        is_type=int,
+                        bounds=(0, 27),
+                        bounds_inclusive=(True, True),
+                    ),
+                    "when_activated": Text(required=False),
+                    "when_deactivated": Text(required=False),
+                },
+            },
         }
     },
     KPH("MDC3800", exact=True, required=False): {
