@@ -10,8 +10,8 @@ Event:
     params:
       init:
         pin: 22
-        when_activated: "on"
-        when_deactivated: "off"
+        when_activated: "log_when_activated"
+        when_deactivated: "log_when_deactivated"
 # I2CMux:
 #   uv_a:
 #     device_type: "veml6070"

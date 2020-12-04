@@ -34,8 +34,8 @@ class VIB801S(SmoothedInputDevice):
             self.close()
             raise
 
-        self.when_activated = self.on
-        self.when_deactivated = self.off
+        self.when_activated = self.log_when_activated
+        self.when_deactivated = self.log_when_deactivated
 
     @property
     def value(self):
@@ -45,12 +45,12 @@ class VIB801S(SmoothedInputDevice):
         # TODO: add task to app
         print(f"{state}: {cur_time}")
 
-    def on(self):
+    def log_when_activated(self):
         cur_time = dt.datetime.utcnow()
         state_name = "on"
         self.add_task(state_name, cur_time)
 
-    def off(self):
+    def log_when_deactivated(self):
         cur_time = dt.datetime.utcnow()
         state_name = "off"
         self.add_task(state_name, cur_time)
