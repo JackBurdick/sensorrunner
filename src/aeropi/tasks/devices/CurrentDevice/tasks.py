@@ -4,10 +4,12 @@ from datetime import datetime
 import celery
 
 import aeropi
-from aeropi.celery_app import app
+from aeropi.celery_app import setup_app
 from aeropi.user_config import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
 from aeropi.sa import CurrentDevice, SESSION_CurrentDevice
+
+app = setup_app()
 
 importlib.reload(aeropi)
 

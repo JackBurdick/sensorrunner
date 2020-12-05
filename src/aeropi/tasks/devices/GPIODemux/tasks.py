@@ -3,7 +3,7 @@ import importlib
 import aeropi
 
 importlib.reload(aeropi)
-from aeropi.celery_app import app
+from aeropi.celery_app import setup_app
 from aeropi.sa import SWITCHLOW, SESSION_SWITCHLOW
 import datetime as dt
 import time
@@ -11,6 +11,7 @@ from aeropi.user_config import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
 
 GPIODEMUX = None
+app = setup_app()
 
 
 @app.task(bind=True, queue="q_demux_log")

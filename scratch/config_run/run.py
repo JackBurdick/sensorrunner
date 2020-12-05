@@ -3,7 +3,7 @@ from redbeat import RedBeatSchedulerEntry as Entry
 
 import time
 import crummycm as ccm
-from aeropi.celery_app import app
+from aeropi.celery_app import setup_app
 from aeropi.config.template import TEMPLATE
 from aeropi.run.run import build_devices_from_config, build_task_params_from_config
 from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
@@ -22,7 +22,7 @@ def create_task_entries(task_params):
                         run_every=comp_task_spec["run_every"]
                     ),
                     kwargs=comp_task_spec["kwargs"],
-                    app=app,
+                    app=setup_app(),
                 )
                 entries[name] = entry
     return entries

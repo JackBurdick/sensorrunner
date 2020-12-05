@@ -3,7 +3,7 @@ import importlib
 import aeropi
 
 importlib.reload(aeropi)
-from aeropi.celery_app import app
+from aeropi.celery_app import setup_app
 from aeropi.sa import (
     VL53l0X,
     SI7021,
@@ -17,6 +17,7 @@ from aeropi.user_config import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
 
 IICMUX = None
+app = setup_app()
 
 
 @app.task(bind=True, queue="q_dists_log")

@@ -4,7 +4,7 @@ from datetime import datetime
 import celery
 
 import aeropi
-from aeropi.celery_app import app
+from aeropi.celery_app import setup_app
 from aeropi.user_config import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
 from aeropi.sa import PT19, SESSION_PT19
@@ -12,6 +12,7 @@ from aeropi.sa import PT19, SESSION_PT19
 importlib.reload(aeropi)
 
 MDC3800_Dev = None
+app = setup_app()
 
 
 @app.task(bind=True, queue="q_mdc3800_log")
