@@ -10,6 +10,7 @@ Event:
     params:
       init:
         pin: 22
+      events:
         when_activated: "log_when_activated"
         when_deactivated: "log_when_deactivated"
 # I2CMux:

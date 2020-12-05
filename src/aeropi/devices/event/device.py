@@ -24,19 +24,12 @@ class Event:
             except KeyError:
                 params = None
 
-            # initialize device with user params
-            if params:
-                init_params = params["init"]
-            else:
-                init_params = {}
-            cur_device = cur_dev_class(**init_params)
-
             # set event functions
             devices[name]["events"] = {}
             available_fns = [
                 f
-                for f in dir(cur_device)
-                if callable(getattr(cur_device, f)) and not f.startswith("_")
+                for f in dir(cur_dev_class)
+                if callable(getattr(cur_dev_class, f)) and not f.startswith("_")
             ]
             for event_name in self.ALLOWED_EVENTS:
                 try:
@@ -50,7 +43,16 @@ class Event:
                         )
                     except KeyError:
                         raise ValueError(
-                            f"specified fn ({fn_name}) for {name} not available for {cur_device}.\n"
+                            f"specified fn ({fn_name}) for {name} not available for {cur_dev_class}.\n"
                             f"please select from {available_fns}"
                         )
+            # initialize device with user params
+            if params:
+                init_params = params["init"]
+            else:
+                init_params = {}
+            cur_params = {**init_params, **devices[name]["events"]}
+            cur_device = cur_dev_class(**cur_params)
+            devices[name]["device"] = cur_device
+
         self.devices = devices

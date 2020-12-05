@@ -17,6 +17,8 @@ class VIB801S(SmoothedInputDevice):
         threshold=0.5,
         partial=False,
         pin_factory=None,
+        when_activated=None,
+        when_deactivated=None,
     ):
         super(VIB801S, self).__init__(
             pin,
@@ -34,8 +36,11 @@ class VIB801S(SmoothedInputDevice):
             self.close()
             raise
 
-        self.when_activated = self.log_when_activated
-        self.when_deactivated = self.log_when_deactivated
+        if when_activated:
+            self.when_activated = when_activated
+
+        if when_deactivated:
+            self.when_deactivated = when_deactivated
 
     @property
     def value(self):

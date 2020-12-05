@@ -69,6 +69,11 @@ TEMPLATE = {
                         bounds=(0, 27),
                         bounds_inclusive=(True, True),
                     ),
+                    KPH("init_param_name", multi=True, required=False): VPH(
+                        "init_param_value"
+                    ),
+                },
+                "events": {
                     "when_activated": Text(required=False),
                     "when_deactivated": Text(required=False),
                 },
