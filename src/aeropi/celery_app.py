@@ -55,7 +55,11 @@ def on_preload_parsed(options, **kwargs):
         USER_CONFIG = ccm.generate(confg_file_path, TEMPLATE)
     except Exception as e:
         sys.exit("user config generation invalid: {e}")
-    setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf)
+
+    try:
+        setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf)
+    except Exception as e:
+        sys.exit("unable to set up app: {e}")
 
 
 def _obtain_relevant_task_dirs(out, device_dir):
