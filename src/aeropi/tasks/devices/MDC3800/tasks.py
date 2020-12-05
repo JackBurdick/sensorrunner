@@ -4,7 +4,8 @@ from datetime import datetime
 import celery
 
 import aeropi
-from aeropi.celery_app import USER_CONFIG, app
+from aeropi.celery_app import app
+from aeropi.user_config import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
 from aeropi.sa import PT19, SESSION_PT19
 

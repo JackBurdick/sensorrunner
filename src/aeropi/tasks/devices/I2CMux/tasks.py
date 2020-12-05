@@ -13,7 +13,7 @@ from aeropi.sa import (
     SESSION_VEML6070,
 )
 from datetime import datetime
-from aeropi.celery_app import USER_CONFIG
+from aeropi.user_config import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
 
 IICMUX = None

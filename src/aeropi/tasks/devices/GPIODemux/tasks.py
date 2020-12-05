@@ -7,7 +7,7 @@ from aeropi.celery_app import app
 from aeropi.sa import SWITCHLOW, SESSION_SWITCHLOW
 import datetime as dt
 import time
-from aeropi.celery_app import USER_CONFIG
+from aeropi.user_config import USER_CONFIG
 from aeropi.run.run import build_devices_from_config
 
 GPIODEMUX = None

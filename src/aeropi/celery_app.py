@@ -12,6 +12,8 @@ import aeropi
 import crummycm as ccm
 from aeropi import celeryconf
 from aeropi.config.template import TEMPLATE
+from aeropi.secrets import REDIS_GLOBAL_host, REDIS_GLOBAL_port, REDIS_GLOBAL_db
+import redis
 
 importlib.reload(aeropi)
 
@@ -54,8 +56,19 @@ def on_preload_parsed(options, **kwargs):
         sys.exit(
             f"--device_config (-Z) is not a valid file {confg_file_path}, maybe try absolute location"
         )
+
     try:
-        user_config = ccm.generate(confg_file_path, TEMPLATE)
+        r = redis.Redis(
+            host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=REDIS_GLOBAL_db
+        )
+    except Exception as e:
+        sys.exit("unable to configure global redis based on secrets")
+
+    r.set("USER_CONFIG_LOCATION", confg_file_path)
+
+    try:
+        user_config_location = r.get("USER_CONFIG_LOCATION")
+        user_config = ccm.generate(user_config_location, TEMPLATE)
         USER_CONFIG = user_config
         if not user_config:
             sys.exit("user_config is empty")
