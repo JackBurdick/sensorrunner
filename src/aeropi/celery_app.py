@@ -27,19 +27,15 @@ DEV_TASK_DIR = "/".join(o)
 app = celery.Celery("celery_run")
 
 
-app.user_options["worker"].add(
-    Option("--username", dest="api_username", default=None, help="API username.")
-)
+app.user_options["worker"].add(Option("--username", default=None, help="API username."))
 
-app.user_options["worker"].add(
-    Option("--password", dest="api_password", default=None, help="API password.")
-)
+app.user_options["worker"].add(Option("--password", default=None, help="API password."))
 
 
 class CustomArgs(bootsteps.Step):
-    def __init__(self, worker, api_username, api_password, **options):
+    def __init__(self, worker, username, password, **options):
         # store the api authentication
-        print(api_username, api_password)
+        print(username, password)
 
 
 app.steps["worker"].add(CustomArgs)
