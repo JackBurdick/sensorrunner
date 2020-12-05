@@ -3,21 +3,19 @@ import os
 from pathlib import Path
 
 import celery
+from celery import signals
+from click import Option
 from kombu import Queue
 
 import aeropi
 import crummycm as ccm
-import importlib
-from celery import bootsteps
-from click import Option
-from celery import signals
-
-importlib.reload(aeropi)
 from aeropi import celeryconf
 from aeropi.config.template import TEMPLATE
-from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
+
+importlib.reload(aeropi)
 
 # from aeropi.run.run import build_devices_from_config
+# from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
 
 path = os.path.abspath(aeropi.__file__)
 o = path.split("/")[:-1]
@@ -29,40 +27,28 @@ app = celery.Celery("celery_run")
 
 
 app.user_options["preload"].add(
-    Option(("-Z", "--username"), default=None, help="API username.")
+    Option(
+        ("-Z", "--device_config"), default=None, help="location of device configuration"
+    )
 )
-
-
-# @signals.user_preload_options.connect
-# def on_preload_parsed(options, **kwargs):
-#     print(options)
-
-the_thing = None
-
-
-# class CustomArgs(bootsteps.Step):
-#     def __init__(self, worker, username, **options):
-#         global the_thing
-#         # store the api authentication
-#         print(username)
-#         the_thing = username
 
 
 @signals.user_preload_options.connect
 def on_preload_parsed(options, **kwargs):
-    global the_thing
-    print(f"Hi: {options}")
-    the_thing = options["username"]
+    the_thing = options["device_config"]
+    if not the_thing:
+        raise ValueError(f"must pass location of device config")
+    USER_CONFIG = ccm.generate(the_thing, TEMPLATE)
+    setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf)
+    print(f"app setup: {options}")
 
-
-# app.steps["worker"].add(CustomArgs)
 
 # obtain parse config
-try:
-    out = ccm.generate(L_CONFIG_DIR, TEMPLATE)
-except FileNotFoundError:
-    out = ccm.generate(P_CONFIG_DIR, TEMPLATE)
-USER_CONFIG = out
+# try:
+#     out = ccm.generate(L_CONFIG_DIR, TEMPLATE)
+# except FileNotFoundError:
+#     out = ccm.generate(P_CONFIG_DIR, TEMPLATE)
+# USER_CONFIG = out
 
 
 def _obtain_relevant_task_dirs(out, device_dir):
@@ -91,9 +77,6 @@ def _return_task_modules(out, device_dir):
     return m_names
 
 
-m_names = _return_task_modules(USER_CONFIG, DEV_TASK_DIR)
-
-
 def _return_queues(m_names):
     used_queues = []
     for m_name in m_names:
@@ -114,23 +97,25 @@ def _return_queues(m_names):
     return used_queues
 
 
-used_queues = _return_queues(m_names)
-queues = [Queue(q) for q in used_queues]
+def setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf):
+    # Create relevant queues
+    m_names = _return_task_modules(USER_CONFIG, DEV_TASK_DIR)
+    used_queues = _return_queues(m_names)
+    queues = [Queue(q) for q in used_queues]
 
-# set Queues
-tmp = list(celeryconf.task_queues)
-tmp.extend(queues)
-celeryconf.task_queues = tuple(tmp)
-# attempt to force when adding new queues
+    # Set Queues
+    tmp = list(celeryconf.task_queues)
+    tmp.extend(queues)
+    celeryconf.task_queues = tuple(tmp)
 
-app.config_from_object(celeryconf)
+    # attempt to force when adding new queues
+    app.config_from_object(celeryconf)
+    app.autodiscover_tasks(m_names, force=True)
 
-
-app.autodiscover_tasks(m_names, force=True)
 
 # aeropi/scratch/config_run/configs/basic_i2c.yml
 # possibly helpful later:
 # https://gist.github.com/chenjianjx/53d8c2317f6023dc2fa0
 
 # DEVICES = build_devices_from_config(USER_CONFIG)
-print(f"OK: {the_thing}")
+# print(f"OK: {the_thing}")
