@@ -16,7 +16,7 @@ EVENT_DEVICES = ["VIB801S"]
 
 TEMPLATE = {
     # TODO: include task information
-    "CurrentDevice": {
+    KPH("CurrentDevice", exact=True, required=False): {
         KPH("name"): {
             "device_type": Text(required=True, is_in_list=["current_device"]),
             "params": {
