@@ -118,7 +118,11 @@ def _return_queues(m_names):
 def setup_app():
     r = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=REDIS_GLOBAL_db)
     config_location = r.get("USER_CONFIG_LOCATION").decode("utf-8")
+    if not config_location:
+        sys.exit(f"config_location not found in database")
     user_config = ccm.generate(config_location, TEMPLATE)
+    if not user_config:
+        sys.exit(f"user_config empty")
 
     # Create relevant queues
     m_names = _return_task_modules(user_config, DEV_TASK_DIR)
