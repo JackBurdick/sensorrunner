@@ -10,6 +10,7 @@ import crummycm as ccm
 import importlib
 from celery import bootsteps
 from click import Option
+from celery import signals
 
 importlib.reload(aeropi)
 from aeropi import celeryconf
@@ -27,15 +28,20 @@ DEV_TASK_DIR = "/".join(o)
 app = celery.Celery("celery_run")
 
 
-app.user_options["worker"].add(Option("--username", default=None, help="API username."))
+app.user_options["worker"].add(
+    Option(("-Z", "--username"), default=None, help="API username.")
+)
 
-app.user_options["worker"].add(Option("--password", default=None, help="API password."))
+
+@signals.user_preload_options.connect
+def on_preload_parsed(options, **kwargs):
+    print(options)
 
 
 class CustomArgs(bootsteps.Step):
-    def __init__(self, worker, username, password, **options):
+    def __init__(self, worker, username, **options):
         # store the api authentication
-        print(username, password)
+        print(username)
 
 
 app.steps["worker"].add(CustomArgs)
