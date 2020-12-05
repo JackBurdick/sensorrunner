@@ -37,13 +37,18 @@ app.user_options["worker"].add(
 # def on_preload_parsed(options, **kwargs):
 #     print(options)
 
+the_thing = None
+
 
 class CustomArgs(bootsteps.Step):
     def __init__(self, worker, username, **options):
+        global the_thing
         # store the api authentication
         print(username)
+        the_thing = username
 
 
+print(f"OK: {the_thing}")
 app.steps["worker"].add(CustomArgs)
 
 # obtain parse config
