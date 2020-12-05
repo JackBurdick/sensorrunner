@@ -32,9 +32,12 @@ app.user_options["preload"].add(
     )
 )
 
+USER_CONFIG = None
+
 
 @signals.user_preload_options.connect
 def on_preload_parsed(options, **kwargs):
+    global USER_CONFIG
     if not options:
         sys.exit("no options exist, but --device_config (-Z) is required")
     try:
@@ -52,12 +55,15 @@ def on_preload_parsed(options, **kwargs):
             f"--device_config (-Z) is not a valid file {confg_file_path}, maybe try absolute location"
         )
     try:
-        USER_CONFIG = ccm.generate(confg_file_path, TEMPLATE)
+        user_config = ccm.generate(confg_file_path, TEMPLATE)
+        USER_CONFIG = user_config
+        if not user_config:
+            sys.exit("user_config is empty")
     except Exception as e:
         sys.exit(f"user config generation invalid: {e}")
 
     try:
-        setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf)
+        setup_app(user_config, DEV_TASK_DIR, celeryconf)
     except Exception as e:
         sys.exit(f"unable to set up app: {e}")
 
@@ -108,9 +114,9 @@ def _return_queues(m_names):
     return used_queues
 
 
-def setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf):
+def setup_app(user_config, DEV_TASK_DIR, celeryconf):
     # Create relevant queues
-    m_names = _return_task_modules(USER_CONFIG, DEV_TASK_DIR)
+    m_names = _return_task_modules(user_config, DEV_TASK_DIR)
     used_queues = _return_queues(m_names)
     queues = [Queue(q) for q in used_queues]
 
