@@ -26,7 +26,7 @@ DEV_TASK_DIR = "/".join(o)
 
 
 app = celery.Celery("celery_run")
-app.config_from_object(celeryconf)
+# app.config_from_object(celeryconf)
 
 app.user_options["preload"].add(
     Option(
@@ -34,12 +34,9 @@ app.user_options["preload"].add(
     )
 )
 
-USER_CONFIG = None
-
 
 @signals.user_preload_options.connect
 def on_preload_parsed(options, **kwargs):
-    global USER_CONFIG
     if not options:
         sys.exit("no options exist, but --device_config (-Z) is required")
     try:
@@ -65,20 +62,6 @@ def on_preload_parsed(options, **kwargs):
         sys.exit("unable to configure global redis based on secrets")
 
     r.set("USER_CONFIG_LOCATION", confg_file_path)
-
-    try:
-        user_config_location = r.get("USER_CONFIG_LOCATION")
-        user_config = ccm.generate(user_config_location, TEMPLATE)
-        USER_CONFIG = user_config
-        if not user_config:
-            sys.exit("user_config is empty")
-    except Exception as e:
-        sys.exit(f"user config generation invalid: {e}")
-
-    try:
-        setup_app(user_config, DEV_TASK_DIR, celeryconf)
-    except Exception as e:
-        sys.exit(f"unable to set up app: {e}")
 
 
 def _obtain_relevant_task_dirs(out, device_dir):
@@ -141,6 +124,12 @@ def setup_app(user_config, DEV_TASK_DIR, celeryconf):
 
     # attempt to force when adding new queues
     app.autodiscover_tasks(m_names, force=True)
+
+
+r = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=REDIS_GLOBAL_db)
+user_config_location = r.get("USER_CONFIG_LOCATION")
+user_config = ccm.generate(user_config_location, TEMPLATE)
+app = setup_app(user_config, DEV_TASK_DIR, celeryconf)
 
 
 # aeropi/scratch/config_run/configs/basic_i2c.yml
