@@ -33,9 +33,9 @@ app.user_options["worker"].add(
 )
 
 
-@signals.user_preload_options.connect
-def on_preload_parsed(options, **kwargs):
-    print(options)
+# @signals.user_preload_options.connect
+# def on_preload_parsed(options, **kwargs):
+#     print(options)
 
 
 class CustomArgs(bootsteps.Step):
