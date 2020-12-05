@@ -12,7 +12,7 @@ from aeropi.devices.SPI.ADC.device import MDC3800
 I2CMux_DEVICES = ["vl53l0x", "si7021", "veml6070"]
 GPIODemux_DEVICES = ["switch_low"]
 MDC3800_DEVICES = ["pt19"]
-EVENT_DEVICES = ["VIB801S"]
+EVENT_DEVICES = ["vib801s"]
 
 TEMPLATE = {
     # TODO: include task information
