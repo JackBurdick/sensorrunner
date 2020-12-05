@@ -63,6 +63,7 @@ def on_preload_parsed(options, **kwargs):
 
     r.set("USER_CONFIG_LOCATION", confg_file_path)
     _ = setup_app()
+    print("app set up")
 
 
 def _obtain_relevant_task_dirs(out, device_dir):
@@ -94,41 +95,59 @@ def _return_task_modules(out, device_dir):
 def _return_queues(m_names):
     used_queues = []
     for m_name in m_names:
-        cur_mod = importlib.import_module(f"{m_name}.tasks")
+        print(f"m_name: {m_name}")
+        try:
+            cur_mod = importlib.import_module(f"{m_name}.tasks")
+        except ModuleNotFoundError as e:
+            sys.exit(f"module {m_name} not found: {e}")
+        print('imported')
         cur_tasks = [
             getattr(cur_mod, o)
             for o in dir(cur_mod)
             if type(getattr(cur_mod, o)).__name__ == "PromiseProxy"
         ]
-        for t in cur_tasks:
-            try:
-                q = t.queue
-            except KeyError:
-                q = None
-            if q:
-                if q not in used_queues:
-                    used_queues.append(q)
+        print(f"cur_tasks: {cur_tasks}")
+        if cur_tasks:
+            for t in cur_tasks:
+                try:
+                    q = t.queue
+                except KeyError:
+                    q = None
+                if q:
+                    if q not in used_queues:
+                        used_queues.append(q)
     return used_queues
 
 
 def setup_app():
+    print('here')
     r = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=REDIS_GLOBAL_db)
+    print(r)
     user_config_location = r.get("USER_CONFIG_LOCATION")
-    user_config = ccm.generate(user_config_location, TEMPLATE)
+    print(f'user_config_location:{user_config_location}')
+    user_config = ccm.generate(user_config_location.decode('utf-8'), TEMPLATE)
+    print(user_config)
     # Create relevant queues
     m_names = _return_task_modules(user_config, DEV_TASK_DIR)
+    print(m_names)
     used_queues = _return_queues(m_names)
+    print('-----'*8)
     queues = [Queue(q) for q in used_queues]
+    print(queues)
+    print('******'*8)
 
     # Set Queues
     tmp = list(celeryconf.task_queues)
     tmp.extend(queues)
     celeryconf.task_queues = tuple(tmp)
     app.config_from_object(celeryconf)
+    print('conf_from_object')
 
     # attempt to force when adding new queues
     app.autodiscover_tasks(m_names, force=True)
-
+    print(m_names)
+    print('done setup')
+    return app
 
 # aeropi/scratch/config_run/configs/basic_i2c.yml
 # possibly helpful later:
