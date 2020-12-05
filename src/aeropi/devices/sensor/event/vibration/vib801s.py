@@ -37,10 +37,10 @@ class VIB801S(SmoothedInputDevice):
             raise
 
         if when_activated:
-            self.when_activated = when_activated
+            self.when_activated = getattr(self, when_activated)
 
         if when_deactivated:
-            self.when_deactivated = when_deactivated
+            self.when_deactivated = getattr(self, when_deactivated)
 
     @property
     def value(self):

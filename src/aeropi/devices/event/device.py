@@ -33,19 +33,16 @@ class Event:
             ]
             for event_name in self.ALLOWED_EVENTS:
                 try:
-                    fn_name = dd[event_name]
+                    fn_name = params["events"][event_name]
                 except KeyError:
                     fn_name = None
                 if fn_name is not None:
-                    try:
-                        devices[name]["events"][event_name] = getattr(
-                            devices[name]["device_type"], fn_name
-                        )
-                    except KeyError:
+                    if fn_name not in available_fns:
                         raise ValueError(
                             f"specified fn ({fn_name}) for {name} not available for {cur_dev_class}.\n"
                             f"please select from {available_fns}"
                         )
+                    devices[name]["events"][event_name] = fn_name
             # initialize device with user params
             if params:
                 init_params = params["init"]
