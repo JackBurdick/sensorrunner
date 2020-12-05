@@ -49,7 +49,7 @@ class Event:
             else:
                 init_params = {}
             cur_params = {**init_params, **devices[name]["events"]}
-            cur_device = cur_dev_class(**cur_params)
+            cur_device = cur_dev_class(name, **cur_params)
             devices[name]["device"] = cur_device
 
         self.devices = devices

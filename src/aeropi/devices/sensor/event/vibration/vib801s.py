@@ -9,6 +9,7 @@ class VIB801S(SmoothedInputDevice):
 
     def __init__(
         self,
+        name,
         pin=None,
         pull_up=False,
         active_state=None,
@@ -36,6 +37,12 @@ class VIB801S(SmoothedInputDevice):
             self.close()
             raise
 
+        if not isinstance(name, str):
+            raise ValueError(
+                f"name ({name}) expected to be type {str}, not {type(name)}"
+            )
+        self.name = name
+
         if when_activated:
             self.when_activated = getattr(self, when_activated)
 
@@ -48,7 +55,7 @@ class VIB801S(SmoothedInputDevice):
 
     def add_task(self, state, cur_time):
         # TODO: add task to app
-        print(f"{state}: {cur_time}")
+        print(f"{self.name} - {state}: {cur_time}")
 
     def log_when_activated(self):
         cur_time = dt.datetime.utcnow()
