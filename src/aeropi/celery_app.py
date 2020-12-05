@@ -48,7 +48,6 @@ class CustomArgs(bootsteps.Step):
         the_thing = username
 
 
-print(f"OK: {the_thing}")
 app.steps["worker"].add(CustomArgs)
 
 # obtain parse config
@@ -127,3 +126,4 @@ app.autodiscover_tasks(m_names, force=True)
 # https://gist.github.com/chenjianjx/53d8c2317f6023dc2fa0
 
 # DEVICES = build_devices_from_config(USER_CONFIG)
+print(f"OK: {the_thing}")
