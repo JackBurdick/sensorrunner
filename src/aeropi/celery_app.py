@@ -28,7 +28,7 @@ DEV_TASK_DIR = "/".join(o)
 app = celery.Celery("celery_run")
 
 
-app.user_options["worker"].add(
+app.user_options["preload"].add(
     Option(("-Z", "--username"), default=None, help="API username.")
 )
 
@@ -40,15 +40,22 @@ app.user_options["worker"].add(
 the_thing = None
 
 
-class CustomArgs(bootsteps.Step):
-    def __init__(self, worker, username, **options):
-        global the_thing
-        # store the api authentication
-        print(username)
-        the_thing = username
+# class CustomArgs(bootsteps.Step):
+#     def __init__(self, worker, username, **options):
+#         global the_thing
+#         # store the api authentication
+#         print(username)
+#         the_thing = username
 
 
-app.steps["worker"].add(CustomArgs)
+@signals.user_preload_options.connect
+def on_preload_parsed(options, **kwargs):
+    global the_thing
+    print(f"Hi: {options}")
+    the_thing = options["username"]
+
+
+# app.steps["worker"].add(CustomArgs)
 
 # obtain parse config
 try:
