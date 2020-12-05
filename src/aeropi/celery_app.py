@@ -8,6 +8,7 @@ from kombu import Queue
 import aeropi
 import crummycm as ccm
 import importlib
+from celery import bootsteps
 
 importlib.reload(aeropi)
 from aeropi import celeryconf
@@ -23,6 +24,30 @@ DEV_TASK_DIR = "/".join(o)
 
 
 app = celery.Celery("celery_run")
+
+
+def add_worker_arguments(parser):
+    parser.add_argument(
+        "--enable-my-option",
+        action="store_true",
+        default=False,
+        help="Enable custom option.",
+    ),
+
+
+app.user_options["worker"].add(add_worker_arguments)
+
+
+class MyBootstep(bootsteps.Step):
+    def __init__(self, parent, enable_my_option=False, **options):
+        super().__init__(parent, **options)
+        if enable_my_option:
+            print(f"hi thered {enable_my_option}")
+        else:
+            print(f"not so much: {enable_my_option}")
+
+
+app.steps["worker"].add(MyBootstep)
 
 # obtain parse config
 try:
