@@ -51,7 +51,10 @@ def on_preload_parsed(options, **kwargs):
         sys.exit(
             f"--device_config (-Z) is not a valid file {confg_file_path}, maybe try absolute location"
         )
-    USER_CONFIG = ccm.generate(confg_file_path, TEMPLATE)
+    try:
+        USER_CONFIG = ccm.generate(confg_file_path, TEMPLATE)
+    except Exception as e:
+        sys.exit("user config generation invalid: {e}")
     setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf)
 
 
