@@ -4,15 +4,15 @@
 #     params:
 #       schedule:
 #         frequency: 4
-Event:
-  vib_sensor:
-    device_type: "vib801s"
-    params:
-      init:
-        pin: 22
-      events:
-        when_activated: "log_when_activated"
-        when_deactivated: "log_when_deactivated"
+# Event:
+#   vib_sensor:
+#     device_type: "vib801s"
+#     params:
+#       init:
+#         pin: 22
+#       events:
+#         when_activated: "log_when_activated"
+#         when_deactivated: "log_when_deactivated"
 # I2CMux:
 #   uv_a:
 #     device_type: "veml6070"
@@ -69,40 +69,39 @@ Event:
 #       schedule:
 #         frequency: 3
 
-# GPIODemux:
-#   demux_a:
-#     init:
-#       gpio_pins_ordered: [25, 23, 24, 17]
-#       pwr_pin: 27
-#     devices:
-#       a:
-#         index: 0
-#         device_type: "switch_low"
-#         params:
-#           run:
-#             on_duration: 0.4
-#             unit: "seconds"
-#           schedule:
-#             frequency: 2
-#       b:
-#         index: 1
-#         device_type: "switch_low"
-#         params:
-#           run:
-#             on_duration: 0.3
-#             unit: "seconds"
-#           schedule:
-#             frequency: 3
-#       c:
-#         index: 2
-#         device_type: "switch_low"
-#         params:
-#           run:
-#             on_duration: 0.1
-#             unit: "seconds"
-#           schedule:
-#             frequency: 1
-
+GPIODemux:
+  demux_a:
+    init:
+      gpio_pins_ordered: [25, 23, 24, 17]
+      pwr_pin: 27
+    devices:
+      a:
+        index: 0
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 0.4
+            unit: "seconds"
+          schedule:
+            frequency: 2
+      b:
+        index: 1
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 0.3
+            unit: "seconds"
+          schedule:
+            frequency: 3
+      c:
+        index: 2
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 0.1
+            unit: "seconds"
+          schedule:
+            frequency: 1
 # MDC3800:
 #   light_a:
 #     device_type: "pt19"

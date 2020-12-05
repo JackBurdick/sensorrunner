@@ -16,7 +16,6 @@ from aeropi.config.template import TEMPLATE
 importlib.reload(aeropi)
 
 # from aeropi.run.run import build_devices_from_config
-# from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
 
 path = os.path.abspath(aeropi.__file__)
 o = path.split("/")[:-1]
@@ -36,35 +35,24 @@ app.user_options["preload"].add(
 
 @signals.user_preload_options.connect
 def on_preload_parsed(options, **kwargs):
-    print(options)
     if not options:
-        sys.exit("no options")
-        # raise ValueError(f"no options")
+        sys.exit("no options exist, but --device_config (-Z) is required")
     try:
-        the_thing = options["device_config"]
+        confg_file_path = options["device_config"]
     except KeyError:
-        sys.exit("no device config passed")
-    print(the_thing)
-    if the_thing is None:
-        sys.exit(f"must pass location of device config")
-    if not isinstance(the_thing, str):
+        sys.exit("--device_config (-Z) was not included passed")
+    if confg_file_path is None:
+        sys.exit("--device_config (-Z) is set to None, but is expected to be a path")
+    if not isinstance(confg_file_path, str):
         sys.exit(
-            f"device config ({the_thing}) expected to be {str} not {type(the_thing)}"
+            f"--device_config (-Z) ({confg_file_path}) expected to be {str} not {type(confg_file_path)}"
         )
-
-    if not Path(the_thing).is_file():
-        sys.exit(f"passed device config is not a file {the_thing}")
-    USER_CONFIG = ccm.generate(the_thing, TEMPLATE)
+    if not Path(confg_file_path).is_file():
+        sys.exit(
+            f"--device_config (-Z) is not a valid file {confg_file_path}, maybe try absolute location"
+        )
+    USER_CONFIG = ccm.generate(confg_file_path, TEMPLATE)
     setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf)
-    print(f"app setup: {options}")
-
-
-# obtain parse config
-# try:
-#     out = ccm.generate(L_CONFIG_DIR, TEMPLATE)
-# except FileNotFoundError:
-#     out = ccm.generate(P_CONFIG_DIR, TEMPLATE)
-# USER_CONFIG = out
 
 
 def _obtain_relevant_task_dirs(out, device_dir):
@@ -132,6 +120,3 @@ def setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf):
 # aeropi/scratch/config_run/configs/basic_i2c.yml
 # possibly helpful later:
 # https://gist.github.com/chenjianjx/53d8c2317f6023dc2fa0
-
-# DEVICES = build_devices_from_config(USER_CONFIG)
-# print(f"OK: {the_thing}")
