@@ -1,5 +1,6 @@
 import importlib
 import os
+import sys
 from pathlib import Path
 
 import celery
@@ -35,20 +36,24 @@ app.user_options["preload"].add(
 
 @signals.user_preload_options.connect
 def on_preload_parsed(options, **kwargs):
+    print(options)
     if not options:
-        raise ValueError(f"no options")
+        sys.exit("no options")
+        # raise ValueError(f"no options")
     try:
         the_thing = options["device_config"]
     except KeyError:
-        raise ValueError("no device config passed")
+        sys.exit("no device config passed")
+    print(the_thing)
     if the_thing is None:
-        raise ValueError(f"must pass location of device config")
+        sys.exit(f"must pass location of device config")
     if not isinstance(the_thing, str):
-        raise ValueError(
+        sys.exit(
             f"device config ({the_thing}) expected to be {str} not {type(the_thing)}"
         )
+
     if not Path(the_thing).is_file():
-        raise ValueError(f"passed device config is not a file {the_thing}")
+        sys.exit(f"passed device config is not a file {the_thing}")
     USER_CONFIG = ccm.generate(the_thing, TEMPLATE)
     setup_app(USER_CONFIG, DEV_TASK_DIR, celeryconf)
     print(f"app setup: {options}")
