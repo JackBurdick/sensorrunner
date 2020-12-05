@@ -9,6 +9,7 @@ import aeropi
 import crummycm as ccm
 import importlib
 from celery import bootsteps
+from click import Option
 
 importlib.reload(aeropi)
 from aeropi import celeryconf
@@ -26,28 +27,22 @@ DEV_TASK_DIR = "/".join(o)
 app = celery.Celery("celery_run")
 
 
-def add_worker_arguments(parser):
-    parser.add_argument(
-        "--enable-my-option",
-        action="store_true",
-        default=False,
-        help="Enable custom option.",
-    ),
+app.user_options["worker"].add(
+    Option("--username", dest="api_username", default=None, help="API username.")
+)
+
+app.user_options["worker"].add(
+    Option("--password", dest="api_password", default=None, help="API password.")
+)
 
 
-app.user_options["worker"].add(add_worker_arguments)
+class CustomArgs(bootsteps.Step):
+    def __init__(self, worker, api_username, api_password, **options):
+        # store the api authentication
+        print(api_username, api_password)
 
 
-class MyBootstep(bootsteps.Step):
-    def __init__(self, parent, enable_my_option=False, **options):
-        super().__init__(parent, **options)
-        if enable_my_option:
-            print(f"hi thered {enable_my_option}")
-        else:
-            print(f"not so much: {enable_my_option}")
-
-
-app.steps["worker"].add(MyBootstep)
+app.steps["worker"].add(CustomArgs)
 
 # obtain parse config
 try:
