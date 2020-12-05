@@ -26,7 +26,7 @@ DEV_TASK_DIR = "/".join(o)
 
 
 app = celery.Celery("celery_run")
-# app.config_from_object(celeryconf)
+app.config_from_object(celeryconf)
 
 app.user_options["preload"].add(
     Option(
@@ -133,7 +133,6 @@ def setup_app():
     tmp = list(celeryconf.task_queues)
     tmp.extend(queues)
     celeryconf.task_queues = tuple(tmp)
-    app.config_from_object(celeryconf)
 
     # attempt to force when adding new queues
     app.autodiscover_tasks(m_names, force=True)
