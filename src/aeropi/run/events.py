@@ -1,9 +1,7 @@
-import crummycm as ccm
 import signal
 
-from aeropi.config.template import TEMPLATE
 from aeropi.devices.event.device import Event
-from aeropi.secrets import L_CONFIG_DIR, P_CONFIG_DIR
+from aeropi.user_config import USER_CONFIG
 
 
 def build_events_from_config(config):
@@ -20,11 +18,7 @@ def build_events_from_config(config):
 
 if __name__ == "__main__":
     # obtain parse config
-    try:
-        out = ccm.generate(L_CONFIG_DIR, TEMPLATE)
-    except FileNotFoundError:
-        out = ccm.generate(P_CONFIG_DIR, TEMPLATE)
-    events = build_events_from_config(out)
+    events = build_events_from_config(USER_CONFIG)
 
     print(events)
 

@@ -1,5 +1,7 @@
 from gpiozero import SmoothedInputDevice
 import datetime as dt
+from aeropi.sa import VIB801S_Row
+from aeropi.tasks.devices.Event.tasks import event_entry
 
 
 class VIB801S(SmoothedInputDevice):
@@ -35,7 +37,6 @@ class VIB801S(SmoothedInputDevice):
             self._queue.start()
         except:
             self.close()
-            raise
 
         if not isinstance(name, str):
             raise ValueError(
@@ -55,7 +56,8 @@ class VIB801S(SmoothedInputDevice):
 
     def add_task(self, state, cur_time):
         # TODO: add task to app
-        print(f"{self.name} - {state}: {cur_time}")
+        cur_row = VIB801S_Row(name=self.name, state=state, measurement_time=cur_time)
+        event_entry.delay(cur_row)
 
     def log_when_activated(self):
         cur_time = dt.datetime.utcnow()
