@@ -125,7 +125,21 @@ def return_worker_info():
         sys.exit("user_config is empty")
     m_names = _return_task_modules(user_config, DEV_TASK_DIR)
     used_queues = _return_queues(m_names)
-    return used_queues
+
+    # NOTE: `collect` is a 'magic queue' that is, it is special compared to all
+    # other queues.
+    # TODO: this logic should be generalized a bit more in the future
+    MAGIC_QUEUES = {"collect": "-Q:main 'collect'"}
+    workers, worker_args = [], []
+    for qname in used_queues:
+        worker_name = f"{qname}_worker"
+        if qname not in MAGIC_QUEUES:
+            worker_arg = f"-Q:{worker_name} '{qname}' -c:{qname} 1"
+        else:
+            worker_arg = MAGIC_QUEUES[qname]
+        workers.append(worker_name)
+        worker_args.append(worker_arg)
+    return (workers, worker_args)
 
 
 def setup_app():
