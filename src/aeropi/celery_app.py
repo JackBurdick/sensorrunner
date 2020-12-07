@@ -40,18 +40,18 @@ def on_preload_parsed(options, **kwargs):
     if not options:
         sys.exit("no options exist, but --device_config (-Z) is required")
     try:
-        confg_file_path = options["device_config"]
+        config_file_path = options["device_config"]
     except KeyError:
         sys.exit("--device_config (-Z) was not included passed")
-    if confg_file_path is None:
+    if config_file_path is None:
         sys.exit("--device_config (-Z) is set to None, but is expected to be a path")
-    if not isinstance(confg_file_path, str):
+    if not isinstance(config_file_path, str):
         sys.exit(
-            f"--device_config (-Z) ({confg_file_path}) expected to be {str} not {type(confg_file_path)}"
+            f"--device_config (-Z) ({config_file_path}) expected to be {str} not {type(config_file_path)}"
         )
-    if not Path(confg_file_path).is_file():
+    if not Path(config_file_path).is_file():
         sys.exit(
-            f"--device_config (-Z) is not a valid file {confg_file_path}, maybe try absolute location"
+            f"--device_config (-Z) is not a valid file {config_file_path}, maybe try absolute location"
         )
 
     try:
@@ -61,7 +61,7 @@ def on_preload_parsed(options, **kwargs):
     except Exception as e:
         sys.exit("unable to configure global redis based on secrets")
 
-    r.set("USER_CONFIG_LOCATION", confg_file_path)
+    r.set("USER_CONFIG_LOCATION", config_file_path)
     _ = setup_app()
 
 
@@ -115,8 +115,14 @@ def _return_queues(m_names):
     return used_queues
 
 
-def return_worker_info(config_location):
+def return_worker_info():
+    r = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=REDIS_GLOBAL_db)
+    config_location = r.get("USER_CONFIG_LOCATION").decode("utf-8")
+    if not config_location:
+        sys.exit("config_location not found in database")
     user_config = ccm.generate(config_location, TEMPLATE)
+    if not user_config:
+        sys.exit("user_config is empty")
     m_names = _return_task_modules(user_config, DEV_TASK_DIR)
     used_queues = _return_queues(m_names)
     return used_queues
@@ -126,10 +132,10 @@ def setup_app():
     r = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=REDIS_GLOBAL_db)
     config_location = r.get("USER_CONFIG_LOCATION").decode("utf-8")
     if not config_location:
-        sys.exit(f"config_location not found in database")
+        sys.exit("config_location not found in database")
     user_config = ccm.generate(config_location, TEMPLATE)
     if not user_config:
-        sys.exit(f"user_config empty")
+        sys.exit("user_config empty")
 
     # Create relevant queues
     m_names = _return_task_modules(user_config, DEV_TASK_DIR)
