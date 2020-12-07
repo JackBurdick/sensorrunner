@@ -5,8 +5,8 @@ yell() { echo "$0: $*" >&2; }
 die() { yell "$*"; exit 111; }
 try() { "$@" || die "cannot $*"; }
 
-CELERYD_FILE_PATH="fakeconf"
-CELERYBEAT_FILE_PATH="fakeconf"
+CELERYD_FILE_PATH="/etc/default/celeryd"
+CELERYBEAT_FILE_PATH="/etc/default/celerybeat"
 
 # If we wnated to implement logic for checking existing vars
 # . "$CELERYD_FILE_PATH"
