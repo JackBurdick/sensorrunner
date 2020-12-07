@@ -5,17 +5,20 @@ yell() { echo "$0: $*" >&2; }
 die() { yell "$*"; exit 111; }
 try() { "$@" || die "cannot $*"; }
 
-#outputString=$(python some_python.py "from_bash")
-# myarr=()
-# i=0
-# python some_python.py "from_bash" | while read line ; do
-#     echo $line
-#     #myarr[i]=$line
-#     #echo "insert"
-# done
+while getopts z: option
+  do
+  case "${option}"
+    in
+      z) CONFIG_FILE=${OPTARG};;
+  esac
+done
 
-pythonScript="daemon_args.py"
-configFile="some_config_path_to_send_to_python"
+CONFIG_DEFAULT="DEFAULT"
+CONFIG_FILE=${CONFIG_FILE:-$CONFIG_DEFAULT}
+_python_script="daemon_args.py"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+_module_script="$DIR/$_python_script"
+
 
 workerNames=()
 workerArgs=()
@@ -28,19 +31,14 @@ while read line ; do
     then
       workerArgs+=$line
   else
-    die "Too many lines recieved from $pythonScript"
+    die "Too many lines recieved from $_module_script"
   fi
   ((++i))
-done < <(python $pythonScript $configFile)
+done < <(python $_module_script $configFile)
 
 
 echo ${workerNames}
 echo ${workerArgs}
-
-#echo "$outputString"
-
-# # convert to array
-# namesArr=($outputString)
 
 # # iterate
 # for i in "${!outputString[@]}"; do 
