@@ -5,16 +5,28 @@ yell() { echo "$0: $*" >&2; }
 die() { yell "$*"; exit 111; }
 try() { "$@" || die "cannot $*"; }
 
+CELERYD_FILE_PATH="fakeconf"
+CELERYBEAT_FILE_PATH="fakeconf"
+
+# If we wnated to implement logic for checking existing vars
+# . "$CELERYD_FILE_PATH"
+# . "$CELERYBEAT_FILE_PATH"
+
+# `:` in `z:` indicates that a value is required
 while getopts z: option
   do
   case "${option}"
     in
-      z) CONFIG_FILE=${OPTARG};;
+      z ) CUR_CONFIG_FILE=${OPTARG};;
   esac
 done
 
-CONFIG_DEFAULT="DEFAULT"
-CONFIG_FILE=${CONFIG_FILE:-$CONFIG_DEFAULT}
+# -z option is mandatory
+if [ -z ${CUR_CONFIG_FILE+x} ]; then
+  die "no config file passed, please pass with \`-z path/to/spec.yml\`"
+fi
+
+
 _python_script="daemon_args.py"
 
 #https://stackoverflow.com/questions/59895/how-to-get-the-source-directory-of-a-bash-script-from-within-the-script-itself
@@ -32,12 +44,14 @@ _device_laptop_name="jackburdick"
 _device_cur_name="$(whoami)"
 
 # see if aeropi is installed
+# var set?
+# https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash
+# but modified for this particular example
 _aeropi_not_avail="$( python -c "import aeropi" 2>&1 )"
-if [ -z _aeropi_not_avail ]; then
+if [ "$_aeropi_not_avail" != "" ]; then
   # aeropi is not present
-  
   # set python to the default python for the current device
-  if [$_device_cur_name == $_device_pi_name]; then
+  if [ $_device_cur_name == $_device_pi_name ]; then
     _py_cmd=$_default_pi_python
   else
     _py_cmd=$_default_laptop_python
@@ -48,26 +62,60 @@ else
 fi
 
 
-workerNames=()
-workerArgs=()
+# build variables
+CELERYD_NODES=""
+CELERYD_WORKER_OPTS=""
+CELERY_Z_OPT=""
 i=0
 while read line ; do
   if [ $i == 0 ]
     then
-      workerNames+=$line
+      CELERYD_NODES+=$line
   elif [ $i == 1 ]
     then
-      workerArgs+=$line
+      CELERYD_WORKER_OPTS+=$line
+  elif [ $i == 2 ]
+    then
+      CELERY_Z_OPT+=$line
   else
     die "Too many lines recieved from $_module_script"
   fi
   ((++i))
-done < <($_py_cmd $_module_script $configFile)
-workerNames=($workerNames)
-workerArgs=($workerArgs)
+done < <($_py_cmd $_module_script $CUR_CONFIG_FILE)
 
 
-# iterate
-for i in "${!workerNames[@]}"; do 
-  printf "%s - %s - %s\n" "$i" "${workerNames[$i]}" "${workerArgs[$i]}"
-done
+## defaults
+# celeryd
+CELERYD_CHDIR="/home/pi/dev/aeropi/src/aeropi"
+CELERY_APP="celery_app"
+CELERY_BIN="/home/pi/.conda/envs/aero/bin/python -m celery"
+CELERYD_LOG_LEVEL="DEBUG"
+
+# %n will be replaced with the first part of the nodename.
+CELERYD_LOG_FILE="/var/log/celery/%n.log"
+CELERYD_PID_FILE="/var/run/celery/%n.pid"
+CELERYD_USER="pi"
+CELERYD_GROUP="pi"
+CELERY_CREATE_DIRS=1
+
+# add z opt to celeryd
+CELERYD_OPTS=$CELERY_Z_OPT+$CELERYD_WORKER_OPTS
+
+#celerybeat
+#CELERYBEAT_OPTS="-Z '/home/pi/dev/aeropi/scratch/config_run/configs/basic_i2c.yml'"
+CELERYBEAT_OPTS=$CELERY_Z_OPT
+
+# SET DEFAULT VARIABLES
+_to_remove="declare -- "
+# NOTE: sed is used to remove the "declare -- " portion left over from typeset.
+# I'm certain there is a better way to set the varibles, but I'm not sure how to
+# do that yet, and this method does achieve the desired outcome despite being clumbsy
+# set variables for celeryd
+typeset -p CELERYD_NODES CELERYD_OPTS> "$CELERYD_FILE_PATH"
+# typeset -p CELERYD_CHDIR CELERYD_NODES CELERY_APP CELERY_BIN CELERYD_OPTS \
+#  CELERYD_LOG_LEVEL CELERYD_LOG_FILE CELERYD_PID_FILE CELERYD_USER CELERYD_GROUP CELERY_CREATE_DIRS> "$CELERYD_FILE_PATH"
+sed -i "s/${_to_remove}//g" ${CELERYD_FILE_PATH}
+# set variables for celerybeat
+
+typeset -p CELERYBEAT_OPTS> "$CELERYBEAT_FILE_PATH"
+sed -i "s/${_to_remove}//g" ${CELERYBEAT_FILE_PATH}

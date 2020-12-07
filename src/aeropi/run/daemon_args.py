@@ -18,6 +18,8 @@ if __name__ == "__main__":
     my_names, my_args = main()
     a = " ".join(my_names)
     b = " ".join(my_args)
+    CELERY_Z_OPT = f"-Z '{args[0]}'"
     print(a)
     print(b)
+    print(CELERY_Z_OPT)
     sys.exit(0)
