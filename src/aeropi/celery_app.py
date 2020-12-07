@@ -115,6 +115,13 @@ def _return_queues(m_names):
     return used_queues
 
 
+def return_worker_info(config_location):
+    user_config = ccm.generate(config_location, TEMPLATE)
+    m_names = _return_task_modules(user_config, DEV_TASK_DIR)
+    used_queues = _return_queues(m_names)
+    return used_queues
+
+
 def setup_app():
     r = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=REDIS_GLOBAL_db)
     config_location = r.get("USER_CONFIG_LOCATION").decode("utf-8")
