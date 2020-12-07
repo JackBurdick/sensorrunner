@@ -21,6 +21,32 @@ _python_script="daemon_args.py"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 _module_script="$DIR/$_python_script"
 
+# which python is being used
+py_name="$(which python)"
+_default_pi_python="/home/pi/.conda/envs/aero/bin/python"
+_default_laptop_python="/home/jackburdick/anaconda3/envs/aerodev/bin/python"
+
+# which device is currently being used
+_device_pi_name="pi"
+_device_laptop_name="jackburdick"
+_device_cur_name="$(whoami)"
+
+# see if aeropi is installed
+_aeropi_not_avail="$( python -c "import aeropi" 2>&1 )"
+if [ -z _aeropi_not_avail ]; then
+  # aeropi is not present
+  
+  # set python to the default python for the current device
+  if [$_device_cur_name == $_device_pi_name]; then
+    _py_cmd=$_default_pi_python
+  else
+    _py_cmd=$_default_laptop_python
+  fi
+else
+  # aeropi is available in current python
+  _py_cmd=$py_name 
+fi
+
 
 workerNames=()
 workerArgs=()
@@ -36,7 +62,7 @@ while read line ; do
     die "Too many lines recieved from $_module_script"
   fi
   ((++i))
-done < <(python $_module_script $configFile)
+done < <($_py_cmd $_module_script $configFile)
 workerNames=($workerNames)
 workerArgs=($workerArgs)
 
