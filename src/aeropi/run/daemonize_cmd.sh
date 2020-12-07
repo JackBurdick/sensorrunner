@@ -16,6 +16,8 @@ done
 CONFIG_DEFAULT="DEFAULT"
 CONFIG_FILE=${CONFIG_FILE:-$CONFIG_DEFAULT}
 _python_script="daemon_args.py"
+
+#https://stackoverflow.com/questions/59895/how-to-get-the-source-directory-of-a-bash-script-from-within-the-script-itself
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 _module_script="$DIR/$_python_script"
 
@@ -24,7 +26,7 @@ workerNames=()
 workerArgs=()
 i=0
 while read line ; do
-  if [ $i -eq 0 ]
+  if [ $i == 0 ]
     then
       workerNames+=$line
   elif [ $i == 1 ]
@@ -35,12 +37,11 @@ while read line ; do
   fi
   ((++i))
 done < <(python $_module_script $configFile)
+workerNames=($workerNames)
+workerArgs=($workerArgs)
 
 
-echo ${workerNames}
-echo ${workerArgs}
-
-# # iterate
-# for i in "${!outputString[@]}"; do 
-#   printf "%s - %s\n" "$i" "${outputString[$i]}"
-# done
+# iterate
+for i in "${!workerNames[@]}"; do 
+  printf "%s - %s - %s\n" "$i" "${workerNames[$i]}" "${workerArgs[$i]}"
+done
