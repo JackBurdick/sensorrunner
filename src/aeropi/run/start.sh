@@ -17,7 +17,7 @@ if [ -z ${CUR_CONFIG_FILE+x} ]; then
 fi
 
 
-_user="jackburdick"
+_user="pi"
 
 ## set varibables according to current spec
 _file_name="daemonize_cmd.sh"
