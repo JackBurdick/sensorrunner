@@ -17,11 +17,7 @@ def build_events_from_config(config):
 
 
 if __name__ == "__main__":
-    # obtain parse config
     events = build_events_from_config(USER_CONFIG)
-
-    print(events)
-
     try:
         signal.pause()
     except KeyboardInterrupt:

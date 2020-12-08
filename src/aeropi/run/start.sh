@@ -3,6 +3,9 @@ yell() { echo "$0: $*" >&2; }
 die() { yell "$*"; exit 111; }
 try() { "$@" || die "cannot $*"; }
 
+#https://stackoverflow.com/questions/59895/how-to-get-the-source-directory-of-a-bash-script-from-within-the-script-itself
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 while getopts z: option
   do
   case "${option}"
@@ -19,7 +22,7 @@ fi
 
 ## set varibables according to current spec
 _file_name="daemonize_cmd.sh"
-cmd="$PWD/$_file_name -z $CUR_CONFIG_FILE"
+cmd="$DIR/$_file_name -z $CUR_CONFIG_FILE"
 sudo $cmd
 
 ## start daemon

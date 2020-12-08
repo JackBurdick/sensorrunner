@@ -40,7 +40,6 @@ _default_laptop_python="/home/jackburdick/anaconda3/envs/aerodev/bin/python"
 
 # which device is currently being used
 _device_pi_name="root"
-_device_laptop_name="jackburdick"
 _device_cur_name="$(whoami)"
 
 # see if aeropi is installed
