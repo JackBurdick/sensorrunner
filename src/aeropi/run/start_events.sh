@@ -37,4 +37,5 @@ fi
 _module_script="$DIR/$_file_name"
 
 # nohup ?
-$_py_cmd $_module_script &
+_start_cmd="$_py_cmd $_module_script &"
+$_start_cmd & echo $!
