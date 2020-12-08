@@ -34,5 +34,13 @@ echo "started beat"
 ## start events
 _start_events_path="start_events.sh"
 _start_events_cmd="$DIR/$_start_events_path"
+echo $_start_events_cmd
+echo "starting..."
+#$_start_events_cmd
 _events_pid=$($_start_events_cmd)
+
 echo "started events $_events_pid"
+
+$_events_pid &
+echo $!
+echo "done"

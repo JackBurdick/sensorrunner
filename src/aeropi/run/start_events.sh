@@ -3,6 +3,7 @@ yell() { echo "$0: $*" >&2; }
 die() { yell "$*"; exit 111; }
 try() { "$@" || die "cannot $*"; }
 
+
 #https://stackoverflow.com/questions/59895/how-to-get-the-source-directory-of-a-bash-script-from-within-the-script-itself
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 _file_name="events.py"
@@ -31,11 +32,15 @@ if [ "$_aeropi_not_avail" != "" ]; then
   fi
 else
   # aeropi is available in current python
-  _py_cmd=$py_name 
+  _py_cmd=$py_name
 fi
 
 _module_script="$DIR/$_file_name"
 
-# nohup ?
-_start_cmd="$_py_cmd $_module_script &"
-$_start_cmd & echo $!
+_my_cmd="$_py_cmd $_module_script &"
+
+# stop background events
+sudo ps aux|grep '/aeropi/src/aeropi/run/events.py' | awk '{print $2}' | xargs sudo kill -9
+
+# I'm unsure why, but the script would hang if called from here
+echo $_my_cmd
