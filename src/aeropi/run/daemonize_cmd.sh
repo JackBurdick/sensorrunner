@@ -111,11 +111,11 @@ _to_remove="declare -- "
 # I'm certain there is a better way to set the varibles, but I'm not sure how to
 # do that yet, and this method does achieve the desired outcome despite being clumbsy
 # set variables for celeryd
-sudo typeset -p CELERYD_NODES CELERYD_OPTS> "$CELERYD_FILE_PATH"
+typeset -p CELERYD_NODES CELERYD_OPTS> "$CELERYD_FILE_PATH"
 # typeset -p CELERYD_CHDIR CELERYD_NODES CELERY_APP CELERY_BIN CELERYD_OPTS \
 #  CELERYD_LOG_LEVEL CELERYD_LOG_FILE CELERYD_PID_FILE CELERYD_USER CELERYD_GROUP CELERY_CREATE_DIRS> "$CELERYD_FILE_PATH"
 sudo sed -i "s/${_to_remove}//g" ${CELERYD_FILE_PATH}
 # set variables for celerybeat
 
-sudo typeset -p CELERYBEAT_OPTS> "$CELERYBEAT_FILE_PATH"
+typeset -p CELERYBEAT_OPTS> "$CELERYBEAT_FILE_PATH"
 sudo sed -i "s/${_to_remove}//g" ${CELERYBEAT_FILE_PATH}
