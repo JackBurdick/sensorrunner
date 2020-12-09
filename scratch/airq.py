@@ -25,7 +25,7 @@ pwr_pin = DigitalOutputDevice(6)
 pwr_pin.on()
 aq_sensor = PM25_I2C(tca2[2])
 time.sleep(1)
-pwr_pin.off()
+# pwr_pin.off() ignore for this example
 
 
 # spec:
@@ -46,16 +46,17 @@ def average_dict(v_dicts):
     occurance, sums = Counter(), Counter()
     for n, sensor_ret_d in v_dicts.items():
         sums.update(sensor_ret_d)
-        occurance.update(itemset.keys())
+        occurance.update(sensor_ret_d.keys())
 
-    avg_res = {x: float(sums[x]) / counters[x] for x in sums.keys()}
+    avg_res = {x: float(sums[x]) / occurance[x] for x in sums.keys()}
     return avg_res
 
 
 def parse_sensor(aq_sensor):
     try:
         aqdata = aq_sensor.read()
-    except RuntimeError:
+    except OSError:
+        print("ERROR!")
         aqdata = None
 
     vals = {}
@@ -90,7 +91,7 @@ def main(num: int = 100):
         # turn on
         pwr_pin.on()
         print("initializing...")
-        time.sleep(30)
+        time.sleep(35)
         print("ready")
 
         raw_vals = {}
