@@ -11,15 +11,21 @@ class PM25:
     def __init__(self, channel, pwr_pin, num_iterations=3, precision=3):
         if pwr_pin is None:
             raise ValueError(f"must supply pwr_pin")
+        # TODO: I'm not doing anything with the units here
         self.pwr_pin = DigitalOutputDevice(pwr_pin)
         self.channel = channel
+        self.device = self._create_device()
+
         self.num_iterations = num_iterations
         self.precision = precision
         self.accepted_units = ["ug/m^3", "um/0.1L"]
 
-    def _parse_sensor(self, device):
+    def _parse_sensor(self):
+        self.pwr_pin.on()
+        # NOTE: the device needs to run for 30+ seconds to initialize
+        time.sleep(40)
         try:
-            aqdata = device.read()
+            aqdata = self.device.read()
         except (OSError, RuntimeError) as e:
             print(f"ERROR!: {e}")
             aqdata = None
@@ -67,8 +73,6 @@ class PM25:
                 raise OSError(
                     f"Unable to initialize PM25 device. please double check {self.pwr_pin} is correct on/off pin"
                 )
-        # NOTE: the device needs to run for 30+ seconds to initialize
-        time.sleep(40)
         return device
 
     def return_value(self, **kwargs):
@@ -89,13 +93,11 @@ class PM25:
                 )
         else:
             raise ValueError(f"`unit` is expected to exist")
-        # TODO: I'm not doing anything with the units here
-        device = self._create_device()
 
         raw_vals = {}
         cur_u = {}
         for i in range(self.num_iterations):
-            cur_v, cur_u = self._parse_sensor(device)
+            cur_v, cur_u = self._parse_sensor()
             # sleep betweek events
             time.sleep(10)
             raw_vals[f"{i}"] = cur_v
