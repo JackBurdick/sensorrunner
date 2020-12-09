@@ -92,7 +92,7 @@ def main(num: int = 100):
         # turn on
         pwr_pin.on()
         print("initializing...")
-        time.sleep(35)
+        time.sleep(45)
         print("ready")
 
         raw_vals = {}
@@ -101,7 +101,7 @@ def main(num: int = 100):
             print("----------" * 8)
             print("IT: {i}")
             print(cur_v)
-            time.sleep(5)
+            time.sleep(10)
             raw_vals[f"{i}"] = cur_v
 
         print("----------" * 8)
