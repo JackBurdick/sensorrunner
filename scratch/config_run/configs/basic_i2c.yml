@@ -13,37 +13,37 @@
 #       events:
 #         when_activated: "log_when_activated"
 #         when_deactivated: "log_when_deactivated"
-I2CMux:
-  airq_a:
-    device_type: "pm25"
-    address: 0x72
-    channel: 2
-    params:
-      init:
-        pwr_pin: 6
-        num_iterations: 3
-      run:
-        unit: "um/0.1L" # TODO: this should be an init param
-      schedule:
-        frequency: 80
-  #   uv_a:
-  #     device_type: "veml6070"
-  #     address: 0x72
-  #     channel: 4
-  #     params:
-  #       run:
-  #         unit: "intensity"
-  #       schedule:
-  #         frequency: 4
-  # env_a:
-  #   device_type: "si7021"
-  #   address: 0x72
-  #   channel: 2
-  #   params:
-  #     run:
-  #       unit: "f"
-  #     schedule:
-  #       frequency: 2
+# I2CMux:
+#   airq_a:
+#     device_type: "pm25"
+#     address: 0x72
+#     channel: 2
+#     params:
+#       init:
+#         pwr_pin: 6
+#         num_iterations: 3
+#       run:
+#         unit: "um/0.1L" # TODO: this should be an init param
+#       schedule:
+#         frequency: 80
+#   uv_a:
+#     device_type: "veml6070"
+#     address: 0x72
+#     channel: 4
+#     params:
+#       run:
+#         unit: "intensity"
+#       schedule:
+#         frequency: 4
+# env_a:
+#   device_type: "si7021"
+#   address: 0x72
+#   channel: 2
+#   params:
+#     run:
+#       unit: "f"
+#     schedule:
+#       frequency: 2
 #   dist_a:
 #     device_type: "vl53l0x"
 #     address: 0x70
@@ -81,21 +81,21 @@ I2CMux:
 #       schedule:
 #         frequency: 3
 
-# GPIODemux:
-#   demux_a:
-#     init:
-#       gpio_pins_ordered: [25, 23, 24, 17]
-#       pwr_pin: 27
-#     devices:
-#       a:
-#         index: 0
-#         device_type: "switch_low"
-#         params:
-#           run:
-#             on_duration: 0.4
-#             unit: "seconds"
-#           schedule:
-#             frequency: 2
+GPIODemux:
+  demux_a:
+    init:
+      gpio_pins_ordered: [25, 23, 24, 17]
+      pwr_pin: 27
+    devices:
+      a:
+        index: 0
+        device_type: "switch_low"
+        params:
+          run:
+            on_duration: 0.4
+            unit: "seconds"
+          schedule:
+            frequency: 2
 #       b:
 #         index: 1
 #         device_type: "switch_low"

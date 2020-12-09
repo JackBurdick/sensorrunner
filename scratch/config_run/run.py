@@ -47,7 +47,7 @@ if __name__ == "__main__":
     try:
         save_entries(entries)
         print("entries started")
-        time.sleep(max(0, 60))
+        time.sleep(max(0, 180))
     except KeyboardInterrupt:
         delete_entries(entries)
         print("entries deleted")
