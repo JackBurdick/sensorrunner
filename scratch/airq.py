@@ -22,7 +22,10 @@ tca2 = adafruit_tca9548a.TCA9548A(i2c, address=0x72)
 pwr_pin = DigitalOutputDevice(6)
 
 # each sensor
+pwr_pin.on()
 aq_sensor = PM25_I2C(tca2[2])
+time.sleep(1)
+pwr_pin.off()
 
 
 # spec:
@@ -96,7 +99,7 @@ def main(num: int = 100):
             print("----------" * 8)
             print("IT: {i}")
             print(cur_v)
-            time.sleep(4)
+            time.sleep(5)
             raw_vals[f"{i}"] = cur_v
 
         print("----------" * 8)
