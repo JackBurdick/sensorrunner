@@ -32,6 +32,7 @@ sudo /etc/init.d/celerybeat start
 echo "started beat"
 
 ## start events
+# TODO: only start if needed
 _start_events_path="start_events.sh"
 _start_events_cmd="$DIR/$_start_events_path"
 echo $_start_events_cmd

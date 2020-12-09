@@ -36,6 +36,7 @@ def save_entries(entries):
 def delete_entries(entries):
     for name, entry in entries.items():
         entry.delete()
+    # TODO: turn off devices
 
 
 if __name__ == "__main__":
@@ -53,6 +54,7 @@ if __name__ == "__main__":
         print("entries deleted")
 
     delete_entries(entries)
+    # TODO: allow to finish?
     print("done")
 
 # dev_dict = {

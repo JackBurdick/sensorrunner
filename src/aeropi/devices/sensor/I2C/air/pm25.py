@@ -100,7 +100,7 @@ class PM25:
 
         # format output
         if self.precision:
-            for k, v in val_dict:
+            for k, v in val_dict.items():
                 val_dict[k] = round(v, self.precision)
 
         additional_vals = {
