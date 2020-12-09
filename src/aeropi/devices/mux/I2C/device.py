@@ -4,6 +4,7 @@ import busio
 from aeropi.devices.sensor.I2C.air.si7021 import SI7021
 from aeropi.devices.sensor.I2C.distance.vl53l0x import VL5310X
 from aeropi.devices.sensor.I2C.light.veml6070 import VEML6070
+from aeropi.devices.sensor.I2C.air.pm25 import PM25
 
 
 class I2CMux:
@@ -16,6 +17,7 @@ class I2CMux:
             "vl53l0x": {"device_class": VL5310X, "fn": None},
             "si7021": {"device_class": SI7021, "fn": None},
             "veml6070": {"device_class": VEML6070, "fn": None},
+            "pm25": {"device_class": PM25, "fn": None},
         }
 
         # connected = (name, address, channel, device, fn)
@@ -37,7 +39,11 @@ class I2CMux:
                     i2c, address=dd["address"]
                 )
             cur_tca = addr_to_tca[dd["address"]]
-            cur_device = cur_dev_class(cur_tca[dd["channel"]])
+            try:
+                init_params = dd["params"]["init"]
+            except KeyError:
+                init_params = {}
+            cur_device = cur_dev_class(cur_tca[dd["channel"]], **init_params)
             devices[name]["device_type"] = cur_device
             available_fns = [
                 f

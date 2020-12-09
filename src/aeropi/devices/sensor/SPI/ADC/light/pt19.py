@@ -16,7 +16,7 @@ class PT19:
                 )
             if unit not in self.accepted_units:
                 raise ValueError(
-                    f"unit {self.unit} not currently supported. Please select from {self.accepted_units}"
+                    f"unit {unit} not currently supported. Please select from {self.accepted_units}"
                 )
         else:
             raise ValueError(f"`unit` is expected to exist")

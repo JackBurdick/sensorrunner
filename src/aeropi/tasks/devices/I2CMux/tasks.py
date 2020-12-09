@@ -1,5 +1,6 @@
 import celery
 import importlib
+
 import aeropi
 
 importlib.reload(aeropi)
@@ -11,6 +12,8 @@ from aeropi.sa import (
     SESSION_SI7021,
     VEML6070,
     SESSION_VEML6070,
+    SESSION_PM25_ENTRY,
+    PM25_ENTRY,
 )
 from datetime import datetime
 from aeropi.user_config import USER_CONFIG
@@ -29,6 +32,8 @@ def _log_dist(self, row):
             row.add(SESSION_SI7021)
         elif isinstance(row, VEML6070):
             row.add(SESSION_VEML6070)
+        elif isinstance(row, PM25_ENTRY):
+            row.add(SESSION_PM25_ENTRY)
         else:
             raise ValueError(f"unable to match entry {row} to accepted row types")
     else:
@@ -76,6 +81,7 @@ def _i2c_run_select(self, dev_dict):
 
     measurement_time = datetime.utcnow()
     cur_v = IICMUX.return_value(cur_name, cur_run_params)
+    post_measurement_time = datetime.utcnow()
     if dev_type == "vl53l0x":
         entry = VL53l0X(
             name=cur_name, value=cur_v, unit=unit, measurement_time=measurement_time
@@ -93,6 +99,29 @@ def _i2c_run_select(self, dev_dict):
         entry = VEML6070(
             name=cur_name, value=cur_v, unit=unit, measurement_time=measurement_time
         )
+    elif dev_type == "pm25":
+        entry = PM25_ENTRY(
+            name=cur_name,
+            start_time=measurement_time,
+            end_time=post_measurement_time,
+            **cur_v
+            # num_iterations=None,
+            # particle_03um=None,
+            # particle_05um=None,
+            # particle_10um=None,
+            # particle_25um=None,
+            # particle_50um=None,
+            # particle_100um=None,
+            # standard_pm10=None,
+            # env_pm10=None,
+            # standard_pm25=None,
+            # env_pm25=None,
+            # standard_pm100=None,
+            # env_pm100=None,
+            # particle_num_unit=None,  # 100um/0.1L
+            # particle_concentration_unit=None,  # ug/m^3
+        )
+
     else:
         raise ValueError(f"device type {dev_type} unsupported")
     return entry

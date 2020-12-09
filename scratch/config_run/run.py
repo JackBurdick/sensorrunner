@@ -36,6 +36,7 @@ def save_entries(entries):
 def delete_entries(entries):
     for name, entry in entries.items():
         entry.delete()
+    # TODO: turn off devices
 
 
 if __name__ == "__main__":
@@ -47,12 +48,13 @@ if __name__ == "__main__":
     try:
         save_entries(entries)
         print("entries started")
-        time.sleep(max(0, 60))
+        time.sleep(max(0, 180))
     except KeyboardInterrupt:
         delete_entries(entries)
         print("entries deleted")
 
     delete_entries(entries)
+    # TODO: allow to finish?
     print("done")
 
 # dev_dict = {

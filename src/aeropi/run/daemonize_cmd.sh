@@ -88,7 +88,8 @@ done < <($_py_cmd $_module_script $CUR_CONFIG_FILE)
 CELERYD_CHDIR="/home/pi/dev/aeropi/src/aeropi"
 CELERY_APP="celery_app"
 CELERY_BIN="/home/pi/.conda/envs/aero/bin/python -m celery"
-CELERYD_LOG_LEVEL="DEBUG"
+# TODO: parameterize
+CELERYD_LOG_LEVEL="INFO"
 
 # %n will be replaced with the first part of the nodename.
 CELERYD_LOG_FILE="/var/log/celery/%n.log"
