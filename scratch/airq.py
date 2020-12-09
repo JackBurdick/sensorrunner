@@ -43,12 +43,12 @@ def average_dict(v_dicts):
             v_dicts[k_d] = {k: v for k, v in v_d.items() if v is not None}
 
     # calculate average
-    occurance, sums = Counter(), Counter()
+    occurrence, sums = Counter(), Counter()
     for n, sensor_ret_d in v_dicts.items():
         sums.update(sensor_ret_d)
-        occurance.update(sensor_ret_d.keys())
+        occurrence.update(sensor_ret_d.keys())
 
-    avg_res = {x: float(sums[x]) / occurance[x] for x in sums.keys()}
+    avg_res = {x: float(sums[x]) / occurrence[x] for x in sums.keys()}
     return avg_res
 
 
