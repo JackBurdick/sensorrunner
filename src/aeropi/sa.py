@@ -250,7 +250,7 @@ class PM25_ENTRY(Base):
             print(f"row {self.name} not added: {e}")
 
     def __repr__(self):
-        return f"<PM25_ENTRY(id='{self.id}', name={self.name}, start_time={self.measurement_time})>"
+        return f"<PM25_ENTRY(id='{self.id}', name={self.name}, start_time={self.start_time})>"
 
 
 Base.metadata.create_all(engine)
