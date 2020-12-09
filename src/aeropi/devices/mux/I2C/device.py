@@ -5,6 +5,7 @@ from aeropi.devices.sensor.I2C.air.si7021 import SI7021
 from aeropi.devices.sensor.I2C.distance.vl53l0x import VL5310X
 from aeropi.devices.sensor.I2C.light.veml6070 import VEML6070
 from aeropi.devices.sensor.I2C.air.pm25 import PM25
+from aeropi.devices.sensor.I2C.air.bmp390 import BMP390
 
 
 class I2CMux:
@@ -18,6 +19,7 @@ class I2CMux:
             "si7021": {"device_class": SI7021, "fn": None},
             "veml6070": {"device_class": VEML6070, "fn": None},
             "pm25": {"device_class": PM25, "fn": None},
+            "bmp390": {"device_class": BMP390, "fn": None},
         }
 
         # connected = (name, address, channel, device, fn)
