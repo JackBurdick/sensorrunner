@@ -23,8 +23,8 @@ pwr_pin = DigitalOutputDevice(6)
 
 # each sensor
 pwr_pin.on()
-aq_sensor = PM25_I2C(tca2[2])
 time.sleep(1)
+aq_sensor = PM25_I2C(tca2[2])
 # pwr_pin.off() ignore for this example
 
 
@@ -59,7 +59,7 @@ def parse_sensor(aq_sensor):
         print("ERROR!")
         aqdata = None
 
-    vals = {}
+    vals, units = {}, {}
     if aqdata:
         # keys
         # reading key, unit, new_name
@@ -80,8 +80,9 @@ def parse_sensor(aq_sensor):
         ]
 
         for skt in sensor_keys:
-            vals[skt[2]] = (aqdata[skt[0]], skt[1])
-    return vals
+            vals[skt[2]] = aqdata[skt[0]]
+            units[skt[2]] = skt[1]
+    return vals, units
 
 
 def main(num: int = 100):
@@ -96,7 +97,7 @@ def main(num: int = 100):
 
         raw_vals = {}
         for i in range(NUM_ITERATIONS):
-            cur_v = parse_sensor(aq_sensor)
+            cur_v, cur_u = parse_sensor(aq_sensor)
             print("----------" * 8)
             print("IT: {i}")
             print(cur_v)
