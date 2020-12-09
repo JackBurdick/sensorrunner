@@ -98,6 +98,35 @@ class SI7021(Base):
         )
 
 
+class BMP390_ENTRY(Base):
+    __tablename__ = "BMP390_ENTRY"
+    __table_args__ = {"extend_existing": True}
+
+    # TODO: SENSOR ID
+    id = Column(Integer, primary_key=True)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    #
+    name = Column(String)
+    temp_value = Column(Float)
+    temp_unit = Column(String)
+    pressure_value = Column(Float)
+    pressure_unit = Column(String)
+    measurement_time = Column(TIMESTAMP)
+
+    def add(self, session):
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            print(f"row {self.name} not added: {e}")
+
+    def __repr__(self):
+        return (
+            f"<SI7021(id='{self.id}', name={self.name}, temp='{self.temp_value} *{self.temp_unit}'"
+            f", rh='{self.pressure_value} {self.pressure_unit}', measurement_time={self.measurement_time})>"
+        )
+
+
 class PT19(Base):
     __tablename__ = "PT19"
     __table_args__ = {"extend_existing": True}
@@ -268,3 +297,4 @@ SESSION_VEML6070 = Session()
 SESSION_CurrentDevice = Session()
 SESSION_VIB801S = Session()
 SESSION_PM25_ENTRY = Session()
+SESSION_BMP390_ENTRY = Session()
