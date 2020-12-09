@@ -3,14 +3,13 @@ from crummycm.validation.types.placeholders.placeholder import ValuePlaceholder 
 from crummycm.validation.types.values.compound.multi import Multi
 from crummycm.validation.types.values.element.numeric import Numeric
 from crummycm.validation.types.values.element.text import Text
-from typer.models import Required
 
 from aeropi.devices.SPI.ADC.device import MDC3800
 
 # from crummycm.validation.types.values.element.bool import Bool
 
 
-I2CMux_DEVICES = ["vl53l0x", "si7021", "veml6070", "pm25"]
+I2CMux_DEVICES = ["vl53l0x", "si7021", "veml6070", "pm25", "bmp390"]
 GPIODemux_DEVICES = ["switch_low"]
 MDC3800_DEVICES = ["pt19"]
 EVENT_DEVICES = ["vib801s"]

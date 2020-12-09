@@ -14,18 +14,27 @@
 #         when_activated: "log_when_activated"
 #         when_deactivated: "log_when_deactivated"
 I2CMux:
-  airq_a:
-    device_type: "pm25"
+  pressure_a:
+    device_type: "bmp390"
     address: 0x72
     channel: 2
     params:
-      init:
-        pwr_pin: 6
-        num_iterations: 3
       run:
-        unit: "um/0.1L" # TODO: this should be an init param
+        unit: "f" # TODO: this should be an init param
       schedule:
-        frequency: 80
+        frequency: 2
+  # airq_a:
+  #   device_type: "pm25"
+  #   address: 0x72
+  #   channel: 2
+  #   params:
+  #     init:
+  #       pwr_pin: 6
+  #       num_iterations: 3
+  #     run:
+  #       unit: "um/0.1L" # TODO: this should be an init param
+  #     schedule:
+  #       frequency: 80
 #   uv_a:
 #     device_type: "veml6070"
 #     address: 0x72
