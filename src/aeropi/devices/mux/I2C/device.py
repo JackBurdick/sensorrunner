@@ -39,7 +39,11 @@ class I2CMux:
                     i2c, address=dd["address"]
                 )
             cur_tca = addr_to_tca[dd["address"]]
-            cur_device = cur_dev_class(cur_tca[dd["channel"]])
+            try:
+                init_params = dd["params"]["init"]
+            except KeyError:
+                init_params = {}
+            cur_device = cur_dev_class(cur_tca[dd["channel"]], **init_params)
             devices[name]["device_type"] = cur_device
             available_fns = [
                 f

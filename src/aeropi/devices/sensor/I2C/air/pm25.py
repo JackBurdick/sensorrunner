@@ -9,6 +9,8 @@ Device.pin_factory = NativeFactory()
 
 class PM25:
     def __init__(self, channel, pwr_pin, num_iterations=3, precision=3):
+        if pwr_pin is None:
+            raise ValueError(f"must supply pwr_pin")
         self.pwr_pin = pwr_pin = DigitalOutputDevice(pwr_pin)
         pwr_pin.on()
         # NOTE: must allow device to be on for initialization
@@ -43,18 +45,18 @@ class PM25:
             # reading key, unit, new_name
             # Particle Matter concentrations of different size particles in micro-gram per cubic meter
             sensor_keys = [
-                ("particles 03um", "03um/0.1L", "03um"),
-                ("particles 05um", "05um/0.1L", "05um"),
-                ("particles 10um", "10um/0.1L", "10um"),
-                ("particles 25um", "25um/0.1L", "25um"),
-                ("particles 50um", "50um/0.1L", "50um"),
-                ("particles 100um", "100um/0.1L", "100um"),
+                ("particles 03um", "03um/0.1L", "particle_03um"),
+                ("particles 05um", "05um/0.1L", "particle_05um"),
+                ("particles 10um", "10um/0.1L", "particle_10um"),
+                ("particles 25um", "25um/0.1L", "particle_25um"),
+                ("particles 50um", "50um/0.1L", "particle_50um"),
+                ("particles 100um", "100um/0.1L", "particle_100um"),
                 ("pm10 standard", "ug/m^3", "standard_pm10"),
-                ("pm10 env", "ug/m^3", "pm10"),
+                ("pm10 env", "ug/m^3", "env_pm10"),
                 ("pm25 standard", "ug/m^3", "standard_pm25"),
-                ("pm25 env", "ug/m^3", "pm25"),
+                ("pm25 env", "ug/m^3", "env_pm25"),
                 ("pm100 standard", "ug/m^3", "standard_pm100"),
-                ("pm100 env", "ug/m^3", "pm100"),
+                ("pm100 env", "ug/m^3", "env_pm100"),
             ]
 
             for skt in sensor_keys:
@@ -101,4 +103,11 @@ class PM25:
             for k, v in val_dict:
                 val_dict[k] = round(v, self.precision)
 
-        return (val_dict, cur_u)
+        additional_vals = {
+            "particle_num_unit": "um/0.1L",
+            "particle_concentration_unit": "ug/m^3",
+            "num_iterations": self.num_iterations,
+        }
+        out = {**val_dict, **additional_vals}
+
+        return out

@@ -214,6 +214,45 @@ class VIB801S_Row(Base):
         return f"<VIB801S(id='{self.id}', name={self.name},measurement_time={self.measurement_time})>"
 
 
+class PM25_ENTRY(Base):
+    __tablename__ = "PM25_ENTRY"
+    __table_args__ = {"extend_existing": True}
+
+    # TODO: SENSOR ID
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    #
+    name = Column(String)
+    start_time = Column(TIMESTAMP)
+    end_time = Column(TIMESTAMP)
+    num_iterations = Column(Integer)
+    particle_03um = Column(Float)
+    particle_05um = Column(Float)
+    particle_10um = Column(Float)
+    particle_25um = Column(Float)
+    particle_50um = Column(Float)
+    particle_100um = Column(Float)
+    standard_pm10 = Column(Float)
+    env_pm10 = Column(Float)
+    standard_pm25 = Column(Float)
+    env_pm25 = Column(Float)
+    standard_pm100 = Column(Float)
+    env_pm100 = Column(Float)
+    particle_num_unit = Column(String)  # 100um/0.1L
+    particle_concentration_unit = Column(String)  # ug/m^3
+
+    def add(self, session):
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            print(f"row {self.name} not added: {e}")
+
+    def __repr__(self):
+        return f"<PM25_ENTRY(id='{self.id}', name={self.name}, start_time={self.measurement_time})>"
+
+
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
@@ -228,3 +267,4 @@ SESSION_PT19 = Session()
 SESSION_VEML6070 = Session()
 SESSION_CurrentDevice = Session()
 SESSION_VIB801S = Session()
+SESSION_PM25_ENTRY = Session()
