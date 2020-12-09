@@ -55,8 +55,8 @@ def average_dict(v_dicts):
 def parse_sensor(aq_sensor):
     try:
         aqdata = aq_sensor.read()
-    except OSError:
-        print("ERROR!")
+    except (OSError, RuntimeError) as e:
+        print(f"ERROR!: {e}")
         aqdata = None
 
     vals, units = {}, {}
@@ -99,7 +99,7 @@ def main(num: int = 100):
         for i in range(NUM_ITERATIONS):
             cur_v, cur_u = parse_sensor(aq_sensor)
             print("----------" * 8)
-            print("IT: {i}")
+            print(f"IT: {i}")
             print(cur_v)
             time.sleep(10)
             raw_vals[f"{i}"] = cur_v
