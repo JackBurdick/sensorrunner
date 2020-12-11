@@ -117,7 +117,7 @@ def _i2c_run_select(self, dev_dict):
             name=cur_name,
             start_time=measurement_time,
             end_time=post_measurement_time,
-            **cur_v
+            **cur_v,
         )
 
     else:
