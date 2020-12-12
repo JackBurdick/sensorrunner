@@ -36,12 +36,12 @@ def main(num: int = 100):
 
         # plot plot the data
         print("\n")
-        print("V: " + graph_map(ls.violet) * "=")
-        print("B: " + graph_map(ls.blue) * "=")
-        print("G: " + graph_map(ls.green) * "=")
-        print("Y: " + graph_map(ls.yellow) * "=")
-        print("O: " + graph_map(ls.orange) * "=")
-        print("R: " + graph_map(ls.red) * "=")
+        print(f"V:{ls.violet}")
+        print(f"B:{ls.blue}")
+        print(f"G:{ls.green}")
+        print(f"Y:{ls.yellow}")
+        print(f"O:{ls.orange}")
+        print(f"R:{ls.red}")
 
         time.sleep(1)
 
