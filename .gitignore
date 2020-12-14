@@ -130,5 +130,5 @@ dmypy.json
 
 .vscode/
 
-/src/aeropi/secrets.py
+/src/sensorrunner/secrets.py
 notes.md

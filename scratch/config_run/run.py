@@ -1,10 +1,13 @@
-from aeropi.user_config import USER_CONFIG
+from sensorrunner.user_config import USER_CONFIG
 import celery
 from redbeat import RedBeatSchedulerEntry as Entry
 
 import time
-from aeropi.celery_app import setup_app
-from aeropi.run.run import build_devices_from_config, build_task_params_from_config
+from sensorrunner.celery_app import setup_app
+from sensorrunner.run.run import (
+    build_devices_from_config,
+    build_task_params_from_config,
+)
 
 app = setup_app()
 

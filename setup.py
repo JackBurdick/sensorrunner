@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="aeropi",
+    name="sensorrunner",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     # a|b|c|rc|alpha|beta|pre|preview

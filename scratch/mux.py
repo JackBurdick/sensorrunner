@@ -1,4 +1,4 @@
-from aeropi.tasks.i2c.I2CMux import I2CMux
+from sensorrunner.tasks.i2c.I2CMux import I2CMux
 
 # (name, address, channel, device)
 dev_tuple = [
