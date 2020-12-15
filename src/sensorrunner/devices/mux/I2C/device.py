@@ -47,7 +47,7 @@ class I2CMux:
                 init_params = {}
             # TODO: create channel within device, The device needs to be
             # on/active for initialization work as expected
-            cur_device = cur_dev_class(cur_tca[dd["channel"]], **init_params)
+            cur_device = cur_dev_class(dd["channel"], cur_tca, **init_params)
             devices[name]["device_type"] = cur_device
             available_fns = [
                 f

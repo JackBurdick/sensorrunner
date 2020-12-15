@@ -2,7 +2,9 @@ import adafruit_vl53l0x
 
 
 class VL5310X:
-    def __init__(self, channel, precision=3):
+    def __init__(self, channel, tca=None, precision=3):
+        if tca:
+            channel = tca[channel]
         device = adafruit_vl53l0x.VL53L0X(channel)
         self.device = device
         self.precision = precision

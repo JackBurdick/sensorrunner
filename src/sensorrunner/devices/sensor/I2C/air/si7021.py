@@ -2,7 +2,9 @@ import adafruit_si7021
 
 
 class SI7021:
-    def __init__(self, channel, precision=3):
+    def __init__(self, channel, tca=None, precision=3):
+        if tca:
+            channel = tca[channel]
         device = adafruit_si7021.SI7021(channel)
         self.device = device
         self.precision = precision

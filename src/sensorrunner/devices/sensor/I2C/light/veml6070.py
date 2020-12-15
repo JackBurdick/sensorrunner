@@ -2,7 +2,9 @@ import adafruit_veml6070
 
 
 class VEML6070:
-    def __init__(self, channel, precision=3):
+    def __init__(self, channel, tca=None, precision=3):
+        if tca:
+            channel = tca[channel]
         # favor precision
         device = adafruit_veml6070.VEML6070(channel, "VEML6070_4_T")
         self.device = device

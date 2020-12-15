@@ -2,7 +2,9 @@ import adafruit_bmp3xx
 
 
 class BMP390:
-    def __init__(self, channel, precision=3):
+    def __init__(self, channel, tca=None, precision=3):
+        if tca:
+            channel = tca[channel]
         device = adafruit_bmp3xx.BMP3XX_I2C(channel)
         device.pressure_oversampling = 8
         device.temperature_oversampling = 2

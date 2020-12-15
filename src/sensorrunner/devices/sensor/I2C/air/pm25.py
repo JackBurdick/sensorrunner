@@ -8,13 +8,13 @@ Device.pin_factory = NativeFactory()
 
 
 class PM25:
-    def __init__(self, channel, pwr_pin, num_iterations=3, precision=3):
+    def __init__(self, channel, tca, pwr_pin, num_iterations=3, precision=3):
         if pwr_pin is None:
             raise ValueError(f"must supply pwr_pin")
         # TODO: I'm not doing anything with the units here
         self.pwr_pin = DigitalOutputDevice(pwr_pin)
-        self.channel = channel
-        self.device = self._create_device()
+        # TODO: improve logic
+        self.device = self._create_device(channel, tca)
 
         self.num_iterations = num_iterations
         self.precision = precision
@@ -55,12 +55,12 @@ class PM25:
                 units[skt[2]] = skt[1]
         return vals, units
 
-    def _create_device(self):
+    def _create_device(self, channel, tca):
         self.pwr_pin.on()
         # NOTE: must allow device to be on for initialization
         time.sleep(2)
         try:
-            device = PM25_I2C(self.channel)
+            device = PM25_I2C(tca[channel])
         except OSError:
             # Try one more time
             self.pwr_pin.off()
@@ -68,7 +68,7 @@ class PM25:
             self.pwr_pin.on()
             time.sleep(2)
             try:
-                device = PM25_I2C(self.channel)
+                device = PM25_I2C(tca[channel])
             except Exception:
                 raise OSError(
                     f"Unable to initialize PM25 device. please double check {self.pwr_pin} is correct on/off pin"
