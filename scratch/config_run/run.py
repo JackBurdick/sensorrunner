@@ -2,7 +2,7 @@ from sensorrunner.user_config import USER_CONFIG
 import celery
 from redbeat import RedBeatSchedulerEntry as Entry
 
-import time
+import signal
 from sensorrunner.celery_app import setup_app
 from sensorrunner.run.run import (
     build_task_params_from_config,
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     try:
         save_entries(entries)
         print("entries started")
-        time.sleep(max(0, 600))
+        signal.pause()
     except KeyboardInterrupt:
         delete_entries(entries)
         print("entries deleted")

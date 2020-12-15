@@ -31,6 +31,7 @@ class I2CMux:
 
         #     addr_to_tca[addr] = adafruit_tca9548a.TCA9548A(i2c, address=addr)
         # TODO: ensure no channel duplicates
+        # TODO: does it make sense to sort by address for initialization?
         addr_to_tca = {}
         devices = {}
         for name, dd in devices_dict.items():
