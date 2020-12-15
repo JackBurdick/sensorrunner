@@ -26,7 +26,8 @@ def _log_demux(self, row):
 
 
 @app.task(bind=True, queue="q_demux_run")
-def _demux_run_select(self, dev_dict, wait_secs=0.1):
+def _demux_run_select(self, dev_dict, wait_secs=0.5):
+    # wait_secs is used to control time between tasks
     global GPIODEMUX
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
     if dev_dict is None:
