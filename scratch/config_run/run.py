@@ -5,7 +5,6 @@ from redbeat import RedBeatSchedulerEntry as Entry
 import time
 from sensorrunner.celery_app import setup_app
 from sensorrunner.run.run import (
-    build_devices_from_config,
     build_task_params_from_config,
 )
 
@@ -43,7 +42,6 @@ def delete_entries(entries):
 
 
 if __name__ == "__main__":
-    # devs = build_devices_from_config(conf)
     task_params = build_task_params_from_config(USER_CONFIG)
     entries = create_task_entries(task_params)
     print(entries)
@@ -51,7 +49,7 @@ if __name__ == "__main__":
     try:
         save_entries(entries)
         print("entries started")
-        time.sleep(max(0, 180))
+        time.sleep(max(0, 600))
     except KeyboardInterrupt:
         delete_entries(entries)
         print("entries deleted")
