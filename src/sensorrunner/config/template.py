@@ -62,7 +62,7 @@ TEMPLATE = {
                 },
                 "schedule": {
                     "frequency": Numeric(
-                        required=False, is_type=float, bounds=(0, 3600)
+                        required=False, is_type=float, bounds=(0, 86400)
                     )
                 },
             },
@@ -106,7 +106,7 @@ TEMPLATE = {
                 },
                 "schedule": {
                     "frequency": Numeric(
-                        required=False, is_type=float, bounds=(0, 3600)
+                        required=False, is_type=float, bounds=(0, 86400)
                     )
                 },
             },
@@ -151,7 +151,7 @@ TEMPLATE = {
                         },
                         "schedule": {
                             "frequency": Numeric(
-                                required=False, is_type=float, bounds=(0, 3600)
+                                required=False, is_type=float, bounds=(1, 86400)
                             )
                         },
                     },
