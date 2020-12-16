@@ -34,7 +34,8 @@ class SWITCHLOW(Base):
             session.add(self)
             session.commit()
         except Exception as e:
-            print(f"row {self.name} not added: {e}")
+            session.rollback()
+            print(f"row {self.name} not added: {e}, rollback issued")
 
     def __repr__(self):
         return f"<SWITCHLOW(id='{self.id}', name={self.name}, created='{self.created_at}', duration={self.stop-self.start}), unit={self.unit}>"

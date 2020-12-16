@@ -71,16 +71,19 @@ def _demux_run_select(self, dev_dict, wait_secs=0.5):
 
     # run device
     # TODO: will need to alter this in the future depending on the device type
-    start, stop = GPIODEMUX.return_value(cur_name, cur_run_params)
-
-    # allow wait between devices
-    time.sleep(max(0, wait))
-
-    if dev_type == "switch_low":
-        #  db entry
-        entry = SWITCHLOW(name=cur_name, start=start, stop=stop, unit=unit)
+    try:
+        start, stop = GPIODEMUX.return_value(cur_name, cur_run_params)
+    except Exception as e:
+        print("unable: {e}")
     else:
-        entry = None
+        if dev_type == "switch_low":
+            #  db entry
+            entry = SWITCHLOW(name=cur_name, start=start, stop=stop, unit=unit)
+        else:
+            entry = None
+
+    # allow wait between devices, even on fail
+    time.sleep(max(0, wait))
 
     return entry
 
