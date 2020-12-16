@@ -74,7 +74,7 @@ def _demux_run_select(self, dev_dict, wait_secs=0.5):
     try:
         start, stop = GPIODEMUX.return_value(cur_name, cur_run_params)
     except Exception as e:
-        print("unable: {e}")
+        raise Exception(f"unable: {e}")
     else:
         if dev_type == "switch_low":
             #  db entry

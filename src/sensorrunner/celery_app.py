@@ -134,7 +134,7 @@ def return_worker_info():
     for qname in used_queues:
         worker_name = f"{qname}_worker"
         if qname not in MAGIC_QUEUES:
-            worker_arg = f"-Q:{worker_name} '{qname}' -c:{qname} 1"
+            worker_arg = f"-Q:{worker_name} '{qname}' -c:{worker_name} 1"
         else:
             worker_arg = MAGIC_QUEUES[qname]
         workers.append(worker_name)
