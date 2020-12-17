@@ -98,7 +98,7 @@ CELERYD_USER="pi"
 CELERYD_GROUP="pi"
 CELERY_CREATE_DIRS=1
 
-# add z opt to celeryd
+# add z opt to celeryd, default to concurrency 1
 CELERYD_OPTS="--concurrency=1 $CELERYD_WORKER_OPTS $CELERY_Z_OPT"
 
 #celerybeat
