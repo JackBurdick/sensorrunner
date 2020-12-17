@@ -99,7 +99,7 @@ CELERYD_GROUP="pi"
 CELERY_CREATE_DIRS=1
 
 # add z opt to celeryd, default to concurrency 1
-CELERYD_OPTS="--concurrency=1 $CELERYD_WORKER_OPTS $CELERY_Z_OPT"
+CELERYD_OPTS="$CELERYD_WORKER_OPTS $CELERY_Z_OPT"
 
 #celerybeat
 #CELERYBEAT_OPTS="-Z '/home/pi/dev/sensorrunner/scratch/config_run/configs/basic_i2c.yml'"

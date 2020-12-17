@@ -129,14 +129,12 @@ def return_worker_info():
     # NOTE: `collect` is a 'magic queue' that is, it is special compared to all
     # other queues.
     # TODO: this logic should be generalized a bit more in the future
-    MAGIC_QUEUES = {"collect": "-Q:main 'collect' -c:main 1 -P:main solo"}
+    MAGIC_QUEUES = {"collect": "-Q:main 'collect' -P:main solo"}
     workers, worker_args = [], []
     for qname in used_queues:
         worker_name = f"{qname}_worker"
         if qname not in MAGIC_QUEUES:
-            worker_arg = (
-                f"-Q:{worker_name} '{qname}' -c:{worker_name} 1 -P:{worker_name} solo"
-            )
+            worker_arg = f"-Q:{worker_name} '{qname}' -P:{worker_name} solo"
         else:
             worker_arg = MAGIC_QUEUES[qname]
         workers.append(worker_name)
