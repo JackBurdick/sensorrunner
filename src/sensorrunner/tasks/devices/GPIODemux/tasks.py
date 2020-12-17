@@ -34,15 +34,15 @@ REDIS_CLIENT = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=8)
 def _log_demux(self, row):
     if row:
         if isinstance(row, SWITCHLOW):
-            have_lock = False
-            lock = REDIS_CLIENT.lock("_log_demux", timeout=2)
-            try:
-                have_lock = lock.acquire(blocking=False)
-                if have_lock:
-                    row.add(SESSION_SWITCHLOW)
-            finally:
-                if have_lock:
-                    lock.release()
+            # have_lock = False
+            # lock = REDIS_CLIENT.lock("_log_demux", timeout=2)
+            # try:
+            #     have_lock = lock.acquire(blocking=False)
+            #     if have_lock:
+            row.add(SESSION_SWITCHLOW)
+            # finally:
+            #     if have_lock:
+            #         lock.release()
         else:
             raise ValueError(f"unable to match entry {row} to accepted row types")
     else:
@@ -52,8 +52,8 @@ def _log_demux(self, row):
 @app.task(bind=True, queue="q_demux_run")
 def _demux_run_select(self, dev_dict, wait_secs=0.5):
 
-    have_lock = False
-    lock = REDIS_CLIENT.lock("_demux_run_select", timeout=8)
+    # have_lock = False
+    # lock = REDIS_CLIENT.lock("_demux_run_select", timeout=8)
     # wait_secs is used to control time between tasks
     global GPIODEMUX
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
@@ -98,19 +98,26 @@ def _demux_run_select(self, dev_dict, wait_secs=0.5):
 
     # run device
     # TODO: will need to alter this in the future depending on the device type
+    # entry = None
+    # try:
+    #     have_lock = lock.acquire(blocking=False)
+    #     if have_lock:
+    #         try:
+    #             if dev_type == "switch_low":
+    #                 start, stop = GPIODEMUX.return_value(cur_name, cur_run_params)
+    #                 entry = SWITCHLOW(name=cur_name, start=start, stop=stop, unit=unit)
+    #         except Exception as e:
+    #             raise Exception(f"unable: {e}")
+    # finally:
+    #     if have_lock:
+    #         lock.release()
     entry = None
     try:
-        have_lock = lock.acquire(blocking=False)
-        if have_lock:
-            try:
-                if dev_type == "switch_low":
-                    start, stop = GPIODEMUX.return_value(cur_name, cur_run_params)
-                    entry = SWITCHLOW(name=cur_name, start=start, stop=stop, unit=unit)
-            except Exception as e:
-                raise Exception(f"unable: {e}")
-    finally:
-        if have_lock:
-            lock.release()
+        if dev_type == "switch_low":
+            start, stop = GPIODEMUX.return_value(cur_name, cur_run_params)
+            entry = SWITCHLOW(name=cur_name, start=start, stop=stop, unit=unit)
+    except Exception as e:
+        raise Exception(f"unable: {e}")
 
     # allow wait between devices, even on fail
     time.sleep(max(0, wait))
