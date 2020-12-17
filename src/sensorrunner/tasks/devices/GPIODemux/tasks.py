@@ -9,12 +9,42 @@ import datetime as dt
 import time
 from sensorrunner.user_config import USER_CONFIG
 from sensorrunner.run.run import build_devices_from_config
+from sensorrunner.secrets import REDIS_GLOBAL_host, REDIS_GLOBAL_port
 
 GPIODEMUX = None
 app = setup_app()
 
+import redis
+
+REDIS_CLIENT = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=8)
+
+
+def only_one(function=None, key="", timeout=None):
+    """Enforce only one celery task at a time."""
+    # adapted from
+    # http://loose-bits.com/2010/10/distributed-task-locking-in-celery.html
+    def _dec(run_func):
+        def _caller(*args, **kwargs):
+            """Caller."""
+            ret_value = None
+            have_lock = False
+            lock = REDIS_CLIENT.lock(key, timeout=timeout)
+            try:
+                have_lock = lock.acquire(blocking=False)
+                if have_lock:
+                    ret_value = run_func(*args, **kwargs)
+            finally:
+                if have_lock:
+                    lock.release()
+            return ret_value
+
+        return _caller
+
+    return _dec(function) if function is not None else _dec
+
 
 @app.task(bind=True, queue="q_demux_log")
+@only_one(key="_log_demux", timeout=2)
 def _log_demux(self, row):
     if row:
         if isinstance(row, SWITCHLOW):
@@ -26,6 +56,7 @@ def _log_demux(self, row):
 
 
 @app.task(bind=True, queue="q_demux_run")
+@only_one(key="_demux_run_select", timeout=8)
 def _demux_run_select(self, dev_dict, wait_secs=0.5):
     # wait_secs is used to control time between tasks
     global GPIODEMUX
