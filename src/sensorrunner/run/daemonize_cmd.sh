@@ -100,7 +100,7 @@ CELERY_CREATE_DIRS=1
 CELERY_VISIBILITY_TIMEOUT=12000
 
 # add z opt to celeryd, default to concurrency 1
-CELERYD_OPTS="-P solo $CELERYD_WORKER_OPTS $CELERY_Z_OPT"
+CELERYD_OPTS="-P solo -c 1 $CELERYD_WORKER_OPTS $CELERY_Z_OPT"
 
 #celerybeat
 #CELERYBEAT_OPTS="-Z '/home/pi/dev/sensorrunner/scratch/config_run/configs/basic_i2c.yml'"
