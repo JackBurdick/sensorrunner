@@ -19,36 +19,30 @@ import redis
 REDIS_CLIENT = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=8)
 
 
-def only_one(function=None, key="", timeout=None):
-    """Enforce only one celery task at a time."""
-    # adapted from
-    # http://loose-bits.com/2010/10/distributed-task-locking-in-celery.html
-    def _dec(run_func):
-        def _caller(*args, **kwargs):
-            """Caller."""
-            ret_value = None
-            have_lock = False
-            lock = REDIS_CLIENT.lock(key, timeout=timeout)
-            try:
-                have_lock = lock.acquire(blocking=False)
-                if have_lock:
-                    ret_value = run_func(*args, **kwargs)
-            finally:
-                if have_lock:
-                    lock.release()
-            return ret_value
+# def only_one(function=None, key="", timeout=None):
+#     """Enforce only one celery task at a time."""
+#     # adapted from
+#     # http://loose-bits.com/2010/10/distributed-task-locking-in-celery.html
+#     def _caller(*args, **kwargs):
+#         """Caller."""
+#         ret_value = None
 
-        return _caller
-
-    return _dec(function) if function is not None else _dec
+#     return _caller
 
 
 @app.task(bind=True, queue="q_demux_log")
-@only_one(key="_log_demux", timeout=2)
 def _log_demux(self, row):
     if row:
         if isinstance(row, SWITCHLOW):
-            row.add(SESSION_SWITCHLOW)
+            have_lock = False
+            lock = REDIS_CLIENT.lock("_log_demux", timeout=2)
+            try:
+                have_lock = lock.acquire(blocking=False)
+                if have_lock:
+                    row.add(SESSION_SWITCHLOW)
+            finally:
+                if have_lock:
+                    lock.release()
         else:
             raise ValueError(f"unable to match entry {row} to accepted row types")
     else:
@@ -56,8 +50,10 @@ def _log_demux(self, row):
 
 
 @app.task(bind=True, queue="q_demux_run")
-@only_one(key="_demux_run_select", timeout=8)
 def _demux_run_select(self, dev_dict, wait_secs=0.5):
+
+    have_lock = False
+    lock = REDIS_CLIENT.lock("_demux_run_select", timeout=8)
     # wait_secs is used to control time between tasks
     global GPIODEMUX
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
@@ -102,16 +98,19 @@ def _demux_run_select(self, dev_dict, wait_secs=0.5):
 
     # run device
     # TODO: will need to alter this in the future depending on the device type
+    entry = None
     try:
-        start, stop = GPIODEMUX.return_value(cur_name, cur_run_params)
-    except Exception as e:
-        raise Exception(f"unable: {e}")
-    else:
-        if dev_type == "switch_low":
-            #  db entry
-            entry = SWITCHLOW(name=cur_name, start=start, stop=stop, unit=unit)
-        else:
-            entry = None
+        have_lock = lock.acquire(blocking=False)
+        if have_lock:
+            try:
+                if dev_type == "switch_low":
+                    start, stop = GPIODEMUX.return_value(cur_name, cur_run_params)
+                    entry = SWITCHLOW(name=cur_name, start=start, stop=stop, unit=unit)
+            except Exception as e:
+                raise Exception(f"unable: {e}")
+    finally:
+        if have_lock:
+            lock.release()
 
     # allow wait between devices, even on fail
     time.sleep(max(0, wait))
