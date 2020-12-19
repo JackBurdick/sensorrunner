@@ -1,12 +1,11 @@
-from sensorrunner.user_config import USER_CONFIG
+import signal
+
 import celery
 from redbeat import RedBeatSchedulerEntry as Entry
 
-import signal
 from sensorrunner.celery_app import setup_app
-from sensorrunner.run.run import (
-    build_task_params_from_config,
-)
+from sensorrunner.run.run import build_task_params_from_config
+from sensorrunner.user_config import USER_CONFIG
 
 app = setup_app()
 

@@ -6,7 +6,8 @@ try() { "$@" || die "cannot $*"; }
 
 #https://stackoverflow.com/questions/59895/how-to-get-the-source-directory-of-a-bash-script-from-within-the-script-itself
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-_file_name="events.py"
+_events_file_name="events.py"
+_tasks_file_name="tasks.py"
 
 # which python is being used
 py_name="$(which python)"
@@ -35,12 +36,22 @@ else
   _py_cmd=$py_name
 fi
 
-_module_script="$DIR/$_file_name"
+_events_script_path="$DIR/$_events_file_name"
+_tasks_script_path="$DIR/$_tasks_file_name"
 
-_my_cmd="$_py_cmd $_module_script &"
+#_events_start_cmd="$_py_cmd $_events_scrpt_path &"
+start_events() { "$_py_cmd $_events_scrpt_path &"; }
+#_tasks_start_cmd="$_py_cmd $_tasks_script_path &"
+start_tasks() { "$_py_cmd $_events_scrpt_path &"; }
 
 # stop background events
 sudo ps aux|grep '/sensorrunner/src/sensorrunner/run/events.py' | awk '{print $2}' | xargs sudo kill -9
 
 # I'm unsure why, but the script would hang if called from here
-echo $_my_cmd
+#echo $_events_start_cmd
+start_events
+echo "started events"
+
+#echo $_tasks_start_cmd
+echo "started tasks"
+start_tasks
