@@ -22,12 +22,13 @@ fi
 ## set varibables according to current spec
 _file_name="daemonize_cmd.sh"
 _set_daemon_vars_cmd="$DIR/$_file_name -z $CUR_CONFIG_FILE"
-sudo $_set_daemon_vars_cmd
+$_set_daemon_vars_cmd
+)
 
 ## start daemon
-sudo /etc/init.d/celeryd start
+/etc/init.d/celeryd start
 echo "started daemon"
-sudo /etc/init.d/celerybeat start
+/etc/init.d/celerybeat start
 echo "started beat"
 
 ## start events

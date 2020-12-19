@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 import celery
-from celery import signals
+from celery import signals, platforms
 from click import Option
 from kombu import Queue
 
@@ -27,6 +27,10 @@ DEV_TASK_DIR = "/".join(o)
 
 app = celery.Celery("celery_run")
 app.config_from_object(celeryconf)
+
+# TODO: this is dangerous, but I don't see another solution at the moment
+# Move fast and break things?
+platforms.C_FORCE_ROOT = True
 
 app.user_options["preload"].add(
     Option(
@@ -129,7 +133,9 @@ def return_worker_info():
     # NOTE: `collect` is a 'magic queue' that is, it is special compared to all
     # other queues.
     # TODO: this logic should be generalized a bit more in the future
-    MAGIC_QUEUES = {"collect": "-Q:main 'collect' -P:main solo -c:main 1 "}
+    MAGIC_QUEUES = {
+        "collect": "-Q:collect_worker 'collect' -P:collect_worker solo -c:collect_worker 1 "
+    }
     workers, worker_args = [], []
     for qname in used_queues:
         worker_name = f"{qname}_worker"
