@@ -23,7 +23,6 @@ fi
 _file_name="daemonize_cmd.sh"
 _set_daemon_vars_cmd="$DIR/$_file_name -z $CUR_CONFIG_FILE"
 $_set_daemon_vars_cmd
-)
 
 ## start daemon
 /etc/init.d/celeryd start
