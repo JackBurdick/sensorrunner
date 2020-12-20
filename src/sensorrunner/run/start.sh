@@ -34,10 +34,5 @@ echo "started beat"
 # TODO: only start if needed
 _start_events_path="start_events.sh"
 _start_events_cmd="$DIR/$_start_events_path"
-echo "starting... $_start_events_cmd"
-_events_pid=$($_start_events_cmd)
-echo "started events, pid: $_events_pid"
-
-$_events_pid &
-echo $!
+$_start_events_cmd
 echo "done"

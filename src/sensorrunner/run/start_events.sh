@@ -39,19 +39,14 @@ fi
 _events_script_path="$DIR/$_events_file_name"
 _tasks_script_path="$DIR/$_tasks_file_name"
 
-#_events_start_cmd="$_py_cmd $_events_scrpt_path &"
-start_events() { "$_py_cmd $_events_scrpt_path &"; }
-#_tasks_start_cmd="$_py_cmd $_tasks_script_path &"
-start_tasks() { "$_py_cmd $_events_scrpt_path &"; }
+_events_start_cmd="$_py_cmd $_events_script_path &"
+_tasks_start_cmd="$_py_cmd $_tasks_script_path &"
 
 # stop background events
 sudo ps aux|grep '/sensorrunner/src/sensorrunner/run/events.py' | awk '{print $2}' | xargs sudo kill -9
 
-# I'm unsure why, but the script would hang if called from here
-#echo $_events_start_cmd
-start_events
+eval "$_events_start_cmd"
 echo "started events"
 
-#echo $_tasks_start_cmd
+eval "$_tasks_start_cmd"
 echo "started tasks"
-start_tasks
