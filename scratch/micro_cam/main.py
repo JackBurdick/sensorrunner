@@ -6,11 +6,14 @@ import uos
 import network
 import gc
 import json
+from ulog import ULog
 
 
 # TODO: check if connected
 sd = setup_sd()
 uos.mount(sd, "/sd")
+mylogger = ULog()
+mylogger.debug("hello")
 
 # TODO: fail loudly
 CAM = None
@@ -18,6 +21,7 @@ if not CAM:
     CAM = setup_cam()
 
 app = tinyweb.webserver()
+mylogger.debug("hello again")
 
 
 def _write_image(cams):
@@ -155,4 +159,6 @@ def run():
 
 
 if __name__ == "__main__":
+    mylogger.debug("about to run")
+    mylogger.to_file("/sd/mylog.json")
     run()
