@@ -8,20 +8,23 @@ import gc
 import json
 from ulog import ULog
 
+IMG_PATH_TEMPLATE = "sd/{}__{}.jpg"
+
+logger = ULog("main.py")
 
 # TODO: check if connected
-sd = setup_sd()
+sd = setup_sd(logger)
+logger.info("sd setup")
 uos.mount(sd, "/sd")
-mylogger = ULog()
-mylogger.debug("hello")
+logger.info("sd card mounted")
 
-# TODO: fail loudly
 CAM = None
 if not CAM:
-    CAM = setup_cam()
+    CAM = setup_cam(logger)
+logger.info("camera setup")
 
 app = tinyweb.webserver()
-mylogger.debug("hello again")
+logger.debug("app webserver created")
 
 
 def _write_image(cams):
@@ -29,20 +32,15 @@ def _write_image(cams):
     ret = {}
     if cams:
         for _, cam_info in cams.items():
-            print("pre")
             buf = CAM.capture()
-            print("capture")
-            img_path = "sd/{}__{}.jpg".format(cam_info["index"], cam_info["ts"])
-            print(img_path)
+            img_path = IMG_PATH_TEMPLATE.format(cam_info["index"], cam_info["ts"])
             f = open(img_path, "w")
             f.write(buf)
             time.sleep_ms(100)
             f.close()
-            print("closed")
             ret["path"] = img_path
             ret["index"] = cam_info["index"]
             ret["ts"] = cam_info["ts"]
-            print(ret)
     return ret
 
 
@@ -53,12 +51,6 @@ def _basic_parse_qs(raw_qs):
         kv = qs.split("=")
         qs_d[kv[0]] = kv[1]
     return qs_d
-
-
-#     def delete(self, data):
-#         """Delete image"""
-#         hello = {"put": {"jack": data}}
-#         return hello
 
 
 class Status:
@@ -76,7 +68,7 @@ class Status:
             "gateway": ifconfig[2],
             "dns": ifconfig[3],
         }
-        return {"memory": mem, "network": net}
+        return {"memory": mem, "network": net}, 200
 
 
 class Capture:
@@ -90,8 +82,7 @@ class Capture:
             # cams: {index: ___, ts: ___}
             img_cap = _write_image(cams)
         resp = {"cams": img_cap}
-        print(resp)
-        return resp
+        return resp, 200
 
 
 class SDFiles:
@@ -116,7 +107,7 @@ class SDFiles:
                 resp = ({"message": "file not found"}, 400)
             else:
                 f.close()
-                # uos.remove("/sd/now.jpg")
+                uos.remove("{}".format(f_name))
                 resp = ({"message": "file deleted"}, 200)
         else:
             resp = ({"message": "no `file_name` detected"}, 400)
@@ -126,20 +117,26 @@ class SDFiles:
 @app.route("/retrieve/")
 async def images(req, resp):
     qs = req.query_string
-    qs_d = _basic_parse_qs(qs)
-    print(qs_d)
     try:
-        ts = qs_d["ts"]
-    except KeyError:
+        qs_d = _basic_parse_qs(qs)
+    except Exception:
+        # catch all exceptions
+        qs_d = None
+    if qs_d:
+        try:
+            ts = qs_d["ts"]
+        except KeyError:
+            ts = None
+        try:
+            index = qs_d["index"]
+        except KeyError:
+            index = None
+    else:
         ts = None
-    try:
-        index = qs_d["index"]
-    except KeyError:
         index = None
 
     if index is not None and ts is not None:
-        fp = "sd/{}__{}.jpg".format(index, ts)
-        print(fp)
+        fp = IMG_PATH_TEMPLATE.format(index, ts)
         await resp.send_file(fp, content_type="image/jpeg")
     else:
         msg = {"message": "index ({}) or ts ({}) missing".format(index, ts)}
@@ -152,13 +149,18 @@ async def images(req, resp):
 
 
 def run():
+    logger.debug("adding resources to app")
     app.add_resource(Status, "/api/status")
+    logger.debug("add resource: /api/status")
     app.add_resource(Capture, "/capture")
+    logger.debug("add resource: /capture")
     app.add_resource(SDFiles, "/sd_files")
+    logger.debug("add resource: /sd_files")
+    logger.debug("calling app run")
+    logger.to_file("/sd/mylog.json")
     app.run(host="0.0.0.0", port=8081)
 
 
 if __name__ == "__main__":
-    mylogger.debug("about to run")
-    mylogger.to_file("/sd/mylog.json")
+    logger.debug("running as script")
     run()

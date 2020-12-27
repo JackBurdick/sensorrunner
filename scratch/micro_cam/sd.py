@@ -1,13 +1,14 @@
 import machine
 
 
-def setup_sd():
+def setup_sd(logger):
     microsd_config = {
         "miso": 2,
         "mosi": 15,
         "ss": 13,
         "sck": 14,
     }
+    logger.debug("microsd_config: {}".format(microsd_config))
 
     sd = machine.SDCard(
         slot=3,
@@ -17,6 +18,7 @@ def setup_sd():
         miso=machine.Pin(microsd_config["miso"]),
         cs=machine.Pin(microsd_config["ss"]),
     )
+    logger.debug("sd card initialized: {}".format(sd))
 
     return sd
 

@@ -4,15 +4,28 @@ import logging
 
 
 class ULog:
-    def __init__(self):
+    """Wrapper around logger
+
+    The default logger won't allow me to add a handler and so this wrapper will
+    store an internal dict of the logger calls then allows them to be stored on
+    a json file.
+    """
+
+    def __init__(self, name=__file__):
         self.d = {}
         logging.basicConfig(level=logging.DEBUG)
-        logger = logging.getLogger(__name__)
+        logger = logging.getLogger(name)
         self.logger = logger
         self.count = 0
+        self.name = name
 
     def _log(self, msg, level, time):
-        self.d[self.count] = {"msg": msg, "level": level, "time": time}
+        self.d[self.count] = {
+            "msg": msg,
+            "level": level,
+            "time": time,
+            "name": self.name,
+        }
         self.count += 1
 
     def debug(self, msg):
