@@ -15,6 +15,7 @@ IMG_PATH_TEMPLATE = "sd/{}__{}__{}.jpg"
 V1_BASE_PATH = "/api/v1"
 BASE_SD_DIR = "/sd"
 IMG_API_PATH = "{}/{}".format(V1_BASE_PATH, "retrieve")
+IMG_API_CAPTURE_PATH = "{}/{}".format(V1_BASE_PATH, "obtain")
 
 logger = ULog("main.py")
 
@@ -39,13 +40,21 @@ app = tinyweb.webserver()
 logger.debug("app webserver created")
 
 
-def _write_image(cam_info):
+def _capture_image():
     global CAM
-    ret = {}
-    if cam_info:
+    try:
         # LED.on()
         # time.sleep_ms(500)
         buf = CAM.capture()
+    except Exception as e:
+        raise Exception("unable to capture image: {}".format(e))
+    return buf
+
+
+def _write_image(cam_info):
+    ret = {}
+    if cam_info:
+        buf = _capture_image()
         img_path = IMG_PATH_TEMPLATE.format(
             cam_info["bucket"], cam_info["index"], cam_info["ts"]
         )
@@ -182,6 +191,67 @@ async def images(req, resp):
 
 
 logger.debug("add resource: {}".format(IMG_API_PATH))
+
+
+@app.route(IMG_API_CAPTURE_PATH)
+async def image_capture(req, resp):
+    qs = req.query_string
+    try:
+        qs_d = _basic_parse_qs(qs)
+    except Exception:
+        # catch all exceptions
+        qs_d = None
+    if qs_d:
+        try:
+            ts = qs_d["ts"]
+        except KeyError:
+            ts = None
+        try:
+            index = qs_d["index"]
+        except KeyError:
+            index = None
+        try:
+            bucket = qs_d["bucket"]
+        except KeyError:
+            bucket = None
+    else:
+        ts = None
+        index = None
+        bucket = None
+
+    cam_info = {}
+    cam_info["bucket"] = bucket
+    cam_info["index"] = index
+    cam_info["ts"] = ts
+
+    if bucket is not None and index is not None and ts is not None:
+        ret = _write_image(cam_info)
+        fp = ret["path"]
+        await resp.send_file(fp, content_type="image/jpeg")
+        try:
+            f = open(fp, "r")
+        except OSError:
+            pass
+            # TODO: handle
+        else:
+            f.close()
+            uos.remove("{}".format(fp))
+
+    else:
+        msg = {
+            "message": "bucket ({}) index ({}) or ts ({}) missing: qs_d:{}".format(
+                bucket, index, ts, qs_d
+            )
+        }
+        resp.code = 400
+        resp.add_header("Content-Type", "application/json")
+        msg_json = json.dumps(msg)
+        resp.add_header("Content-Length", len(msg_json))
+        await resp._send_headers()
+        await resp.send(msg_json)
+
+
+logger.debug("add resource: {}".format(IMG_API_CAPTURE_PATH))
 
 
 def run():

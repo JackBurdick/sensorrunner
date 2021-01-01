@@ -133,3 +133,5 @@ dmypy.json
 /src/sensorrunner/secrets.py
 notes.md
 scratch/micro_cam/secrets\.py
+
+scratch/micro_cam/request/secrets\.py
