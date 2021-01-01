@@ -283,6 +283,34 @@ class PM25_ENTRY(Base):
         return f"<PM25_ENTRY(id='{self.id}', name={self.name}, start_time={self.start_time})>"
 
 
+class CAM_Row(Base):
+    __tablename__ = "cam"
+    __table_args__ = {"extend_existing": True}
+
+    # TODO: SENSOR ID
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    #
+    name = Column(String)
+    bucket = Column(String)
+    index = Column(String)
+    capture_time = Column(TIMESTAMP)
+    file_path = Column(String)
+    ip = Column(String)
+    # TOOD: meta -- quality +
+
+    def add(self, session):
+        try:
+            session.add(self)
+            session.commit()
+        except Exception as e:
+            print(f"row {self.name} not added: {e}")
+
+    def __repr__(self):
+        return f"<CAM_Row(id='{self.id}', capture_time={self.capture_time}, bucket={self.bucket}, index={self.index}, file_path={self.file_path})>"
+
+
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
@@ -299,3 +327,4 @@ SESSION_CurrentDevice = Session()
 SESSION_VIB801S = Session()
 SESSION_PM25_ENTRY = Session()
 SESSION_BMP390_ENTRY = Session()
+SESSION_CAM = Session()
