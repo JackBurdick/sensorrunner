@@ -13,7 +13,7 @@ I2CMux_DEVICES = ["vl53l0x", "si7021", "veml6070", "pm25", "bmp390"]
 GPIODemux_DEVICES = ["switch_low"]
 MDC3800_DEVICES = ["pt19"]
 EVENT_DEVICES = ["vib801s"]
-ESPCams_DEVICES = ["ESPCam"]
+Cams_DEVICES = ["ESPCam"]
 
 TEMPLATE = {
     # TODO: include task information
@@ -117,7 +117,7 @@ TEMPLATE = {
     KPH("Cams", exact=True, required=False): {
         # call>bucket, index, ts, local_dir
         KPH("name", multi=True): {
-            "device_type": Text(required=True, is_in_list=ESPCams_DEVICES),
+            "device_type": Text(required=True, is_in_list=Cams_DEVICES),
             "params": {
                 KPH("init", required=True, exact=True): {
                     "ip_addr": Text(required=True),

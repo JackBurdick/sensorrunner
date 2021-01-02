@@ -1,7 +1,7 @@
 from sensorrunner.devices.sensor.cam.espcam import ESPCam
 
 
-class ESPCams:
+class Cams:
     def __init__(
         self,
         devices_dict,
