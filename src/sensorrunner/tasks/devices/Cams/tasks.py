@@ -72,7 +72,7 @@ def _cams_run_select(self, dev_dict):
     ret_dict = CAMSDICT.return_value(cur_name, cur_run_params)
     post_capture_time = datetime.utcnow()
     # CAMDICT
-    if dev_type == "cams":
+    if dev_type == "ESPCam":
         entry = ESPCAM_Row(
             name=cur_name,
             bucket=cur_run_params["bucket"],
