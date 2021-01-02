@@ -11,8 +11,7 @@ _tasks_file_name="tasks.py"
 
 # which python is being used
 py_name="$(which python)"
-# TODO: Change
-_default_pi_python="/home/pi/.conda/envs/aero/bin/python"
+_default_pi_python="/home/pi/aero/bin/python"
 _default_laptop_python="/home/jackburdick/anaconda3/envs/aerodev/bin/python"
 
 # which device is currently being used
