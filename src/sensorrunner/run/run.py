@@ -85,7 +85,7 @@ def build_task_params_from_config(config):
         elif device_type == "Cams":
             cur_dev_name = device_type
             task_params[device_type] = {}
-            cur_tasks = ESPCams.build_task_params(device_type, config["ESPCams"])
+            cur_tasks = ESPCams.build_task_params(device_type, config["Cams"])
             task_params[device_type][cur_dev_name] = cur_tasks
         elif device_type == "GPIODemux":
             task_params[device_type] = {}
