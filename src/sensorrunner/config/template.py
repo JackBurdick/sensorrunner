@@ -114,7 +114,7 @@ TEMPLATE = {
             "fn_name": Text(required=False),
         }
     },
-    KPH("ESPCams", exact=True, required=False): {
+    KPH("Cams", exact=True, required=False): {
         # call>bucket, index, ts, local_dir
         KPH("name", multi=True): {
             "device_type": Text(required=True, is_in_list=ESPCams_DEVICES),
