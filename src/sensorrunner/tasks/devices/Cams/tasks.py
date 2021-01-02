@@ -71,8 +71,6 @@ def _cams_run_select(self, dev_dict):
     ip = Column(String)
     """
 
-    # init>ip_addr
-    # call>bucket, index, ts, local_dir
     ret_dict = CAMSDICT.return_value(cur_name, cur_run_params)
     post_capture_time = datetime.utcnow()
     # CAMDICT
@@ -81,7 +79,7 @@ def _cams_run_select(self, dev_dict):
             name=cur_name,
             bucket=cur_run_params["bucket"],
             index=cur_run_params["index"],
-            capture_time=cur_run_params["ts"],
+            capture_time=ret_dict["ts"],
             post_capture_time=post_capture_time,
             file_path=ret_dict["file_path"],
             ip=CAMSDICT.devices[cur_name]["device_type"].ip_addr,

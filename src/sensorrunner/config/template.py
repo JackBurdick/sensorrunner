@@ -13,6 +13,7 @@ I2CMux_DEVICES = ["vl53l0x", "si7021", "veml6070", "pm25", "bmp390"]
 GPIODemux_DEVICES = ["switch_low"]
 MDC3800_DEVICES = ["pt19"]
 EVENT_DEVICES = ["vib801s"]
+ESPCams_DEVICES = ["ESPCam"]
 
 TEMPLATE = {
     # TODO: include task information
@@ -103,6 +104,28 @@ TEMPLATE = {
                         "run_param_value"
                     ),
                     "unit": Text(required=True),
+                },
+                "schedule": {
+                    "frequency": Numeric(
+                        required=False, is_type=float, bounds=(0, 86400)
+                    )
+                },
+            },
+            "fn_name": Text(required=False),
+        }
+    },
+    KPH("ESPCams", exact=True, required=False): {
+        # call>bucket, index, ts, local_dir
+        KPH("name", multi=True): {
+            "device_type": Text(required=True, is_in_list=ESPCams_DEVICES),
+            "params": {
+                KPH("init", required=True, exact=True): {
+                    "ip_addr": Text(required=True),
+                },
+                "run": {
+                    "bucket": Numeric(is_type=int),
+                    "index": Numeric(is_type=int),
+                    "local_dir": Text(required=True),
                 },
                 "schedule": {
                     "frequency": Numeric(
