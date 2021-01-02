@@ -36,7 +36,8 @@ _module_script="$DIR/$_python_script"
 # which python is being used
 py_name="$(which python)"
 # TODO: change
-_default_pi_python="/home/pi/.conda/envs/aero/bin/python"
+#_default_pi_python="/home/pi/.conda/envs/aero/bin/python"
+_default_pi_python="/home/pi/aero/bin/python"
 _default_laptop_python="/home/jackburdick/anaconda3/envs/aerodev/bin/python"
 
 # which device is currently being used
@@ -87,10 +88,12 @@ done < <($_py_cmd $_module_script $CUR_CONFIG_FILE)
 ## defaults
 # celeryd
 # TODO: change
-CELERYD_CHDIR="/home/pi/dev/sensorrunner/src/sensorrunner"
+# CELERYD_CHDIR="/home/pi/dev/sensorrunner/src/sensorrunner"
+CELERYD_CHDIR="/home/pi/dev/github/sensorrunner/src/sensorrunner"
 CELERY_APP="celery_app"
 # TODO: change
-CELERY_BIN="/home/pi/.conda/envs/aero/bin/python -m celery"
+# CELERY_BIN="/home/pi/.conda/envs/aero/bin/python -m celery"
+CELERY_BIN="/home/pi/aero/bin/python -m celery"
 # TODO: parameterize
 CELERYD_LOG_LEVEL="INFO"
 
