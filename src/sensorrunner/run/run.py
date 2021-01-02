@@ -24,12 +24,12 @@ def build_devices_from_config(config):
         DEVICES["I2CMux"] = i2c_dev
 
     try:
-        cams_config = config["ESPCams"]
+        cams_config = config["Cams"]
     except KeyError:
         cams_config = None
     if cams_config:
         cams_devices = ESPCams(cams_config)
-        DEVICES["ESPCams"] = cams_devices
+        DEVICES["Cams"] = cams_devices
 
     try:
         GPIODemux_config = config["GPIODemux"]
@@ -82,10 +82,10 @@ def build_task_params_from_config(config):
             task_params[device_type] = {}
             cur_tasks = MDC3800.build_task_params(device_type, config["MDC3800"])
             task_params[device_type][cur_dev_name] = cur_tasks
-        elif device_type == "ESPCams":
+        elif device_type == "Cams":
             cur_dev_name = device_type
             task_params[device_type] = {}
-            cur_tasks = ESPCams.build_task_params(device_type, config["ESPCams"])
+            cur_tasks = ESPCams.build_task_params(device_type, config["Cams"])
             task_params[device_type][cur_dev_name] = cur_tasks
         elif device_type == "GPIODemux":
             task_params[device_type] = {}

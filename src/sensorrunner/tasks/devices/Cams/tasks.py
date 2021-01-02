@@ -54,10 +54,8 @@ def _cams_run_select(self, dev_dict):
     # NOTE: I'm not sure how best to handle this.. passing through the queue is
     # not currently an options since it is not serialized by standard methods
     if CAMSDICT is None:
-        CAMSDICT_wrapped = build_devices_from_config(
-            {"ESPCams": USER_CONFIG["ESPCams"]}
-        )
-        CAMSDICT = CAMSDICT_wrapped["ESPCams"]
+        CAMSDICT_wrapped = build_devices_from_config({"Cams": USER_CONFIG["Cams"]})
+        CAMSDICT = CAMSDICT_wrapped["Cams"]
     else:
         pass
 
@@ -74,12 +72,12 @@ def _cams_run_select(self, dev_dict):
     ret_dict = CAMSDICT.return_value(cur_name, cur_run_params)
     post_capture_time = datetime.utcnow()
     # CAMDICT
-    if dev_type == "cams":
+    if dev_type == "ESPCam":
         entry = ESPCAM_Row(
             name=cur_name,
             bucket=cur_run_params["bucket"],
             index=cur_run_params["index"],
-            capture_time=ret_dict["ts"],
+            capture_time=ret_dict["capture_time"],
             post_capture_time=post_capture_time,
             file_path=ret_dict["file_path"],
             ip=CAMSDICT.devices[cur_name]["device_type"].ip_addr,

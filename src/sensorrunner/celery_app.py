@@ -161,6 +161,7 @@ def setup_app():
 
     # Create relevant queues
     m_names = _return_task_modules(user_config, DEV_TASK_DIR)
+    # TODO: ensure all relevant user_config map to m_names, raise warning/exception
     used_queues = _return_queues(m_names)
     queues = [Queue(q) for q in used_queues]
 
