@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 import json
 import requests
-import datetime
+from datetime import datetime
 
 # def get_image(bucket, index, ts):
 #     qs_dict = {"bucket": bucket, "index": index, "ts": ts}
