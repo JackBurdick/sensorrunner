@@ -2,6 +2,7 @@ from sensorrunner.devices.demux.gpio.device import GPIODemux
 from sensorrunner.devices.mux.I2C.device import I2CMux
 from sensorrunner.devices.SPI.ADC.device import MDC3800
 from sensorrunner.devices.device.device import CurrentDevice
+from sensorrunner.devices.cams.ESPCAM.device import ESPCams
 
 
 def build_devices_from_config(config):
@@ -21,6 +22,14 @@ def build_devices_from_config(config):
     if i2cmux_config:
         i2c_dev = I2CMux(i2cmux_config)
         DEVICES["I2CMux"] = i2c_dev
+
+    try:
+        cams_config = config["ESPCams"]
+    except KeyError:
+        cams_config = None
+    if cams_config:
+        cams_devices = ESPCams(cams_config)
+        DEVICES["ESPCams"] = cams_devices
 
     try:
         GPIODemux_config = config["GPIODemux"]
@@ -72,6 +81,11 @@ def build_task_params_from_config(config):
             cur_dev_name = device_type
             task_params[device_type] = {}
             cur_tasks = MDC3800.build_task_params(device_type, config["MDC3800"])
+            task_params[device_type][cur_dev_name] = cur_tasks
+        elif device_type == "ESPCams":
+            cur_dev_name = device_type
+            task_params[device_type] = {}
+            cur_tasks = ESPCams.build_task_params(device_type, config["ESPCams"])
             task_params[device_type][cur_dev_name] = cur_tasks
         elif device_type == "GPIODemux":
             task_params[device_type] = {}
