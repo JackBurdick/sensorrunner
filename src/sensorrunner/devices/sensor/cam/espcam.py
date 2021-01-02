@@ -140,6 +140,6 @@ class ESPCam:
                 f"unable to obtain image: {response.status_code} \n{response}"
             )
 
-        val_d = {"image_path": local_file_path, "capture_time": ts}
+        val_d = {"file_path": local_file_path, "capture_time": ts}
 
         return val_d
