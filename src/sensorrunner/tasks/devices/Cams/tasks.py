@@ -77,7 +77,7 @@ def _cams_run_select(self, dev_dict):
             name=cur_name,
             bucket=cur_run_params["bucket"],
             index=cur_run_params["index"],
-            capture_time=ret_dict["ts"],
+            capture_time=ret_dict["capture_time"],
             post_capture_time=post_capture_time,
             file_path=ret_dict["file_path"],
             ip=CAMSDICT.devices[cur_name]["device_type"].ip_addr,
