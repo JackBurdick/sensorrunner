@@ -54,8 +54,8 @@ class ESPCam:
         self.ip_addr = ip_addr
         self.path_template = "{}__{}__{}.jpg"
 
-    def _build_req(self, ip_addr, port, api_v, api_endpoint, qs_dict, data_dict):
-        URL = f"http://{ip_addr}:{port}/api/{api_v}/{api_endpoint}"
+    def _build_req(self, ip_addr, api_v, api_endpoint, qs_dict, data_dict):
+        URL = f"http://{ip_addr}/api/{api_v}/{api_endpoint}"
 
         if qs_dict is not None:
             qstr = urlencode(qs_dict)
@@ -73,7 +73,7 @@ class ESPCam:
     def _v1_req_adapter(
         self,
         ip_addr,
-        port_str,
+        # port_str,
         api_endpoint,
         api_v="v1",
         qs_dict=None,
@@ -83,7 +83,7 @@ class ESPCam:
             data_dict = {}
         r_url, r_header, r_payload = self._build_req(
             ip_addr=ip_addr,
-            port=port_str,
+            # port=port_str,
             api_v=api_v,
             api_endpoint=api_endpoint,
             qs_dict=qs_dict,
@@ -94,8 +94,9 @@ class ESPCam:
     def obtain_image_rd(self, bucket, index, ts):
         # url = "http://<>/api/v1/obtain?index=0&ts=01_01_2021__13_52_10&bucket=0"
         qs_dict = {"bucket": bucket, "index": index, "ts": ts}
+        # 'ip_addr' and 'port_str'
         r_url, r_header, r_payload = self._v1_req_adapter(
-            api_endpoint="obtain", qs_dict=qs_dict
+            ip_addr=self.ip_addr, api_endpoint="obtain", qs_dict=qs_dict
         )
         r_method = "GET"
         rd = {"method": r_method, "url": r_url, "headers": r_header, "data": r_payload}
