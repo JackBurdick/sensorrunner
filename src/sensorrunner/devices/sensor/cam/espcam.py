@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 import json
 import requests
-
+import datetime
 
 # def get_image(bucket, index, ts):
 #     qs_dict = {"bucket": bucket, "index": index, "ts": ts}
@@ -119,14 +119,10 @@ class ESPCam:
         except KeyError:
             raise ValueError(f"index not in {kwargs}")
 
-        try:
-            # "01_01_2021__13_52_10"
-            ts = kwargs["ts"]
-        except KeyError:
-            raise ValueError(f"ts not in {kwargs}")
+        # e.g. '01_01_2021__17_13_18'
+        ts = datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
 
         try:
-            # "01_01_2021__13_52_10"
             local_dir = kwargs["local_dir"]
         except KeyError:
             raise ValueError(f"local_dir not in {kwargs}")
@@ -143,6 +139,6 @@ class ESPCam:
                 f"unable to obtain image: {response.status_code} \n{response}"
             )
 
-        val_d = {"image_path": local_file_path}
+        val_d = {"image_path": local_file_path, "capture_time": ts}
 
         return val_d
