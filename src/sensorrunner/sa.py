@@ -295,7 +295,7 @@ class ESPCAM_Row(Base):
     name = Column(String)
     bucket = Column(String)
     index = Column(String)
-    capture_time = Column(TIMESTAMP)
+    capture_time = Column(String)
     post_capture_time = Column(TIMESTAMP)
     file_path = Column(String)
     ip = Column(String)
