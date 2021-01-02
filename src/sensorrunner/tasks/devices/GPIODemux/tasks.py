@@ -14,9 +14,9 @@ from sensorrunner.secrets import REDIS_GLOBAL_host, REDIS_GLOBAL_port
 GPIODEMUX = None
 app = setup_app()
 
-import redis
+# import redis
 
-REDIS_CLIENT = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=8)
+# REDIS_CLIENT = redis.Redis(host=REDIS_GLOBAL_host, port=REDIS_GLOBAL_port, db=8)
 
 
 # def only_one(function=None, key="", timeout=None):

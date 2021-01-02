@@ -283,7 +283,7 @@ class PM25_ENTRY(Base):
         return f"<PM25_ENTRY(id='{self.id}', name={self.name}, start_time={self.start_time})>"
 
 
-class CAM_Row(Base):
+class ESPCAM_Row(Base):
     __tablename__ = "cam"
     __table_args__ = {"extend_existing": True}
 
@@ -296,6 +296,7 @@ class CAM_Row(Base):
     bucket = Column(String)
     index = Column(String)
     capture_time = Column(TIMESTAMP)
+    post_capture_time = Column(TIMESTAMP)
     file_path = Column(String)
     ip = Column(String)
     # TOOD: meta -- quality +
@@ -327,4 +328,4 @@ SESSION_CurrentDevice = Session()
 SESSION_VIB801S = Session()
 SESSION_PM25_ENTRY = Session()
 SESSION_BMP390_ENTRY = Session()
-SESSION_CAM = Session()
+SESSION_ESPCAM = Session()
