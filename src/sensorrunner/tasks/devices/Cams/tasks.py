@@ -54,10 +54,8 @@ def _cams_run_select(self, dev_dict):
     # NOTE: I'm not sure how best to handle this.. passing through the queue is
     # not currently an options since it is not serialized by standard methods
     if CAMSDICT is None:
-        CAMSDICT_wrapped = build_devices_from_config(
-            {"ESPCams": USER_CONFIG["ESPCams"]}
-        )
-        CAMSDICT = CAMSDICT_wrapped["ESPCams"]
+        CAMSDICT_wrapped = build_devices_from_config({"Cams": USER_CONFIG["Cams"]})
+        CAMSDICT = CAMSDICT_wrapped["Cams"]
     else:
         pass
 

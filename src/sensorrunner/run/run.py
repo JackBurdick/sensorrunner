@@ -29,7 +29,7 @@ def build_devices_from_config(config):
         cams_config = None
     if cams_config:
         cams_devices = ESPCams(cams_config)
-        DEVICES["ESPCams"] = cams_devices
+        DEVICES["Cams"] = cams_devices
 
     try:
         GPIODemux_config = config["GPIODemux"]
