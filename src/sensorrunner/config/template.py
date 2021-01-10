@@ -128,11 +128,9 @@ TEMPLATE = {
                     "local_dir": Text(required=True),
                 },
                 "schedule": {
-                    "schedule": {
-                        KPH("schedule_param_name", multi=True, required=False): VPH(
-                            "schedule_param_value"
-                        )
-                    },
+                    KPH("schedule_param_name", multi=True, required=False): VPH(
+                        "schedule_param_value"
+                    )
                 },
             },
             "fn_name": Text(required=False),
