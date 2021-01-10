@@ -99,12 +99,10 @@ def _cams_run_select(self, dev_dict):
         urllib3.exceptions.NewConnectionError,
         requests.exceptions.ConnectionError,
     ) as e:
-        # Find the number of attempts so far
         # TODO: log error
         num_retries = _cams_run_select.request.retries
         seconds_to_wait = 2.0 ** num_retries
-        # First countdown will be 1.0, then 2.0, 4.0, etc.
-        raise _cams_run_select.retry(countdown=seconds_to_wait)
+        raise self.retry(countdown=seconds_to_wait)
     return entry
 
 

@@ -18,6 +18,7 @@ IMG_API_PATH = "{}/{}".format(V1_BASE_PATH, "retrieve")
 IMG_API_CAPTURE_PATH = "{}/{}".format(V1_BASE_PATH, "obtain")
 
 logger = ULog("main.py")
+run_logger = ULog("runtime")
 
 # LED = machine.Pin(1, machine.Pin.OUT)
 # time.sleep_ms(300)
@@ -35,8 +36,14 @@ CAM = None
 if not CAM:
     CAM = setup_cam(logger)
 logger.info("camera setup")
-
-app = tinyweb.webserver()
+app = tinyweb.webserver(
+    host="0.0.0.0",
+    port=8081,
+    request_timeout=4,
+    max_concurrency=2,
+    backlog=5,
+    debug=True,
+)
 logger.debug("app webserver created")
 
 
@@ -103,28 +110,38 @@ class Capture:
     url = "{}/{}".format(V1_BASE_PATH, "capture")
 
     def post(self, data):
-        img_cap = None
-        if data:
-            try:
-                cam_info = data["cam"]
-            except KeyError:
-                cam_info = None
-            # cams: {index: ___, ts: ___}
-            img_cap = _write_image(cam_info)
-        resp = {"cam": img_cap}
-        return resp, 200
+        try:
+            img_cap = None
+            if data:
+                try:
+                    cam_info = data["cam"]
+                except KeyError:
+                    cam_info = None
+                # cams: {index: ___, ts: ___}
+                img_cap = _write_image(cam_info)
+        except Exception as e:
+            resp = {"error": e}
+            return resp, 400
+        else:
+            resp = {"cam": img_cap}
+            return resp, 200
 
 
 class SDFiles:
     url = "{}/{}".format(V1_BASE_PATH, "sdfiles")
 
     def get(self, data):
-        files = uos.listdir(BASE_SD_DIR)
-        # remove dotfiles
-        files = [f for f in files if not f.startswith(".")]
-        # {"files": ["now_2.jpg", "0_12_26_2020__11_43_10.jpg"]}
-        resp = {"files": files}
-        return resp, 400
+        try:
+            files = uos.listdir(BASE_SD_DIR)
+            # remove dotfiles
+            files = [f for f in files if not f.startswith(".")]
+            # {"files": ["now_2.jpg", "0_12_26_2020__11_43_10.jpg"]}
+        except Exception as e:
+            resp = {"error": e}
+            return resp, 400
+        else:
+            resp = {"files": files}
+            return resp, 200
 
     def delete(self, data):
         # e.g. "now_2.jpg"
@@ -227,7 +244,7 @@ async def image_capture(req, resp):
     if bucket is not None and index is not None and ts is not None:
         ret = _write_image(cam_info)
         fp = ret["path"]
-        await resp.send_file(fp, content_type="image/jpeg")
+        await resp.send_file(fp, content_type="image/jpeg", max_age=0)
         try:
             f = open(fp, "r")
         except OSError:
@@ -265,11 +282,14 @@ def run():
     app.add_resource(SDFiles, SDFiles.url)
     logger.debug("add resource: {}".format(SDFiles.url))
 
-    logger.debug("calling app run")
+    logger.debug("calling app.run()")
     logger.to_file("/sd/mylog.json")
-    app.run(host="0.0.0.0", port=8081)
+    app.run()
 
 
 if __name__ == "__main__":
     logger.debug("running as script")
-    run()
+    try:
+        run()
+    except Exception as e:
+        run_logger.error("exception: {}".format(e))

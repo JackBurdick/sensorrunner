@@ -2,7 +2,7 @@ import camera
 
 
 def setup_cam(logger):
-    QUALITY = 6
+    QUALITY = 12
     camera.init(0)
     logger.debug("Camera initialized")
     camera.quality(QUALITY)
