@@ -1,5 +1,7 @@
 import celery
 import importlib
+import requests
+import urllib3
 
 import sensorrunner
 
@@ -98,7 +100,13 @@ def _cams_run_select(self, dev_dict):
         seconds_to_wait = 2.0 ** num_retries
         try:
             raise self.retry(exc=e, countdown=seconds_to_wait)
-        except celery.exceptions.MaxRetriesExceededError as e:
+        except (
+            celery.exceptions.MaxRetriesExceededError,
+            urllib3.exceptions.MaxRetryError,
+            urllib3.exceptions.NewConnectionError,
+            requests.exceptions.ConnectionError,
+            OSError,
+        ) as e:
             # TODO log e
             entry = None
 
