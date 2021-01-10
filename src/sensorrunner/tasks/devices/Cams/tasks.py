@@ -2,6 +2,8 @@ import celery
 import importlib
 
 import sensorrunner
+import requests
+import urllib3
 
 importlib.reload(sensorrunner)
 from sensorrunner.celery_app import setup_app
@@ -25,8 +27,7 @@ def _log_cam(self, row):
         pass
 
 
-@app.task(bind=True, queue="q_cam_run")
-def _cams_run_select(self, dev_dict):
+def _return_entry(dev_dict):
     global CAMSDICT
     # https://docs.celeryproject.org/en/latest/userguide/tasks.html#instantiation
     if dev_dict is None:
@@ -85,6 +86,25 @@ def _cams_run_select(self, dev_dict):
 
     else:
         raise ValueError(f"device type {dev_type} unsupported")
+    return entry
+
+
+@app.task(bind=True, queue="q_cam_run", max_retries=5, soft_time_limit=30)
+def _cams_run_select(self, dev_dict):
+
+    try:
+        entry = _return_entry(dev_dict)
+    except (
+        OSError,
+        urllib3.exceptions.NewConnectionError,
+        requests.exceptions.ConnectionError,
+    ) as e:
+        # Find the number of attempts so far
+        # TODO: log error
+        num_retries = _cams_run_select.request.retries
+        seconds_to_wait = 2.0 ** num_retries
+        # First countdown will be 1.0, then 2.0, 4.0, etc.
+        raise _cams_run_select.retry(countdown=seconds_to_wait)
     return entry
 
 
