@@ -20,7 +20,7 @@ def create_task_entries(task_params):
                         run_every=comp_task_spec["run_every"]
                     )
                 except KeyError:
-                    sched = comp_task_spec["schedule"]
+                    sched = celery.schedules.crontab(**comp_task_spec["schedule"])
 
                 name = comp_task_spec["name"]
                 entry = Entry(
