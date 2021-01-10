@@ -117,7 +117,15 @@ class Cams:
             # TODO: make more robust
             entry_d["task"] = "sensorrunner.tasks.devices.Cams.tasks.Cams_run"
             # maybe make schedule outside this?
-            entry_d["run_every"] = comp_dict["params"]["schedule"]["frequency"]
+            try:
+                entry_d["run_every"] = comp_dict["params"]["schedule"]["frequency"]
+            except KeyError:
+                entry_d["schedule"] = {}
+                sched_params = comp_dict["params"]["schedule"]
+                if not sched_params:
+                    raise ValueError(f"no schedule params specified: {comp_dict}")
+                else:
+                    entry_d["schedule"] = sched_params
             if not isinstance(dev_dict, dict):
                 raise ValueError(
                     f"run params ({dev_dict}) expected to be type {dict}, not {type(dev_dict)}"
