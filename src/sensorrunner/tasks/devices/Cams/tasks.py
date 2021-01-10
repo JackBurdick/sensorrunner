@@ -97,7 +97,7 @@ def _cams_run_select(self, dev_dict):
     except Exception as e:
         # TODO: log error
         num_retries = self.request.retries
-        seconds_to_wait = 2.0 ** num_retries
+        seconds_to_wait = 4.0 ** num_retries
         try:
             raise self.retry(exc=e, countdown=seconds_to_wait)
         except (
