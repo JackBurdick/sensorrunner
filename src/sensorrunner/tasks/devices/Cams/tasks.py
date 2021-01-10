@@ -92,11 +92,16 @@ def _cams_run_select(self, dev_dict):
 
     try:
         entry = _return_entry(dev_dict)
-    except Exception as exc:
+    except Exception as e:
         # TODO: log error
         num_retries = _cams_run_select.request.retries
         seconds_to_wait = 2.0 ** num_retries
-        raise self.retry(exc=exc, countdown=seconds_to_wait)
+        try:
+            entry = self.retry(exc=e, countdown=seconds_to_wait)
+        except celery.exceptions.MaxRetriesExceeded:
+            # TODO log
+            entry = None
+
     return entry
 
 
