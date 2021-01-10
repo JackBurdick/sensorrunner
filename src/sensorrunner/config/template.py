@@ -62,8 +62,8 @@ TEMPLATE = {
                     "unit": Text(required=True),
                 },
                 "schedule": {
-                    "frequency": Numeric(
-                        required=False, is_type=float, bounds=(0, 86400)
+                    KPH("schedule_param_name", multi=True, required=False): VPH(
+                        "schedule_param_value"
                     )
                 },
             },
