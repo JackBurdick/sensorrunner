@@ -15,13 +15,18 @@ def create_task_entries(task_params):
     for device_type, device_task_spec in task_params.items():
         for dev_name, dev_spec in device_task_spec.items():
             for comp_name, comp_task_spec in dev_spec.items():
+                try:
+                    sched = celery.schedules.schedule(
+                        run_every=comp_task_spec["run_every"]
+                    )
+                except KeyError:
+                    sched = comp_task_spec["schedule"]
+
                 name = comp_task_spec["name"]
                 entry = Entry(
                     name,
                     comp_task_spec["task"],
-                    schedule=celery.schedules.schedule(
-                        run_every=comp_task_spec["run_every"]
-                    ),
+                    schedule=sched,
                     kwargs=comp_task_spec["kwargs"],
                     app=app,
                 )
