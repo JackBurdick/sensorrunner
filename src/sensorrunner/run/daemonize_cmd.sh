@@ -98,7 +98,7 @@ CELERY_BIN="/home/pi/aero/bin/python -m celery"
 CELERYD_LOG_LEVEL="INFO"
 
 # %n will be replaced with the first part of the nodename.
-CELERYD_LOG_FILE="/var/log/celery/%n.log"
+CELERYD_LOG_FILE="/var/log/celery/%n%I.log"
 CELERYD_PID_FILE="/var/run/celery/%n.pid"
 CELERYD_USER="pi"
 CELERYD_GROUP="pi"
@@ -106,7 +106,7 @@ CELERY_CREATE_DIRS=1
 CELERY_VISIBILITY_TIMEOUT=12000
 
 # add z opt to celeryd, default to concurrency 1
-CELERYD_OPTS="-P solo -c 1 $CELERYD_WORKER_OPTS $CELERY_Z_OPT"
+CELERYD_OPTS="--without-gossip -P solo -c 1 $CELERYD_WORKER_OPTS $CELERY_Z_OPT"
 
 #celerybeat
 #CELERYBEAT_OPTS="-Z '/home/pi/dev/sensorrunner/scratch/config_run/configs/basic_i2c.yml'"
