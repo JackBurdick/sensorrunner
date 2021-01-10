@@ -2,8 +2,6 @@ import celery
 import importlib
 
 import sensorrunner
-import requests
-import urllib3
 
 importlib.reload(sensorrunner)
 from sensorrunner.celery_app import setup_app
@@ -94,15 +92,11 @@ def _cams_run_select(self, dev_dict):
 
     try:
         entry = _return_entry(dev_dict)
-    except (
-        OSError,
-        urllib3.exceptions.NewConnectionError,
-        requests.exceptions.ConnectionError,
-    ) as e:
+    except Exception as exc:
         # TODO: log error
         num_retries = _cams_run_select.request.retries
         seconds_to_wait = 2.0 ** num_retries
-        raise self.retry(countdown=seconds_to_wait)
+        raise self.retry(exc=exc, countdown=seconds_to_wait)
     return entry
 
 
