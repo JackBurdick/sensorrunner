@@ -20,3 +20,5 @@ beat_schedule = {}
 # queue
 broker_transport_options = {"queue_order_strategy": "priority"}
 task_queues = (Queue("collect"),)
+
+timezone = "America/Los_Angeles"
