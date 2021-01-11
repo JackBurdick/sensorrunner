@@ -2,6 +2,7 @@ from urllib.parse import urlencode
 import json
 import requests
 from datetime import datetime
+import pathlib
 
 # def get_image(bucket, index, ts):
 #     qs_dict = {"bucket": bucket, "index": index, "ts": ts}
@@ -103,7 +104,11 @@ class ESPCam:
         return rd
 
     def _write_resp_image(self, local_dir, local_fname, response):
-        file_path = f"{local_dir}/{local_fname}"
+        time_path = datetime.now().strftime("%Y/%m/%d")
+        local_dt_dir = pathlib.Path.joinpath(local_dir, time_path)
+        if not local_dt_dir.exists:
+            local_dt_dir.mkdir(parents=True, exist_ok=True)
+        file_path = pathlib.Path.joinpath(local_dt_dir, local_fname)
         with open(file_path, "wb") as fp:
             for chunk in response:
                 fp.write(chunk)
