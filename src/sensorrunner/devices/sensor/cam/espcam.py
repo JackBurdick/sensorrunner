@@ -106,8 +106,7 @@ class ESPCam:
     def _write_resp_image(self, local_dir, local_fname, response):
         time_path = datetime.now().strftime("%Y/%m/%d")
         local_dt_dir = pathlib.Path(local_dir).joinpath(time_path)
-        if not local_dt_dir.exists:
-            local_dt_dir.mkdir(parents=True, exist_ok=True)
+        local_dt_dir.mkdir(parents=True, exist_ok=True)
         file_path = local_dt_dir.joinpath(local_fname)
         with open(file_path, "wb") as fp:
             for chunk in response:
