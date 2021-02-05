@@ -111,7 +111,8 @@ class ESPCam:
         with open(file_path, "wb") as fp:
             for chunk in response:
                 fp.write(chunk)
-        return file_path
+        file_path_str = str(file_path)
+        return file_path_str
 
     def return_value(self, **kwargs):
         try:
