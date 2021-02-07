@@ -1,5 +1,5 @@
 from atlas_i2c import AtlasI2C
-
+import time
 
 sensor_address = 99
 dev = AtlasI2C()
