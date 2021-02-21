@@ -1,6 +1,7 @@
 import fcntl
 import io
 import time
+import typer
 
 import smbus
 
@@ -27,9 +28,12 @@ class AtlasMux(object):
         assert channel >= 0 and channel <= 7, ValueError(
             f"channel must be between [0,7], not {channel}"
         )
-        self.bus.write_byte(self.address, 0)  # all off
+        self.reset_channels()
         self.bus.write_byte(self.address, 2 ** channel)
         time.sleep(0.1)
+
+    def reset_channels(self):
+        self.bus.write_byte(self.address, 0)  # all off
 
     def _atlas_setup(self, address=0x63):
         self.file_write = io.open(
@@ -54,13 +58,13 @@ class AtlasMux(object):
         ar.data = resp[1:].strip().strip(b"\x00")
         return ar
 
-    def read_sensor(self, channel=3, address=0x63, reading_delay_s=1.5):
+    def read_sensor(self, cmd="R", channel=3, address=0x63, reading_delay_s=1.5):
         self.set_channel(channel)
 
         _I2C_rep = 0x703
         with io.open(file=f"/dev/i2c-{self.bus_num}", mode="wb", buffering=0) as wfp:
             fcntl.ioctl(wfp, _I2C_rep, address)
-            cmd = "R"
+            # cmd = "R"
             cmd += "\00"
             wfp.write(cmd.encode("latin-1"))
 
@@ -74,7 +78,7 @@ class AtlasMux(object):
             ar.data = resp[1:].strip().strip(b"\x00")
 
         # set all channels off
-        self.bus.write_byte(self.address, 0)
+        self.reset_channels()
 
         return ar
         #####
@@ -85,8 +89,20 @@ ph_addr = 0x63
 tca = AtlasMux("atlas_mux", MUX_ADDR)
 # tca.set_channel(3)
 # tca._atlas_setup()
-for i in range(10):
-    v = tca.read_sensor(channel=3, address=0x63)
-    print(f"{i}: {v}")
-    print("-----" * 8)
-    time.sleep(1)
+# for i in range(10):
+#     v = tca.read_sensor(channel=3, address=0x63)
+#     print(f"{i}: {v}")
+#     print("-----" * 8)
+#     time.sleep(1)
+
+
+def main(cmd: str = "R", num: int = 3):
+    for i in range(num):
+        v = tca.read_sensor(cmd=cmd, channel=3, address=0x63)
+        print(f"{i}: {v}")
+        print("-----" * 8)
+        time.sleep(1.0)
+
+
+if __name__ == "__main__":
+    typer.run(main)
