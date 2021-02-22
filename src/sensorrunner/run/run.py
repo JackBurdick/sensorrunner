@@ -1,9 +1,9 @@
-from sensorrunner.devices.demux.gpio.device import GPIODemux
-from sensorrunner.devices.mux.I2C.device import I2CMux
-from sensorrunner.devices.SPI.ADC.device import MDC3800
-from sensorrunner.devices.device.device import CurrentDevice
 from sensorrunner.devices.atlas.device import AtlasI2cMux
 from sensorrunner.devices.cams.device import Cams
+from sensorrunner.devices.demux.gpio.device import GPIODemux
+from sensorrunner.devices.device.device import CurrentDevice
+from sensorrunner.devices.mux.I2C.device import I2CMux
+from sensorrunner.devices.SPI.ADC.device import MDC3800
 
 
 def build_devices_from_config(config):

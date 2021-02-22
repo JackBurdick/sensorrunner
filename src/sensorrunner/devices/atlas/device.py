@@ -1,8 +1,8 @@
-import smbus
-import time
 import fcntl
 import io
+import time
 
+import smbus
 from sensorrunner.devices.sensor.atlas.ph import PhSensor
 
 

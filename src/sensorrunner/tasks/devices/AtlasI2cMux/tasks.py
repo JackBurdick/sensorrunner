@@ -1,18 +1,15 @@
 # AtlasI2cMux_run
-import celery
 import importlib
+from datetime import datetime
 
+import celery
 import sensorrunner
+from sensorrunner.celery_app import setup_app
+from sensorrunner.run.run import build_devices_from_config
+from sensorrunner.sa import PH_ENTRY, SESSION_PH_ENTRY
+from sensorrunner.user_config import USER_CONFIG
 
 importlib.reload(sensorrunner)
-from sensorrunner.celery_app import setup_app
-from sensorrunner.sa import (
-    SESSION_PH_ENTRY,
-    PH_ENTRY,
-)
-from datetime import datetime
-from sensorrunner.user_config import USER_CONFIG
-from sensorrunner.run.run import build_devices_from_config
 
 AtlasMux = None
 app = setup_app()

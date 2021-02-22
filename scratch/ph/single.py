@@ -1,9 +1,9 @@
 import fcntl
 import io
 import time
-import typer
 
 import smbus
+import typer
 
 
 class AtlasResponse:

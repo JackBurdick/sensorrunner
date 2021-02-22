@@ -3,9 +3,9 @@ from datetime import datetime
 from sqlalchemy import TIMESTAMP, Boolean, Column, Float, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils import create_database, database_exists
 
 from sensorrunner.secrets import POSTGRES
+from sqlalchemy_utils import create_database, database_exists
 
 engine = create_engine(POSTGRES)
 if not database_exists(engine.url):

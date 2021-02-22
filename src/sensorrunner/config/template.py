@@ -3,7 +3,6 @@ from crummycm.validation.types.placeholders.placeholder import ValuePlaceholder 
 from crummycm.validation.types.values.compound.multi import Multi
 from crummycm.validation.types.values.element.numeric import Numeric
 from crummycm.validation.types.values.element.text import Text
-
 from sensorrunner.devices.SPI.ADC.device import MDC3800
 
 # from crummycm.validation.types.values.element.bool import Bool

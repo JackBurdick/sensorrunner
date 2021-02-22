@@ -1,11 +1,11 @@
 import adafruit_tca9548a
 import board
 import busio
+from sensorrunner.devices.sensor.I2C.air.bmp390 import BMP390
+from sensorrunner.devices.sensor.I2C.air.pm25 import PM25
 from sensorrunner.devices.sensor.I2C.air.si7021 import SI7021
 from sensorrunner.devices.sensor.I2C.distance.vl53l0x import VL5310X
 from sensorrunner.devices.sensor.I2C.light.veml6070 import VEML6070
-from sensorrunner.devices.sensor.I2C.air.pm25 import PM25
-from sensorrunner.devices.sensor.I2C.air.bmp390 import BMP390
 
 
 class I2CMux:
