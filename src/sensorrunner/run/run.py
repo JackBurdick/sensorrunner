@@ -29,7 +29,9 @@ def build_devices_from_config(config):
     except KeyError:
         AtlasI2cMux_config = None
     if AtlasI2cMux_config:
-        AtlasI2cMux_dev = AtlasI2cMux(AtlasI2cMux_config)
+        AtlasI2cMux_dev = AtlasI2cMux(
+            AtlasI2cMux_config["init"], AtlasI2cMux_config["devices"]
+        )
         DEVICES["AtlasI2cMux"] = AtlasI2cMux_dev
 
     try:
