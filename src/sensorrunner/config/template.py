@@ -175,6 +175,7 @@ TEMPLATE = {
                         )
                     },
                 },
+                "fn_name": Text(required=False),
             }
         },
     },
