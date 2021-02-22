@@ -132,7 +132,7 @@ class AtlasI2cMux:
         if not isinstance(name, str):
             return ValueError(f"`name` is expected to be type {str}, not {type(name)}")
         try:
-            cur_device = self.devices[name]
+            cur_device = self.devices[name]["device_type"]
         except KeyError:
             raise ValueError(
                 f"{name} is not available. please select from {self.devices.keys()}"
