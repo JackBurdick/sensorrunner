@@ -47,7 +47,7 @@ class AtlasI2cMux:
 
         # init devices
         devices = {}
-        for d_name, dd in devices_config["devices"]:
+        for d_name, dd in devices_config:
             devices["name"] = d_name
             try:
                 cur_c = dd["channel"]
