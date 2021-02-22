@@ -10,6 +10,7 @@ from sensorrunner.devices.SPI.ADC.device import MDC3800
 
 
 I2CMux_DEVICES = ["vl53l0x", "si7021", "veml6070", "pm25", "bmp390"]
+AtlasI2cMuxDEVICES = ["pH"]
 GPIODemux_DEVICES = ["switch_low"]
 MDC3800_DEVICES = ["pt19"]
 EVENT_DEVICES = ["vib801s"]
@@ -135,6 +136,47 @@ TEMPLATE = {
             },
             "fn_name": Text(required=False),
         }
+    },
+    KPH("AtlasI2cMux", exact=True, required=False): {
+        "init": {
+            "bus_num": Numeric(
+                required=True, is_type=int, bounds=(0, 2), bounds_inclusive=(True, True)
+            ),
+            "address": Numeric(
+                required=True,
+                is_type=int,
+                bounds=(0x70, 0x77),
+                bounds_inclusive=(True, True),
+            ),
+        },
+        "devices": {
+            KPH("name", multi=True): {
+                "device_type": Text(required=True, is_in_list=AtlasI2cMuxDEVICES),
+                KPH("channel", required=False, exact=True): Numeric(
+                    required=True,
+                    is_type=int,
+                    bounds=(0, 7),
+                    bounds_inclusive=(True, True),
+                ),
+                "address": Numeric(
+                    required=True,
+                    is_type=int,
+                    bounds=(0x60, 0x90),
+                    bounds_inclusive=(True, True),
+                ),
+                "cmd_str": Text(required=False, is_in_list=["R"]),
+                "params": {
+                    "run": {
+                        "unit": Text(required=True),
+                    },
+                    "schedule": {
+                        "frequency": Numeric(
+                            required=False, is_type=float, bounds=(1, 86400)
+                        )
+                    },
+                },
+            }
+        },
     },
     KPH("GPIODemux", exact=True, required=False): {
         KPH("demux_name", required=True, multi=True): {
