@@ -147,6 +147,7 @@ class AtlasI2cMux:
                 address=cur_device.address,
             )
             value = ar.value
+            value = float(value.decode())
         except OSError:
             value = None
 

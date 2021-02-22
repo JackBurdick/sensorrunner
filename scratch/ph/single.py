@@ -52,7 +52,7 @@ class AtlasMux(object):
             fcntl.ioctl(rfp, _I2C_rep, address)
             resp = rfp.read(31)
             ar.status_code = resp[0]
-            ar.data = resp[1:].strip().strip(b"\x00")
+            ar.value = resp[1:].strip().strip(b"\x00")
 
         # set all channels off
         self.reset_channels()
