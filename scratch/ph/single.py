@@ -35,30 +35,7 @@ class AtlasMux(object):
     def reset_channels(self):
         self.bus.write_byte(self.address, 0)  # all off
 
-    def _atlas_setup(self, address=0x63):
-        self.file_write = io.open(
-            file=f"/dev/i2c-{self.bus_num}", mode="wb", buffering=0
-        )
-        self.file_read = io.open(
-            file=f"/dev/i2c-{self.bus_num}", mode="rb", buffering=0
-        )
-
-        _I2C_rep = 0x703
-        fcntl.ioctl(self.file_read, _I2C_rep, address)
-        fcntl.ioctl(self.file_write, _I2C_rep, address)
-
-    def read_value(self):
-        cmd = "R"
-        cmd += "\00"
-        self.file_write.write(cmd.encode("latin-1"))
-        time.sleep(1.5)
-        resp = self.file_read.read(31)
-        ar = AtlasResponse()
-        ar.status_code = resp[0]
-        ar.data = resp[1:].strip().strip(b"\x00")
-        return ar
-
-    def read_sensor(self, cmd="R", channel=3, address=0x63, reading_delay_s=1.5):
+    def send_cmd(self, cmd="R", channel=3, address=0x63, reading_delay_s=1.5):
         self.set_channel(channel)
 
         _I2C_rep = 0x703
@@ -81,24 +58,16 @@ class AtlasMux(object):
         self.reset_channels()
 
         return ar
-        #####
 
 
 MUX_ADDR = 0x70
 ph_addr = 0x63
 tca = AtlasMux("atlas_mux", MUX_ADDR)
-# tca.set_channel(3)
-# tca._atlas_setup()
-# for i in range(10):
-#     v = tca.read_sensor(channel=3, address=0x63)
-#     print(f"{i}: {v}")
-#     print("-----" * 8)
-#     time.sleep(1)
 
 
 def main(cmd: str = "R", num: int = 3):
     for i in range(num):
-        v = tca.read_sensor(cmd=cmd, channel=3, address=0x63)
+        v = tca.send_cmd(cmd=cmd, channel=3, address=0x63)
         print(f"{i}: {v}")
         print("-----" * 8)
         time.sleep(1.0)

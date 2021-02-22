@@ -2,6 +2,7 @@ from sensorrunner.devices.demux.gpio.device import GPIODemux
 from sensorrunner.devices.mux.I2C.device import I2CMux
 from sensorrunner.devices.SPI.ADC.device import MDC3800
 from sensorrunner.devices.device.device import CurrentDevice
+from sensorrunner.devices.atlas.device import AtlasI2cMux
 from sensorrunner.devices.cams.device import Cams
 
 
@@ -24,6 +25,14 @@ def build_devices_from_config(config):
         DEVICES["I2CMux"] = i2c_dev
 
     try:
+        AtlasI2cMux_config = config["AtlasI2cMux"]
+    except KeyError:
+        AtlasI2cMux_config = None
+    if AtlasI2cMux_config:
+        AtlasI2cMux_dev = AtlasI2cMux(AtlasI2cMux_config)
+        DEVICES["AtlasI2cMux"] = AtlasI2cMux_dev
+
+    try:
         cams_config = config["Cams"]
     except KeyError:
         cams_config = None
@@ -37,6 +46,8 @@ def build_devices_from_config(config):
         GPIODemux_config = None
     if GPIODemux_config:
         for gpiod_name, gpio_d in GPIODemux_config.items():
+            # TODO: this looks like a mistake -- need to investigate, the
+            # gpio_dev is being overwritten
             gpio_dev = GPIODemux(gpiod_name, gpio_d["init"], gpio_d["devices"])
             # TODO: fix
             # DEVICES["GPIODemux"][gpiod_name] = gpio_dev
@@ -66,8 +77,10 @@ def build_task_params_from_config(config):
     """
     TODO: standardize getattr(DEV, 'build_tasks')
 
-    NOTE: rather than be a seperate call, this logic will likely happen at the
+    NOTE: rather than be a separate call, this logic will likely happen at the
     same time as building the devices. HOwever, right now they are separate
+
+    NOTE: This is getting really noisy + would benefit from a refactor 21Feb
 
     """
     task_params = {}
@@ -76,6 +89,13 @@ def build_task_params_from_config(config):
             cur_dev_name = device_type
             task_params[device_type] = {}
             cur_tasks = I2CMux.build_task_params(device_type, config["I2CMux"])
+            task_params[device_type][cur_dev_name] = cur_tasks
+        if device_type == "AtlasI2cMux":
+            cur_dev_name = device_type
+            task_params[device_type] = {}
+            cur_tasks = AtlasI2cMux.build_task_params(
+                device_type, config["AtlasI2cMux"]
+            )
             task_params[device_type][cur_dev_name] = cur_tasks
         elif device_type == "MDC3800":
             cur_dev_name = device_type
