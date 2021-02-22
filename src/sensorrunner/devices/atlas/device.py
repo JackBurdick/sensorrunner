@@ -157,7 +157,7 @@ class AtlasI2cMux:
     def build_task_params(device_name, device_dict):
         DEFAULT_FN_NAME = "return_value"
         entry_specs = {}
-        for comp_name, comp_dict in device_dict.items():
+        for comp_name, comp_dict in device_dict["devices"].items():
             dev_dict = comp_dict.copy()
             entry_d = {}
             fn_name = comp_dict["fn_name"]
