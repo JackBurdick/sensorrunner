@@ -41,6 +41,7 @@ class AtlasI2cMux:
             bus_num = init_config["bus_num"]
         except KeyError:
             bus_num = 1
+        self.bus_num = bus_num
 
         # we're using a tca9548a but not using the standard library for reading+writing
         self.bus = smbus.SMBus(bus_num)
