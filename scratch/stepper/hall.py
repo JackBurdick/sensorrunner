@@ -1,6 +1,6 @@
 from gpiozero import SmoothedInputDevice
 import datetime as dt
-imoprt time
+import time
 
 
 class Hall(SmoothedInputDevice):
@@ -14,7 +14,7 @@ class Hall(SmoothedInputDevice):
         pin=None,
         pull_up=True,
         active_state=None,
-        #queue_len=100,
+        queue_len=5,
         #sample_rate=100,
         #threshold=0.5,
         partial=False,
@@ -22,11 +22,11 @@ class Hall(SmoothedInputDevice):
         when_activated=None,
         when_deactivated=None,
     ):
-        super(Hall, self).__init__(
+        super().__init__(
             pin,
             pull_up=pull_up,
             active_state=active_state,
-            threshold=threshold,
+            #threshold=threshold,
             #queue_len=queue_len,
             #sample_wait=1 / sample_rate,
             partial=partial,
@@ -36,6 +36,7 @@ class Hall(SmoothedInputDevice):
             self._queue.start()
         except:
             self.close()
+            raise
 
         if not isinstance(name, str):
             raise ValueError(
@@ -65,5 +66,5 @@ class Hall(SmoothedInputDevice):
 h = Hall(name="hall", pin=23)
 
 for i in range(30):
-    print(i, h.value())
+    print(i, h.value)
     time.sleep(0.3)
