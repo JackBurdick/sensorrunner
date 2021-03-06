@@ -75,9 +75,13 @@ class Stepper:
         self.name = name
         self.dir_pin = DigitalOutputDevice(init_config["dir"])
         self.step_pin = DigitalOutputDevice(init_config["step"])
+        self.enable_pin = DigitalOutputDevice(init_config["enable"])
         self.loc_pin = Hall(name="location", pin=init_config["location"])
         self.pulse_width = 0.0015
         self.time_between = 0.005
+        
+        # ensure stepper off
+        self.enable_pin.on()
 
         # TODO: logic to set zero/record positions
         # TODO: logic to roughly caclulate distances/locations
@@ -91,6 +95,7 @@ class Stepper:
         return self.loc_pin.value
 
     def move_direction(self, num_steps, direction):
+        self.enable_pin.off()
         cur_step = 0
         if direction:
             self.dir_pin.on()
@@ -106,12 +111,14 @@ class Stepper:
                 print(f"{cur_step}/{num_steps} {direction}")
                 cur_step += 1
                 time.sleep(self.time_between)
+        self.enable_pin.on()
 
 
 DIRPIN = 27
 STEPIN = 17
 LOCPIN = 23
-init_config = {"dir": DIRPIN, "step": STEPIN, "location": LOCPIN}
+ENABLEPIN = 22
+init_config = {"dir": DIRPIN, "step": STEPIN, "location": LOCPIN, "enable": ENABLEPIN}
 s = Stepper(init_config=init_config)
 
 
