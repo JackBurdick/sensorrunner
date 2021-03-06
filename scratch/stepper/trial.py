@@ -1,14 +1,66 @@
 import sys
 import time
 
-from gpiozero import Device, DigitalOutputDevice
+from gpiozero import Device, DigitalOutputDevice, SmoothedInputDevice
 
 # from gpiozero.pins.mock import MockFactory
 from gpiozero.pins.native import NativeFactory
 
-from .hall import Hall
-
 Device.pin_factory = NativeFactory()
+
+import datetime as dt
+
+
+class Hall(SmoothedInputDevice):
+    """
+    vibration
+    """
+
+    def __init__(
+        self,
+        name,
+        pin=None,
+        pull_up=True,
+        active_state=None,
+        queue_len=5,
+        # sample_rate=100,
+        # threshold=0.5,
+        partial=False,
+        pin_factory=None,
+        when_activated=None,
+        when_deactivated=None,
+    ):
+        super().__init__(
+            pin,
+            pull_up=pull_up,
+            active_state=active_state,
+            # threshold=threshold,
+            # queue_len=queue_len,
+            # sample_wait=1 / sample_rate,
+            partial=partial,
+            pin_factory=pin_factory,
+        )
+        try:
+            self._queue.start()
+        except:
+            self.close()
+            raise
+
+        if not isinstance(name, str):
+            raise ValueError(
+                f"name ({name}) expected to be type {str}, not {type(name)}"
+            )
+        self.name = name
+
+        # if when_activated:
+        #     self.when_activated = getattr(self, when_activated)
+
+        # if when_deactivated:
+        #     self.when_deactivated = getattr(self, when_deactivated)
+
+    @property
+    def value(self):
+        return super(Hall, self).value
 
 
 class Stepper:
